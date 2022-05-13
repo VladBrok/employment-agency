@@ -7,7 +7,6 @@ using Npgsql;
 using Temp;
 
 /**
-    * Connection string
     * CRUD operations
     * Send data by pages
     * Data validation
@@ -15,21 +14,26 @@ using Temp;
     * Cascade deletion
     * Timeouts and error handling
     * Security
+    * Is default json serialization in Asp net core async?
+    * await using ?
 */
 
 Settings? settings = null;
-using (var reader = new StreamReader("appSettings.json"))
+using (var stream = File.OpenRead("appSettings.json"))
 {
-    string json = await reader.ReadToEndAsync();
-    settings = JsonSerializer.Deserialize<Settings>(json, new JsonSerializerOptions
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.Never
-    });
+    settings = (await JsonSerializer.DeserializeAsync<Settings>(
+        stream,
+        new JsonSerializerOptions
+        {
+            AllowTrailingCommas = true
+        }))!;
 }
 
 var s = new SeekerService(settings);
+
 bool success = await s.DeleteAsync(7398);
 Console.WriteLine($"{(success ? "D" : "Not d")}eleted.");
+
 await new EmploymentAgencyContext(settings)
     .Applications
     .Include(x => x.Seeker)
