@@ -7,38 +7,151 @@ using Npgsql;
 using Temp;
 
 /**
-    * CRUD operations
+    * What to do with the linked data (.Include)
+    * Searching ?
     * Send data by pages
     * Data validation
-    * Searching ?
-    * Cascade deletion
     * Timeouts and error handling
     * Security
-    * Is default json serialization in Asp net core async?
     * await using ?
 */
 
 Settings? settings = null;
 using (var stream = File.OpenRead("appSettings.json"))
 {
-    settings = (await JsonSerializer.DeserializeAsync<Settings>(
-        stream,
-        new JsonSerializerOptions
-        {
-            AllowTrailingCommas = true
-        }))!;
+    settings = (await JsonSerializer.DeserializeAsync<Settings>(stream))!;
 }
 
-var s = new SeekerService(settings);
+var s = new Service<Address>(settings, context => context.Addresses);
+Address? a = await s.ReadAsync(1);
+Console.WriteLine(a?.BuildingNumber);
 
-bool success = await s.DeleteAsync(7398);
-Console.WriteLine($"{(success ? "D" : "Not d")}eleted.");
+// var s = new Service<Seeker>(settings, context => context.Seekers);
+// var seeker = new Seeker()
+// {
+//     Id = 2,
+//     StatusId = 1,
+//     AddressId = 1,
+//     SpecialityId = 1,
+//     LastName = "TEST",
+//     FirstName = "BRAVE",
+//     Birthday = new DateOnly(2000, 1, 1),
+//     RegistrationCity = "Uganda",
+//     Recommended = true,
+//     Pol = true,
+// };
+// await s.UpdateAsync(seeker.Id, seeker);
+// Console.WriteLine((await s.ReadAsync(seeker.Id))?.FirstName);
 
-await new EmploymentAgencyContext(settings)
-    .Applications
-    .Include(x => x.Seeker)
-    .Take(5)
-    .ForEachAsync(x => Console.WriteLine($"Seeker: {x.Seeker?.Id}, Application: {x.Id}"));
+// public class SeekerService
+// {
+//     private readonly Settings _settings;
+
+//     public SeekerService(Settings settings)
+//     {
+//         _settings = settings;
+//     }
+
+//     public async Task CreateAsync(Seeker entity)
+//     {
+//         using var context = new EmploymentAgencyContext(_settings);
+
+//         entity.Id = default;
+//         await context.Seekers.AddAsync(entity);
+
+//         await context.SaveChangesAsync();
+//     }
+
+//     public async Task<Seeker?> ReadAsync(int id)
+//     {
+//         using var context = new EmploymentAgencyContext(_settings);
+
+//         return await context.Seekers.FirstOrDefaultAsync(x => x.Id == id);
+//     }
+
+//     public async Task<IEnumerable<Seeker>> ReadAsync()
+//     {
+//         using var context = new EmploymentAgencyContext(_settings);
+
+//         return await context.Seekers.ToListAsync();
+//     }
+
+//     public async Task<bool> UpdateAsync(int id, Seeker entity)
+//     {
+//         using var context = new EmploymentAgencyContext(_settings);
+
+//         var toUpdate = await context.Seekers.FirstOrDefaultAsync(x => x.Id == id);
+//         if (toUpdate is null)
+//         {
+//             return false;
+//         }
+
+//         entity.Id = id;
+//         context.Entry(toUpdate).CurrentValues.SetValues(entity);
+
+//         await context.SaveChangesAsync();
+//         return true;
+//     }
+
+//     public async Task<bool> DeleteAsync(int id)
+//     {
+//         using var context = new EmploymentAgencyContext(_settings);
+
+//         var entity = await context.Seekers.FirstOrDefaultAsync(x => x.Id == id);
+//         if (entity is null)
+//         {
+//             return false; // Not found
+//         }
+
+//         context.Seekers.Remove(entity);
+
+//         context.ChangeTracker.DetectChanges();
+//         Console.WriteLine(context.ChangeTracker.DebugView.ShortView);
+
+//         await context.SaveChangesAsync();
+//         return true; // No content
+//     }
+// }
+
+
+// public class PostgreSql
+// {
+//     private readonly string _connection;
+
+//     public PostgreSql(string connection)
+//     {
+//         _connection = connection;
+//     }
+
+//     public async Task ExecuteReaderAsync(string command)
+//     {
+//         await using var conn = new NpgsqlConnection(_connection);
+//         await conn.OpenAsync();
+
+//         await using var cmd = new NpgsqlCommand(command, conn);
+//         await using var reader = await cmd.ExecuteReaderAsync();
+
+//         while (await reader.ReadAsync())
+//         {
+//             var values = new object[reader.FieldCount];
+//             reader.GetValues(values);
+//             foreach (var value in values.Select(x => x.ToString()))
+//             {
+//                 Console.Write(value + " ");
+//             }
+//             Console.WriteLine();
+//         }
+//     }
+// }
+
+// bool success = await s.DeleteAsync(7398);
+// Console.WriteLine($"{(success ? "D" : "Not d")}eleted.");
+
+// await new EmploymentAgencyContext(settings)
+//     .Applications
+//     .Include(x => x.Seeker)
+//     .Take(5)
+//     .ForEachAsync(x => Console.WriteLine($"Seeker: {x.Seeker?.Id}, Application: {x.Id}"));
 
 // using var context = new EmploymentAgencyContext(); // Lifetime is short (1 query - 1 connection)
 // Update
@@ -71,61 +184,3 @@ await new EmploymentAgencyContext(settings)
 
 // var p = new PostgreSql(connectionString);
 // await p.ExecuteReaderAsync("select * from seekers");
-
-public class SeekerService
-{
-    private readonly Settings _settings;
-
-    public SeekerService(Settings settings)
-    {
-        _settings = settings;
-    }
-
-    public async Task<bool> DeleteAsync(int id)
-    {
-        using var context = new EmploymentAgencyContext(_settings);
-        var entity = await context.Seekers.FirstOrDefaultAsync(x => x.Id == id);
-        if (entity is null)
-        {
-            return false;
-        }
-
-        context.Seekers.Remove(entity);
-
-        context.ChangeTracker.DetectChanges();
-        Console.WriteLine(context.ChangeTracker.DebugView.ShortView);
-
-        await context.SaveChangesAsync();
-        return true;
-    }
-}
-
-public class PostgreSql
-{
-    private readonly string _connection;
-
-    public PostgreSql(string connection)
-    {
-        _connection = connection;
-    }
-
-    public async Task ExecuteReaderAsync(string command)
-    {
-        await using var conn = new NpgsqlConnection(_connection);
-        await conn.OpenAsync();
-
-        await using var cmd = new NpgsqlCommand(command, conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
-        {
-            var values = new object[reader.FieldCount];
-            reader.GetValues(values);
-            foreach (var value in values.Select(x => x.ToString()))
-            {
-                Console.Write(value + " ");
-            }
-            Console.WriteLine();
-        }
-    }
-}
