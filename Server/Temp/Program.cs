@@ -6,16 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Temp;
 
-/**
-    * What to do with the linked data (.Include)
-    * Searching ?
-    * Send data by pages
-    * Data validation
-    * Timeouts and error handling
-    * Security
-    * await using ?
-*/
-
 Settings? settings = null;
 using (var stream = File.OpenRead("appSettings.json"))
 {
