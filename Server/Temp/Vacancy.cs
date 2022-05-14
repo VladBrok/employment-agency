@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class Vacancy
+    public partial class Vacancy : IIDentifiable
     {
         public int Id { get; set; }
         public int EmployerId { get; set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class District
+    public partial class District : IIDentifiable
     {
         public District()
         {

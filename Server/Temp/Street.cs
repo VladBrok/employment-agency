@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class Street
+    public partial class Street : IIDentifiable
     {
         public int Id { get; set; }
         public int DistrictId { get; set; }

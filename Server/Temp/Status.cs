@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class Status
+    public partial class Status : IIDentifiable
     {
         public Status()
         {

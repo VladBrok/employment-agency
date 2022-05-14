@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class ChangeLog
+    public partial class ChangeLog : IIDentifiable
     {
         public int Id { get; set; }
         public string TableName { get; set; } = null!;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class EmploymentType
+    public partial class EmploymentType : IIDentifiable
     {
         public EmploymentType()
         {

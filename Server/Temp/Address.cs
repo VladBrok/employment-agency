@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class Address
+    public partial class Address : IIDentifiable
     {
         public Address()
         {

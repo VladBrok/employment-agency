@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Temp
 {
-    public partial class Position
+    public partial class Position : IIDentifiable
     {
         public Position()
         {
