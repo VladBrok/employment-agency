@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using EmploymentAgency.Models;
+using EmploymentAgency.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
@@ -23,9 +25,14 @@ public class CrudController<T> : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> Get()
+    public async Task<ActionResult> Get(
+        [Required, Range(0, int.MaxValue)] int page,
+        [Required, Range(1, int.MaxValue)] int pageSize,
+        string? pattern)
     {
-        return Ok(await _service.ReadAsync());
+        return pattern is null
+               ? Ok(await _service.ReadAsync(page, pageSize))
+               : Ok(await _service.ReadAsync(page, pageSize, pattern));
     }
 
     [HttpGet("{id}")]
@@ -43,27 +50,28 @@ public class CrudController<T> : ControllerBase
     public async Task<ActionResult> Put(int id, [FromBody] T entity)
     {
         bool found = await _service.UpdateAsync(id, entity);
-        if (!found)
-        {
-            return NotFound(id);
-        }
-        return NoContent();
+        return GetResult(id, found);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
         bool found = await _service.DeleteAsync(id);
-        if (!found)
-        {
-            return NotFound(id);
-        }
-        return NoContent();
+        return GetResult(id, found);
     }
 
     public override NotFoundObjectResult NotFound([ActionResultObjectValue] object? id)
     {
         return base.NotFound($"Сущность с id = {id} не найдена.");
+    }
+
+    private ActionResult GetResult(int id, bool found)
+    {
+        if (found)
+        {
+            return NoContent();
+        }
+        return NotFound(id);
     }
 }
 

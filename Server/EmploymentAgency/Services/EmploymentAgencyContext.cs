@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EmploymentAgency.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
 
-namespace EmploymentAgency.Models;
+namespace EmploymentAgency.Services;
 
 public partial class EmploymentAgencyContext : DbContext
 {

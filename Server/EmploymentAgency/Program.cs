@@ -1,18 +1,15 @@
-using System.Text.Json.Serialization;
 using EmploymentAgency.Helpers;
 using EmploymentAgency.Models;
+using EmploymentAgency.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
+builder.Services.AddControllers().AddJsonOptions(ConfigureJson);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 AddCustomDependencies(builder.Services);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -28,14 +25,20 @@ app.MapControllers();
 app.Run();
 
 /**
-    * Send data by pages
-    * Special queries
     * Data validation
-    * Searching ?
+    * Special queries
+    
     * Timeouts and error handling
     * Security
-    * await using ?
 */
+
+void ConfigureJson(JsonOptions options)
+{
+    var o = options.JsonSerializerOptions;
+    o.Converters.Add(new DateOnlyJsonConverter());
+    o.Converters.Add(new IdentifiableConverterFactory());
+}
+
 void AddCustomDependencies(IServiceCollection services)
 {
     var settings = new ConfigurationBuilder()
@@ -44,16 +47,22 @@ void AddCustomDependencies(IServiceCollection services)
         .GetSection("Settings")
         .Get<Settings>();
 
-    services.AddSingleton(new Service<Seeker>(settings, x => x.Seekers));
-    services.AddSingleton(new Service<Address>(settings, x => x.Addresses));
-    services.AddSingleton(new Service<Application>(settings, x => x.Applications));
-    services.AddSingleton(new Service<ChangeLog>(settings, x => x.ChangeLogs));
-    services.AddSingleton(new Service<District>(settings, x => x.Districts));
-    services.AddSingleton(new Service<Employer>(settings, x => x.Employers));
-    services.AddSingleton(new Service<EmploymentType>(settings, x => x.EmploymentTypes));
-    services.AddSingleton(new Service<Position>(settings, x => x.Positions));
-    services.AddSingleton(new Service<Property>(settings, x => x.Properties));
-    services.AddSingleton(new Service<Status>(settings, x => x.Statuses));
-    services.AddSingleton(new Service<Street>(settings, x => x.Streets));
-    services.AddSingleton(new Service<Vacancy>(settings, x => x.Vacancies));
+    services.AddSingleton(settings);
+    services.AddDbContext<EmploymentAgencyContext>();
+
+    services.AddScoped(p => new Service<Seeker>(GetDbContext(p), c => c.Seekers));
+    services.AddScoped(p => new Service<Address>(GetDbContext(p), c => c.Addresses));
+    services.AddScoped(p => new Service<Application>(GetDbContext(p), c => c.Applications));
+    services.AddScoped(p => new Service<ChangeLog>(GetDbContext(p), c => c.ChangeLogs));
+    services.AddScoped(p => new Service<District>(GetDbContext(p), c => c.Districts));
+    services.AddScoped(p => new Service<Employer>(GetDbContext(p), c => c.Employers));
+    services.AddScoped(p => new Service<EmploymentType>(GetDbContext(p), c => c.EmploymentTypes));
+    services.AddScoped(p => new Service<Position>(GetDbContext(p), c => c.Positions));
+    services.AddScoped(p => new Service<Property>(GetDbContext(p), c => c.Properties));
+    services.AddScoped(p => new Service<Status>(GetDbContext(p), c => c.Statuses));
+    services.AddScoped(p => new Service<Street>(GetDbContext(p), c => c.Streets));
+    services.AddScoped(p => new Service<Vacancy>(GetDbContext(p), c => c.Vacancies));
 }
+
+EmploymentAgencyContext GetDbContext(IServiceProvider provider) =>
+    provider.GetService<EmploymentAgencyContext>()!;
