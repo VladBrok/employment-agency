@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EmploymentAgency.Models;
+﻿namespace EmploymentAgency.Models;
 
 public partial class Seeker : IIdentifiable
 {
-    public Seeker()
-    {
-    }
-
     public int Id { get; set; }
     public int StatusId { get; set; }
     public int AddressId { get; set; }

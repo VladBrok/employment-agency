@@ -5,10 +5,7 @@ namespace EmploymentAgency.Models;
 
 public partial class Position : IIdentifiable
 {
-    public Position()
-    {
-    }
 
     public int Id { get; set; }
-    public string PositionName { get; set; } = null!;
+    public string Name { get; set; } = null!;
 }

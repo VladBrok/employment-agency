@@ -7,7 +7,7 @@ public partial class Street : IIdentifiable
 {
     public int Id { get; set; }
     public int DistrictId { get; set; }
-    public string StreetName { get; set; } = null!;
+    public string Name { get; set; } = null!;
     public int? PostalCode { get; set; }
 
     public virtual District District { get; set; } = null!;

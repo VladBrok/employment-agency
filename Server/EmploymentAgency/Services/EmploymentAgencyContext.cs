@@ -161,12 +161,12 @@ public partial class EmploymentAgencyContext : DbContext
         {
             entity.ToTable("districts");
 
-            entity.HasIndex(e => e.DistrictName, "districts_district_key")
+            entity.HasIndex(e => e.Name, "districts_district_key")
                 .IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.DistrictName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(30)
                 .HasColumnName("district");
         });
@@ -175,7 +175,7 @@ public partial class EmploymentAgencyContext : DbContext
         {
             entity.ToTable("employers");
 
-            entity.HasIndex(e => e.EmployerName, "employers_employer_key")
+            entity.HasIndex(e => e.Name, "employers_employer_key")
                 .IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
@@ -186,7 +186,7 @@ public partial class EmploymentAgencyContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("email");
 
-            entity.Property(e => e.EmployerName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(40)
                 .HasColumnName("employer");
 
@@ -285,12 +285,12 @@ public partial class EmploymentAgencyContext : DbContext
         {
             entity.ToTable("positions");
 
-            entity.HasIndex(e => e.PositionName, "positions_position_key")
+            entity.HasIndex(e => e.Name, "positions_position_key")
                 .IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.PositionName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(40)
                 .HasColumnName("position");
         });
@@ -299,12 +299,12 @@ public partial class EmploymentAgencyContext : DbContext
         {
             entity.ToTable("properties");
 
-            entity.HasIndex(e => e.PropertyName, "properties_property_key")
+            entity.HasIndex(e => e.Name, "properties_property_key")
                 .IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.PropertyName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(30)
                 .HasColumnName("property");
         });
@@ -399,12 +399,12 @@ public partial class EmploymentAgencyContext : DbContext
         {
             entity.ToTable("statuses");
 
-            entity.HasIndex(e => e.StatusName, "statuses_status_key")
+            entity.HasIndex(e => e.Name, "statuses_status_key")
                 .IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.StatusName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(20)
                 .HasColumnName("status");
         });
@@ -413,7 +413,7 @@ public partial class EmploymentAgencyContext : DbContext
         {
             entity.ToTable("streets");
 
-            entity.HasIndex(e => e.StreetName, "streets_street_key")
+            entity.HasIndex(e => e.Name, "streets_street_key")
                 .IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
@@ -422,7 +422,7 @@ public partial class EmploymentAgencyContext : DbContext
 
             entity.Property(e => e.PostalCode).HasColumnName("postal_code");
 
-            entity.Property(e => e.StreetName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(30)
                 .HasColumnName("street");
 
