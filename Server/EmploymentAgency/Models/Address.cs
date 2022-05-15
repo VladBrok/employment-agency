@@ -1,6 +1,6 @@
 ﻿namespace EmploymentAgency.Models;
 
-public partial class Address : IIDentifiable
+public partial record Address : IIDentifiable
 {
     public int Id { get; set; }
     public int DistrictId { get; set; }

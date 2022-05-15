@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System.Reflection;
 using EmploymentAgency.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +42,7 @@ public class Service<T>
     public async Task<IEnumerable<T>> ReadAsync(int page, int pageSize, string pattern)
     {
         var entities = await ReadAsync(page, pageSize);
-        return entities.Where(e => AnyMemberContains(pattern, e));
+        return entities.Where(e => AnyMemberContains(pattern, e)).ToList();
     }
 
     public async Task<bool> UpdateAsync(int id, T entity)
@@ -61,14 +61,26 @@ public class Service<T>
 
     private bool AnyMemberContains(string substr, T e)
     {
-        return _context.Entry(e).Members
-            .Any(m =>
+        Console.WriteLine("Service: " + e.GetType());
+        return e.GetType()
+            .GetProperties()
+            .Where(p => !p.Name.EndsWith("Id"))
+            .Any(p =>
             {
-                Trace.Assert(!m.Metadata.Name.Contains("oading"));
-                return m.CurrentValue?
-                        .ToString()?
-                        .Contains(substr, StringComparison.OrdinalIgnoreCase) ?? false;
+                Console.WriteLine(p.Name + p.GetValue(e)?.ToString());
+                return p.GetValue(e)?
+                    .ToString()?
+                    .Contains(substr, StringComparison.OrdinalIgnoreCase) ?? false;
             });
+        // return _context.Entry(e).Members
+        //     .Any(m =>
+        //     {
+        //         Trace.Assert(!m.Metadata.Name.Contains("oading"));
+        //         return m.Metadata.FieldInfo?
+        //                 .GetValue(e)?
+        //                 .ToString()?
+        //                 .Contains(substr, StringComparison.OrdinalIgnoreCase) ?? false;
+        //     });
     }
 
     private async Task<bool> TryFindAsync(int id, Action<T> callback)
