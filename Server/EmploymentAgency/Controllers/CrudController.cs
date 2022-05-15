@@ -8,7 +8,7 @@ namespace EmploymentAgency.Controllers;
 
 [ApiController]
 public class CrudController<T> : ControllerBase
-    where T : class, IIDentifiable
+    where T : class, IIdentifiable
 {
     private readonly Service<T> _service;
 

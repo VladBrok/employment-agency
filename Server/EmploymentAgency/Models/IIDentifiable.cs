@@ -1,6 +1,6 @@
 namespace EmploymentAgency.Models;
 
-public interface IIDentifiable
+public interface IIdentifiable
 {
     int Id { get; set; }
 }

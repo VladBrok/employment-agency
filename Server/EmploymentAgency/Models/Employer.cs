@@ -1,6 +1,6 @@
 ﻿namespace EmploymentAgency.Models;
 
-public partial class Employer : IIDentifiable
+public partial class Employer : IIdentifiable
 {
     public Employer()
     {

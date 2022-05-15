@@ -8,7 +8,7 @@ public class IdentifiableConverterFactory : JsonConverterFactory
 {
     public override bool CanConvert(Type type)
     {
-        return type.IsAssignableTo(typeof(IIDentifiable));
+        return type.IsAssignableTo(typeof(IIdentifiable));
     }
 
     public override JsonConverter CreateConverter(

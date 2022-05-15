@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EmploymentAgency.Models;
 
-public partial class ChangeLog : IIDentifiable
+public partial class ChangeLog : IIdentifiable
 {
     public int Id { get; set; }
     public string TableName { get; set; } = null!;

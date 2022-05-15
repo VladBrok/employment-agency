@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EmploymentAgency.Models;
 
-public partial class Property : IIDentifiable
+public partial class Property : IIdentifiable
 {
     public Property()
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EmploymentAgency.Models;
 
-public partial class Street : IIDentifiable
+public partial class Street : IIdentifiable
 {
     public int Id { get; set; }
     public int DistrictId { get; set; }

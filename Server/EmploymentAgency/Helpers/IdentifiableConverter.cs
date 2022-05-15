@@ -6,7 +6,7 @@ using EmploymentAgency.Models;
 namespace EmploymentAgency.Helpers;
 
 public class IdentifiableConverter<T> : JsonConverter<T>
-    where T : IIDentifiable
+    where T : IIdentifiable
 {
     public override T Read(
         ref Utf8JsonReader reader,
