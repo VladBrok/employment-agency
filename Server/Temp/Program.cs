@@ -6,15 +6,54 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Temp;
 
-Settings? settings = null;
-using (var stream = File.OpenRead("appSettings.json"))
+Settings settings = await LoadSettingsAsync();
+var postgres = new PostgreSql(settings.ConnectionString);
+await postgres.ExecuteReaderAsync("select * from seekers order by 1, 2, 3 limit 10");
+// await postgres.ExecuteReaderAsync("SELECT * FROM get_seekers_in_district('Ленинский') LIMIT 5;");
+// await postgres.ExecuteReaderAsync("insert into positions values(default, ");
+
+async Task<Settings> LoadSettingsAsync()
 {
-    settings = (await JsonSerializer.DeserializeAsync<Settings>(stream))!;
+    using var stream = File.OpenRead("appSettings.json");
+    return (await JsonSerializer.DeserializeAsync<Settings>(stream))!;
 }
 
-var s = new Service<Address>(settings, context => context.Addresses);
-Address? a = await s.ReadAsync(1);
-Console.WriteLine(a?.BuildingNumber);
+public class PostgreSql
+{
+    private readonly string _connection;
+
+    public PostgreSql(string connection)
+    {
+        _connection = connection;
+    }
+
+    public async Task ExecuteReaderAsync(string command)
+    {
+        await using var conn = new NpgsqlConnection(_connection);
+        await conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand(command, conn);
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            var values = new object[reader.FieldCount];
+            reader.GetValues(values);
+
+            int i = 0;
+            foreach (var value in values.Select(x => x.ToString()))
+            {
+                Console.WriteLine(reader.GetName(i++) + ": " + value);
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
+
+// var s = new Service<Address>(settings, context => context.Addresses);
+// Address? a = await s.ReadAsync(1);
+// Console.WriteLine(a?.BuildingNumber);
 
 // var s = new Service<Seeker>(settings, context => context.Seekers);
 // var seeker = new Seeker()
