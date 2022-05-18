@@ -1,16 +1,14 @@
-using System;
-using System.CodeDom.Compiler;
-using System.Linq;
-using System.Threading.Tasks;
 using EmploymentAgency.Models;
+using EmploymentAgency.Reports;
+using Microsoft.AspNetCore.Mvc;
 
 /**
-    * update или delete нарушает ограничение внешнего клуча
-    * Reports
+    * Searching
     * Timeouts and error handling
     
     * Performance
     * Security
+    * update или delete нарушает ограничение внешнего клуча
 */
 
 WebApplication app = BuildApp();
@@ -19,6 +17,7 @@ UseRequiredMiddlewares();
 PostgreSql postgres = MakePostgres();
 MapCrudQueries();
 MapSpecialQueries(root: "api/special");
+MapReports(root: "api/report");
 
 app.Run();
 
@@ -130,57 +129,57 @@ void MapSpecialQueries(string root)
     }
 
     app.MapGet(
-        $"{root}/applications_percent_after",
-        async (int page, int pageSize, int year) =>
+        $"{root}/applications_percent_after/{{year}}",
+        async (int page, int pageSize, [FromRoute] int year) =>
             await ReadAsync(page, pageSize, $"get_applications_percent_after('{year}')"));
 
     app.MapGet(
-        $"{root}/applications_percent_by_positions_after",
+        $"{root}/applications_percent_by_positions_after/{{year}}",
         async (int page, int pageSize, int year) =>
             await ReadAsync(page, pageSize, $"get_applications_percent_by_positions_after('{year}')"));
 
     app.MapGet(
-        $"{root}/application_count_by_positions",
+        $"{root}/application_count_by_positions/{{year}}/{{month}}",
         async (int page, int pageSize, int year, int month) =>
             await ReadAsync(page, pageSize, $"get_application_count_by_positions('{year}', '{month}')"));
 
     app.MapGet(
-        $"{root}/seekers_in_district",
+        $"{root}/seekers_in_district/{{district}}",
         async (int page, int pageSize, string district) =>
             await ReadAsync(page, pageSize, $"get_seekers_in_district('{district}')"));
 
     app.MapGet(
-        $"{root}/employers_with_property",
+        $"{root}/employers_with_property/{{property}}",
         async (int page, int pageSize, string property) =>
             await ReadAsync(page, pageSize, $"get_employers_with_property('{property}')"));
 
     app.MapGet(
-        $"{root}/vacancies_posted_on",
+        $"{root}/vacancies_posted_on/{{date}}",
         async (int page, int pageSize, DateOnly date) =>
             await ReadAsync(page, pageSize, $"get_vacancies_posted_on('{date}')"));
 
     app.MapGet(
-        $"{root}/seekers_born_after",
+        $"{root}/seekers_born_after/{{date}}",
         async (int page, int pageSize, DateOnly date) =>
             await ReadAsync(page, pageSize, $"get_seekers_born_after('{date}')"));
 
     app.MapGet(
-        $"{root}/applications_without_experience",
+        $"{root}/applications_without_experience/{{position}}",
         async (int page, int pageSize, string position) =>
             await ReadAsync(page, pageSize, $"get_applications_without_experience('{position}')"));
 
     app.MapGet(
-        $"{root}/max_salaries_for_position",
+        $"{root}/max_salaries_for_position/{{position}}",
         async (int page, int pageSize, string position) =>
             await ReadAsync(page, pageSize, $"get_max_salaries_for_position('{position}')"));
 
     app.MapGet(
-        $"{root}/seekers_whose_total_experience_exceeds",
+        $"{root}/seekers_whose_total_experience_exceeds/{{experience}}",
         async (int page, int pageSize, int experience) =>
             await ReadAsync(page, pageSize, $"get_seekers_whose_total_experience_exceeds('{experience}')"));
 
     app.MapGet(
-        $"{root}/positions_from_open_vacancies_whose_average_salary_exceeds",
+        $"{root}/positions_from_open_vacancies_whose_average_salary_exceeds/{{salary}}",
         async (int page, int pageSize, int salary) =>
             await ReadAsync(page, pageSize, $"get_positions_from_open_vacancies_whose_average_salary_exceeds('{salary}')"));
 
@@ -190,7 +189,7 @@ void MapSpecialQueries(string root)
             await ReadAsync(page, pageSize, $"get_num_applications_for_each_employment_type()"));
 
     app.MapGet(
-        $"{root}/latest_vacancy_of_employers_whose_name_contains",
+        $"{root}/latest_vacancy_of_employers_whose_name_contains/{{pattern}}",
         async (int page, int pageSize, string pattern) =>
             await ReadAsync(page, pageSize, $"get_latest_vacancy_of_employers_whose_name_contains('{{pattern}}')"));
 }
@@ -275,6 +274,25 @@ async Task<IResult> ReadPageAsync(int page, int pageSize, string command, int? i
            OFFSET {page * pageSize}
            LIMIT {pageSize}; "
     ));
+}
+
+void MapReports(string root)
+{
+    app.MapPost(
+        $"{root}/{{type:regex(html|excel)}}",
+        async (string fileName,
+            string type,
+            string title,
+            [FromBody] IEnumerable<Entity> entities,
+            HttpResponse response) =>
+        {
+            var report = new ReportFactory().MakeReport(type);
+            await report.BuildAsync(entities, fileName, title);
+
+            response.Headers.Add("content-disposition", $"attachment;filename={fileName}");
+            response.ContentType = "application/octet-stream";
+            await response.SendFileAsync(fileName);
+        });
 }
 
 delegate Task<IResult> ReadAsyncFunc(int page, int pageSize, int? id = null);
