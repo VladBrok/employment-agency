@@ -1,5 +1,7 @@
 using Npgsql;
 
+namespace EmploymentAgency;
+
 public class PostgreSql
 {
     private readonly string _connection;
