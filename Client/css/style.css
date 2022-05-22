@@ -5,7 +5,7 @@
   outline: none;
   padding: 0.2rem;
   margin: 0 0.5em;
-  border: 0.1rem solid #e1e0e9;
+  border: 0.1rem solid var(--secondary-color);
   border-radius: 0.2rem;
 }
 
@@ -23,7 +23,7 @@
 
 .button:hover {
   cursor: pointer;
-  color: #f5f6fa;
+  color: var(--tertiary-color);
   background: var(--button-color);
 }
 
@@ -43,7 +43,7 @@
 }
 
 .table-container .title {
-  color: #464457;
+  color: var(--primary-color);
   margin-bottom: 3rem;
 }
 
@@ -52,15 +52,15 @@
   border-collapse: collapse;
   overflow: hidden;
   border-radius: 0.4rem;
-  box-shadow: 0.1rem 0.1rem 0.7rem #e1e0e9;
+  box-shadow: 0.1rem 0.1rem 0.7rem var(--secondary-color);
   width: 100%;
   text-align: center;
   margin: 1.3rem 0;
 }
 
 .table .head {
-  background: #e1e0e9;
-  color: #464457;
+  background: var(--secondary-color);
+  color: var(--primary-color);
   text-transform: uppercase;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .table tr {
-  border: 0.08rem solid #e1e0e9;
+  border: 0.08rem solid var(--secondary-color);
 }
 
 .table th {

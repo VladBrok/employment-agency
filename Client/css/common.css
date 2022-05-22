@@ -1,6 +1,9 @@
 :root {
-  --highlight: #db0a5b;
+  --highlight-color: #db0a5b;
   --button-color: #857ec1;
+  --primary-color: #464457;
+  --secondary-color: #e1e0e9;
+  --tertiary-color: #f5f6fa;
 }
 
 * {
@@ -15,7 +18,7 @@ body {
 }
 
 body {
-  background: #f5f6fa;
+  background: var(--tertiary-color);
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
 }
