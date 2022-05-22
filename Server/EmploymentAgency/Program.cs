@@ -4,11 +4,11 @@ using EmploymentAgency.Models;
 
 /**
     * В адресе должна быть улица, иначе появляются дубликаты при запросе seekers
-    * Timeouts and error handling
     * Get by parent id (select * from applications where seeker_id = 1)
     
     * Performance
     * Security
+    * Error handling
     * update или delete нарушает ограничение внешнего клуча
 */
 
@@ -47,11 +47,15 @@ void UseRequiredMiddlewares()
 PostgreSql MakePostgres()
 {
     var settings = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile("appsettings.json", optional: false)
         .Build()
         .GetSection("Settings")
         .Get<Settings>();
-    return new PostgreSql(settings.ConnectionString);
+    var retry = new RetryStrategy(
+        settings.MaxRetryCount,
+        settings.InitialRetryDelayMs,
+        settings.RetryDelayMultiplier);
+    return new PostgreSql(settings.ConnectionString, retry);
 }
 
 void MapAllEndpoints()

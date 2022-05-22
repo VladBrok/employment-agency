@@ -5,10 +5,12 @@ namespace EmploymentAgency;
 public class PostgreSql
 {
     private readonly string _connection;
+    private readonly RetryStrategy _retry;
 
-    public PostgreSql(string connection)
+    public PostgreSql(string connection, RetryStrategy retry)
     {
         _connection = connection;
+        _retry = retry;
     }
 
     public async Task<IEnumerable<Entity>> ExecuteAsync(
@@ -74,32 +76,39 @@ public class PostgreSql
     private async Task ExecuteReaderAsync(string command, Func<Entity, bool> callback)
     {
         Console.WriteLine(command);
-
-        await using var conn = new NpgsqlConnection(_connection);
-        await conn.OpenAsync();
-
-        await using var cmd = new NpgsqlCommand(command, conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
-
-        bool shouldStop = false;
-        while (!shouldStop && await reader.ReadAsync())
+        await _retry.ExecuteAsync<NpgsqlException>(async () =>
         {
-            var values = new object[reader.FieldCount];
-            reader.GetValues(values);
+            await using var conn = new NpgsqlConnection(_connection);
+            await conn.OpenAsync();
 
-            int columnIndex = 0;
-            shouldStop = callback(values.ToDictionary(
-                _ => reader.GetName(columnIndex++),
-                v => v.ToString() ?? ""));
-        }
+            await using var cmd = new NpgsqlCommand(command, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            bool shouldStop = false;
+            while (!shouldStop && await reader.ReadAsync())
+            {
+                var values = new object[reader.FieldCount];
+                reader.GetValues(values);
+
+                int columnIndex = 0;
+                shouldStop = callback(values.ToDictionary(
+                    _ => reader.GetName(columnIndex++),
+                    v => v.ToString() ?? ""));
+            }
+        }, exception => exception.IsTransient);
     }
 
     private async Task<int> ExecuteNonQueryAsync(string command)
     {
-        await using var conn = new NpgsqlConnection(_connection);
-        await conn.OpenAsync();
+        int count = 0;
+        await _retry.ExecuteAsync<NpgsqlException>(async () =>
+        {
+            await using var conn = new NpgsqlConnection(_connection);
+            await conn.OpenAsync();
 
-        await using var cmd = new NpgsqlCommand(command, conn);
-        return await cmd.ExecuteNonQueryAsync();
+            await using var cmd = new NpgsqlCommand(command, conn);
+            count = await cmd.ExecuteNonQueryAsync();
+        }, exception => exception.IsTransient);
+        return count;
     }
 }
