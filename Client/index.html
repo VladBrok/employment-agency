@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Агентство По Трудоустройству</title>
+</head>
+
+<body>
+  <nav class="navigation">
+    <h1 class="title">Агентство по трудоустройству</h1>
+    <ul class="list">
+      <li class="item selected-item"><a href="#">Основные таблицы</a></li>
+      <li class="item"><a href="#">Справочники</a></li>
+      <li class="item"><a href="#">Специальные запросы</a></li>
+      <li class="item"><a href="#">Генерация данных</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <div class="table-container">
+      <h2 class="title">Работники предприятия</h2>
+
+      <div class="before-table">
+        <div class="search">
+          <label for="search">Поиск по подстроке:</label>
+          <input type="text" id="search" name="search" class="input">
+          <button class="search-button button">Поиск</button>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead class="head">
+          <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Пол</th>
+            <th>Должность</th>
+          </tr>
+        </thead>
+        <tbody class="body">
+          <tr>
+            <td>Леха</td>
+            <td>Степан</td>
+            <td>Мужик</td>
+            <td>Инженер</td>
+          </tr>
+          <tr>
+            <td>Никифор</td>
+            <td>Федот</td>
+            <td>Мужик</td>
+            <td>Программист</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pages">
+        <div class="previous-page element button">❮</div>
+        <div class="current-page element button">9</div>
+        <div class="next-page element button">❯</div>
+      </div>
+
+    </div>
+  </main>
+</body>
+
+</html>

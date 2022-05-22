@@ -1,0 +1,37 @@
+.navigation {
+  background: #464457;
+  padding: 0.1rem;
+  height: 100%;
+  max-width: 16rem;
+}
+
+.navigation .title {
+  color: #fdfdff;
+  margin: 2rem 1rem;
+}
+
+.navigation .item {
+  color: #e1e0e9;
+  position: relative;
+}
+
+.navigation .selected-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 0.5rem;
+  background: var(--highlight);
+  box-shadow: 0.2rem 0 1.3rem var(--highlight);
+}
+
+.navigation .item a {
+  display: block;
+  padding: 1.2rem;
+}
+
+.navigation .item a:hover {
+  text-decoration: underline;
+  color: #fdfdff;
+}
