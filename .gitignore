@@ -10,6 +10,7 @@ nupkg/
 # Visual Studio Code
 .vscode
 
+img/
 # Rider
 .idea
 
