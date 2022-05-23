@@ -18,21 +18,24 @@
         <a href="#">Основные таблицы</a>
         <ul class="child">
           <li><a data-endpoint="/employers" href="#">Работодатели</a></li>
-          <li><a href="#">Соискатели</a></li>
-          <li><a href="#">Вакансии</a></li>
-          <li><a href="#">Заявки на трудоустройство</a></li>
-          <li><a href="#">Адреса</a></li>
+          <li><a data-endpoint="/seekers" href="#">Соискатели</a></li>
+          <li><a data-endpoint="/vacancies" href="#">Вакансии</a></li>
+          <li><a data-endpoint="/applications" href="#">Заявки на
+              трудоустройство</a></li>
+          <li><a data-endpoint="/addresses" href="#">Адреса</a></li>
         </ul>
       </li>
       <li class="item parent">
         <a href="#">Справочники</a>
         <ul class="child">
-          <li><a href="#">Должности</a></li>
-          <li><a href="#">Типы собственности</a></li>
-          <li><a href="#">Улицы</a></li>
-          <li><a href="#">Районы</a></li>
-          <li><a href="#">Типы занятости</a></li>
-          <li><a href="#">Социальные статусы</a></li>
+          <li><a data-endpoint="/positions" href="#">Должности</a></li>
+          <li><a data-endpoint="/properties" href="#">Типы собственности</a>
+          </li>
+          <li><a data-endpoint="/streets" href="#">Улицы</a></li>
+          <li><a data-endpoint="/districts" href="#">Районы</a></li>
+          <li><a data-endpoint="/employment_types" href="#">Типы занятости</a>
+          </li>
+          <li><a data-endpoint="/statuses" href="#">Социальные статусы</a></li>
         </ul>
       </li>
       <li class="item parent">
@@ -41,16 +44,25 @@
           <li class="parent">
             <a href="#">Представления</a>
             <ul class="child">
-              <li><a href="#">Средний возраст соискателей по должностям</a>
+              <li><a data-endpoint="/special/average_seeker_ages_by_positions"
+                  href="#">Средний возраст соискателей по должностям</a></li>
+              <li><a data-endpoint="/special/vacancies_and_salaries"
+                  href="#">Зарплаты
+                  для разных вакансий</a></li>
+              <li><a data-endpoint="/special/employer_addresses"
+                  href="#">Работодатели и
+                  их адреса</a></li>
+              <li><a data-endpoint="/special/employment_types_and_salaries"
+                  href="#">Ожидаемые зарплаты для каждого типа занятости</a>
               </li>
-              <li><a href="#">Зарплаты для разных вакансий</a></li>
-              <li><a href="#">Работодатели и их адреса</a></li>
-              <li><a href="#">Ожидаемые зарплаты для каждого типа
-                  занятости</a>
-              </li>
-              <li><a href="#">Вакансии каждой компании</a></li>
-              <li><a href="#">Заявки каждого соискателя</a></li>
-              <li><a href="#">Количество вакансий</a></li>
+              <li><a data-endpoint="/special/employers_and_vacancies"
+                  href="#">Вакансии
+                  каждой компании</a></li>
+              <li><a data-endpoint="/special/seekers_and_applications"
+                  href="#">Заявки
+                  каждого соискателя</a></li>
+              <li><a data-endpoint="/special/num_vacancies_from_each_employer"
+                  href="#">Количество вакансий</a></li>
             </ul>
           </li>
           <li class="parent">
@@ -108,7 +120,7 @@
   </nav>
 
   <main class="main">
-    <div class="table-container">
+    <!-- <div class="table-container">
       <h2 class="title">Работники предприятия</h2>
 
       <div class="before-table">
@@ -174,7 +186,7 @@
         <div class="next-page element button">❯</div>
       </div>
 
-    </div>
+    </div> -->
   </main>
 </body>
 
