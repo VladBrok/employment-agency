@@ -20,7 +20,6 @@ MapAllEndpoints();
 
 app.Run();
 
-
 WebApplication BuildApp()
 {
     var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +27,7 @@ WebApplication BuildApp()
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddCors();
 
     return builder.Build();
 }
@@ -42,6 +42,7 @@ void UseRequiredMiddlewares()
 
     app.UseHttpsRedirection();
     app.UseAuthorization();
+    app.UseCors(builder => builder.AllowAnyOrigin());
 }
 
 PostgreSql MakePostgres()
@@ -54,7 +55,8 @@ PostgreSql MakePostgres()
     var retry = new RetryStrategy(
         settings.MaxRetryCount,
         settings.InitialRetryDelayMs,
-        settings.RetryDelayMultiplier);
+        settings.RetryDelayMultiplier
+    );
     return new PostgreSql(settings.ConnectionString, retry);
 }
 
