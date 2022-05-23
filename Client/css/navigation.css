@@ -1,8 +1,8 @@
 .navigation {
   background: var(--primary-color);
   padding: 0.1rem;
-  height: 100%;
   max-width: 16rem;
+  min-height: 100vh;
 }
 
 .navigation .title {
@@ -12,7 +12,32 @@
 
 .navigation .item {
   color: var(--secondary-color);
+}
+
+.navigation .child {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background: var(--primary-color);
+  display: none;
+  width: max-content;
+}
+
+.navigation .child li a {
+  padding: 0.6rem 1rem;
+}
+
+.navigation .parent {
   position: relative;
+}
+
+.navigation .parent > a::after {
+  content: "»";
+  margin-left: 0.5rem;
+}
+
+.navigation .parent:hover > .child {
+  display: block;
 }
 
 .navigation .selected-item::before {

@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="scripts/script.js"></script>
   <link rel="stylesheet" href="css/style.css">
   <title>Агентство По Трудоустройству</title>
 </head>
@@ -13,10 +14,96 @@
   <nav class="navigation">
     <h1 class="title">Агентство по трудоустройству</h1>
     <ul class="list">
-      <li class="item selected-item"><a href="#">Основные таблицы</a></li>
-      <li class="item"><a href="#">Справочники</a></li>
-      <li class="item"><a href="#">Специальные запросы</a></li>
-      <li class="item"><a href="#">Генерация данных</a></li>
+      <li class="item selected-item parent">
+        <a href="#">Основные таблицы</a>
+        <ul class="child">
+          <li><a data-endpoint="/employers" href="#">Работодатели</a></li>
+          <li><a href="#">Соискатели</a></li>
+          <li><a href="#">Вакансии</a></li>
+          <li><a href="#">Заявки на трудоустройство</a></li>
+          <li><a href="#">Адреса</a></li>
+        </ul>
+      </li>
+      <li class="item parent">
+        <a href="#">Справочники</a>
+        <ul class="child">
+          <li><a href="#">Должности</a></li>
+          <li><a href="#">Типы собственности</a></li>
+          <li><a href="#">Улицы</a></li>
+          <li><a href="#">Районы</a></li>
+          <li><a href="#">Типы занятости</a></li>
+          <li><a href="#">Социальные статусы</a></li>
+        </ul>
+      </li>
+      <li class="item parent">
+        <a href="#">Специальные запросы</a>
+        <ul class="child">
+          <li class="parent">
+            <a href="#">Представления</a>
+            <ul class="child">
+              <li><a href="#">Средний возраст соискателей по должностям</a>
+              </li>
+              <li><a href="#">Зарплаты для разных вакансий</a></li>
+              <li><a href="#">Работодатели и их адреса</a></li>
+              <li><a href="#">Ожидаемые зарплаты для каждого типа
+                  занятости</a>
+              </li>
+              <li><a href="#">Вакансии каждой компании</a></li>
+              <li><a href="#">Заявки каждого соискателя</a></li>
+              <li><a href="#">Количество вакансий</a></li>
+            </ul>
+          </li>
+          <li class="parent">
+            <a href="#">Процедуры</a>
+            <ul class="child">
+              <li class="parent">
+                <a href="#">Заявки</a>
+                <ul class="child">
+                  <li><a href="#">Без опыта работы</a></li>
+                  <li><a href="#">Процент после указанного года</a></li>
+                  <li><a href="#">Процент по должностям</a></li>
+                  <li><a href="#">Количество по должностям</a></li>
+                  <li><a href="#">Количество по типам занятости</a></li>
+                </ul>
+              </li>
+              <li class="parent">
+                <a href="#">Соискатели</a>
+                <ul class="child">
+                  <li><a href="#">Проживающие в указанном районе</a></li>
+                  <li><a href="#">Родившиеся после указанной даты</a></li>
+                  <li><a href="#">У которых общий опыт превышает указанный</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="parent">
+                <a href="#">Работодатели</a>
+                <ul class="child">
+                  <li><a href="#">С указанным типом собственности</a></li>
+                </ul>
+              </li>
+              <li class="parent">
+                <a href="#">Вакансии</a>
+                <ul class="child">
+                  <li><a href="#">Опубликованные в указанный день</a></li>
+                  <li><a href="#">Даты размещения последних вакансий для
+                      указанных работодателей</a></li>
+                </ul>
+              </li>
+              <li class="parent">
+                <a href="#">Должности</a>
+                <ul class="child">
+                  <li><a href="#">Из открытых вакансий, у которых средняя
+                      зарплата выше указанной</a></li>
+                  <li><a href="#">Максимальные зарплаты</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="item">
+        <a href="#">Генерация данных</a>
+      </li>
     </ul>
   </nav>
 
@@ -54,12 +141,36 @@
             <td>Мужик</td>
             <td>Программист</td>
           </tr>
+          <tr>
+            <td>Никифор</td>
+            <td>Федот</td>
+            <td>Мужик</td>
+            <td>Программист</td>
+          </tr>
+          <tr>
+            <td>Никифор</td>
+            <td>Федот</td>
+            <td>Мужик</td>
+            <td>Программист</td>
+          </tr>
+          <tr>
+            <td>Никифор</td>
+            <td>Федот</td>
+            <td>Мужик</td>
+            <td>Программист</td>
+          </tr>
+          <tr>
+            <td>Никифор</td>
+            <td>Федот</td>
+            <td>Мужик</td>
+            <td>Программист</td>
+          </tr>
         </tbody>
       </table>
 
       <div class="pages">
-        <div class="previous-page element button">❮</div>
-        <div class="current-page element button">9</div>
+        <div class="previous-page element button disabled">❮</div>
+        <div class="current-page element button disabled">9</div>
         <div class="next-page element button">❯</div>
       </div>
 

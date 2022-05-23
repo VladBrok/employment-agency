@@ -12,11 +12,6 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   background: var(--tertiary-color);
   font-family: Arial, Helvetica, sans-serif;
