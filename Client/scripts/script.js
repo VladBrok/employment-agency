@@ -9,10 +9,7 @@ navigation.addEventListener("click", async (e) => {
 
   if (endpoint) {
     const title = e.target.textContent;
-    const response = await fetch(
-      `${URL}${endpoint}?page=0&pageSize=${PAGE_SIZE}`
-    );
-    const data = await response.json();
+    const data = await fetchJson(endpoint, 0);
     makeTable(title, data, endpoint);
   }
 });
@@ -20,19 +17,8 @@ navigation.addEventListener("click", async (e) => {
 main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("previous-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
-    page.textContent--;
-    const endpoint = e.target.closest("[data-endpoint]").dataset.endpoint;
 
-    const response = await fetch(
-      `${URL}${endpoint}?page=${+page.textContent - 1}&pageSize=${PAGE_SIZE}`
-    );
-    const data = await response.json();
-
-    e.target.parentElement.parentElement.querySelector(
-      ".body"
-    ).innerHTML = `<tr>${data
-      .map((d) => `<td>${Object.values(d).join("</td><td>")}</td>`)
-      .join("</tr><tr>")}</tr>`;
+    await changePage(page, -1);
 
     if (+page.textContent === 1) {
       e.target.classList.add("disabled");
@@ -42,19 +28,8 @@ main.addEventListener("click", async (e) => {
 
   if (e.target.classList.contains("next-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
-    const endpoint = e.target.closest("[data-endpoint]").dataset.endpoint;
 
-    const response = await fetch(
-      `${URL}${endpoint}?page=${+page.textContent}&pageSize=${PAGE_SIZE}`
-    );
-    const data = await response.json();
-
-    e.target.parentElement.parentElement.querySelector(
-      ".body"
-    ).innerHTML = `<tr>${data
-      .map((d) => `<td>${Object.values(d).join("</td><td>")}</td>`)
-      .join("</tr><tr>")}</tr>`;
-    page.textContent++;
+    await changePage(page, +1);
 
     if (+page.textContent === 2) {
       e.target.parentElement
@@ -64,9 +39,14 @@ main.addEventListener("click", async (e) => {
   }
 });
 
-function makeTable(title, data, endpoint) {
-  const columnHeaders = Object.keys(data[0]);
+async function fetchJson(endpoint, page) {
+  const response = await fetch(
+    `${URL}${endpoint}?page=${+page}&pageSize=${PAGE_SIZE}`
+  );
+  return await response.json();
+}
 
+function makeTable(title, data, endpoint) {
   main.insertAdjacentHTML(
     "beforeend",
     `
@@ -82,12 +62,10 @@ function makeTable(title, data, endpoint) {
     <div class="table-wrapper">
     <table class="table">
       <thead class="head">
-        <tr><th>${columnHeaders.join("</th><th>")}</th></tr>
+        ${extractColumns(data)}
       </thead>
       <tbody class="body">
-        <tr>${data
-          .map((d) => `<td>${Object.values(d).join("</td><td>")}</td>`)
-          .join("</tr><tr>")}</tr>
+        ${extractRows(data)}
       </tbody>
     </table>
     </div>
@@ -98,4 +76,24 @@ function makeTable(title, data, endpoint) {
     </div>
   </div>`
   );
+}
+
+function extractColumns(data) {
+  return `<tr><th>${Object.keys(data[0]).join("</th><th>")}</th></tr>`;
+}
+
+function extractRows(data) {
+  return `<tr>${data
+    .map((d) => `<td>${Object.values(d).join("</td><td>")}</td>`)
+    .join("</tr><tr>")}</tr>`;
+}
+
+async function changePage(page, increment) {
+  page.textContent = +page.textContent + increment;
+
+  const tableContainer = page.closest("[data-endpoint]");
+  const endpoint = tableContainer.dataset.endpoint;
+  const data = await fetchJson(endpoint, page.textContent - 1);
+
+  tableContainer.querySelector(".body").innerHTML = extractRows(data);
 }
