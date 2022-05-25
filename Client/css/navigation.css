@@ -60,3 +60,17 @@
   text-decoration: underline;
   color: #fdfdff;
 }
+
+@media (max-width: 768px) {
+  .navigation {
+    max-width: 12rem;
+  }
+
+  .navigation .item a {
+    padding: 0.9rem;
+  }
+
+  .navigation .title {
+    font-size: 1.2rem;
+  }
+}

@@ -14,7 +14,8 @@ public static class ReportsMapper
                 string type,
                 string title,
                 [FromBody] IEnumerable<Entity> entities,
-                HttpResponse response) =>
+                HttpResponse response
+            ) =>
             {
                 var report = new ReportFactory().MakeReport(type);
                 await report.BuildAsync(entities, fileName, title);
@@ -22,6 +23,7 @@ public static class ReportsMapper
                 response.Headers.Add("content-disposition", $"attachment;filename={fileName}");
                 response.ContentType = "application/octet-stream";
                 await response.SendFileAsync(fileName);
-            });
+            }
+        );
     }
 }

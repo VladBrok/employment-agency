@@ -1,5 +1,6 @@
-const URL = "https://localhost:7288/api";
-const PAGE_SIZE = 15;
+import columns from "./columns.js";
+import values from "./values.js";
+import fetchJson from "./api.js";
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
@@ -9,16 +10,21 @@ navigation.addEventListener("click", async (e) => {
 
   if (endpoint) {
     const title = e.target.textContent;
-    const data = await fetchJson(endpoint, 0);
-    makeTable(title, data, endpoint);
+    const parameterNames = e.target.dataset.parameters?.split(",");
+    const data = await fetchJson({
+      endpoint,
+      parameters: parameterNames?.map((p) => values[p].defaultValue),
+    });
+    makeTable(title, data, endpoint, parameterNames);
   }
 });
 
 main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("previous-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
+    page.textContent--;
 
-    await changePage(page, -1);
+    await updateTable(page, page.textContent - 1);
 
     if (+page.textContent === 1) {
       e.target.classList.add("disabled");
@@ -28,36 +34,47 @@ main.addEventListener("click", async (e) => {
 
   if (e.target.classList.contains("next-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
+    page.textContent++;
 
-    await changePage(page, +1);
+    await updateTable(page, page.textContent - 1);
 
     if (+page.textContent === 2) {
       e.target.parentElement
         .querySelector(".previous-page")
         .classList.remove("disabled");
     }
+    return;
+  }
+
+  if (e.target.classList.contains("search-button")) {
+    await updateTable(e.target);
   }
 });
 
-async function fetchJson(endpoint, page) {
-  const response = await fetch(
-    `${URL}${endpoint}?page=${+page}&pageSize=${PAGE_SIZE}`
-  );
-  return await response.json();
-}
-
-function makeTable(title, data, endpoint) {
-  main.insertAdjacentHTML(
-    "beforeend",
-    `
+function makeTable(title, data, endpoint, parameterNames) {
+  main.innerHTML = `
   <div class="table-container" data-endpoint="${endpoint}">
     <h2 class="title">${title}</h2>  
     <div class="before-table">
-      <div class="search">
-        <label for="search">Поиск по подстроке:</label>
-        <input type="text" id="search" name="search" class="input">
-        <button class="search-button button">Поиск</button>
-      </div>
+      <table>
+        <tr class="search">
+          <td><label for="search">Поиск по подстроке:</label></td>
+          <td><input type="text" id="search" class="input" required></td>
+          <td><button class="search-button button find">Поиск</button></td>
+        </tr>
+        ${
+          parameterNames
+            ?.map(
+              (p, i) =>
+                `<tr class="search">
+        <td><label for="search${i}">${p}:</label></td>
+        <td><input type="${values[p].type}" id="search${i}" class="input" value="${values[p].defaultValue}"></td>
+        <td><button class="search-button button enter-button">Ввод</button></td>
+            </tr>`
+            )
+            .join("") ?? ""
+        }
+      </table>
     </div>
     <div class="table-wrapper">
     <table class="table">
@@ -74,26 +91,42 @@ function makeTable(title, data, endpoint) {
       <div class="current-page element button disabled">1</div>
       <div class="next-page element button">❯</div>
     </div>
-  </div>`
-  );
+  </div>`;
 }
 
 function extractColumns(data) {
-  return `<tr><th>${Object.keys(data[0]).join("</th><th>")}</th></tr>`;
+  return data?.length
+    ? `<tr><th>${Object.keys(data[0])
+        .map((k) => columns[k]?.displayName ?? k) // todo: make proxy to return k
+        .join("</th><th>")}</th></tr>`
+    : "";
 }
 
 function extractRows(data) {
-  return `<tr>${data
-    .map((d) => `<td>${Object.values(d).join("</td><td>")}</td>`)
-    .join("</tr><tr>")}</tr>`;
+  return data?.length
+    ? `<tr>${data
+        .map(
+          (d) =>
+            `<td>${Object.entries(d)
+              .map(
+                ([colName, value]) =>
+                  columns[colName]?.convertValue(value) ?? value // todo: make proxy to return value
+              )
+              .join("</td><td>")}
+            </td>`
+        )
+        .join("</tr><tr>")}</tr>`
+    : "<tr><td colspan='100'><h2 class='title'>Результатов нет.</h2></td></tr>";
 }
 
-async function changePage(page, increment) {
-  page.textContent = +page.textContent + increment;
-
-  const tableContainer = page.closest("[data-endpoint]");
+async function updateTable(tableChild, page = 0) {
+  const tableContainer = tableChild.closest("[data-endpoint]");
   const endpoint = tableContainer.dataset.endpoint;
-  const data = await fetchJson(endpoint, page.textContent - 1);
 
+  const inputs = Array.from(tableContainer.querySelectorAll(".input"));
+  const filter = inputs[0].value;
+  const parameters = inputs.slice(1).map((x) => x.value);
+
+  const data = await fetchJson({ endpoint, page, filter, parameters });
   tableContainer.querySelector(".body").innerHTML = extractRows(data);
 }

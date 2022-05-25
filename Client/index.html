@@ -71,42 +71,70 @@
               <li class="parent">
                 <a href="#">Заявки</a>
                 <ul class="child">
-                  <li><a href="#">Без опыта работы</a></li>
-                  <li><a href="#">Процент после указанного года</a></li>
-                  <li><a href="#">Процент по должностям</a></li>
-                  <li><a href="#">Количество по должностям</a></li>
-                  <li><a href="#">Количество по типам занятости</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/applications_without_experience">Без
+                      опыта работы</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/applications_percent_after"
+                      data-parameters="Год">Процент
+                      после указанного года</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/applications_percent_by_positions_after">Процент
+                      по должностям</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/application_count_by_positions"
+                      data-parameters="Год,Месяц">Количество
+                      по должностям</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/num_applications_for_each_employment_type">Количество
+                      по типам занятости</a></li>
                 </ul>
               </li>
               <li class="parent">
                 <a href="#">Соискатели</a>
                 <ul class="child">
-                  <li><a href="#">Проживающие в указанном районе</a></li>
-                  <li><a href="#">Родившиеся после указанной даты</a></li>
-                  <li><a href="#">У которых общий опыт превышает указанный</a>
+                  <li><a href="#"
+                      data-endpoint="/special/seekers_in_district">Проживающие в
+                      указанном районе</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/seekers_born_after">Родившиеся
+                      после указанной даты</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/seekers_whose_total_experience_exceeds">У
+                      которых общий опыт превышает указанный</a>
                   </li>
                 </ul>
               </li>
               <li class="parent">
                 <a href="#">Работодатели</a>
                 <ul class="child">
-                  <li><a href="#">С указанным типом собственности</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/employers_with_property">С
+                      указанным типом собственности</a></li>
                 </ul>
               </li>
               <li class="parent">
                 <a href="#">Вакансии</a>
                 <ul class="child">
-                  <li><a href="#">Опубликованные в указанный день</a></li>
-                  <li><a href="#">Даты размещения последних вакансий для
+                  <li><a href="#"
+                      data-endpoint="/special/vacancies_posted_on">Опубликованные
+                      в указанный день</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/latest_vacancy_of_employers_whose_name_contains">Даты
+                      размещения последних вакансий для
                       указанных работодателей</a></li>
                 </ul>
               </li>
               <li class="parent">
                 <a href="#">Должности</a>
                 <ul class="child">
-                  <li><a href="#">Из открытых вакансий, у которых средняя
+                  <li><a href="#"
+                      data-endpoint="/special/positions_from_open_vacancies_whose_average_salary_exceeds">
+                      Из открытых вакансий, у которых средняя
                       зарплата выше указанной</a></li>
-                  <li><a href="#">Максимальные зарплаты</a></li>
+                  <li><a href="#"
+                      data-endpoint="/special/max_salaries_for_position">Максимальные
+                      зарплаты</a></li>
                 </ul>
               </li>
             </ul>
@@ -124,61 +152,191 @@
       <h2 class="title">Работники предприятия</h2>
 
       <div class="before-table">
-        <div class="search">
-          <label for="search">Поиск по подстроке:</label>
-          <input type="text" id="search" name="search" class="input">
-          <button class="search-button button">Поиск</button>
-        </div>
+        <table>
+          <tr class="search">
+            <td><label for="search">Поиск по подстроке:</label></td>
+            <td><input type="text" id="search" name="search" class="input"></td>
+            <td><button class="search-button button">Поиск</button></td>
+          </tr>
+          <tr class="search">
+            <td><label for="search">Год:</label></td>
+            <td><input type="text" id="search" name="search" class="input"></td>
+            <td><button class="search-button button">Ввод</button></td>
+          </tr>
+          <tr class="search">
+            <td><label for="search">Месяц:</label></td>
+            <td><input type="text" id="search" name="search" class="input"></td>
+            <td><button class="search-button button">Ввод</button></td>
+          </tr>
+        </table>
       </div>
+      <div class="table-wrapper">
 
-      <table class="table">
-        <thead class="head">
-          <tr>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Пол</th>
-            <th>Должность</th>
-          </tr>
-        </thead>
-        <tbody class="body">
-          <tr>
-            <td>Леха</td>
-            <td>Степан</td>
-            <td>Мужик</td>
-            <td>Инженер</td>
-          </tr>
-          <tr>
-            <td>Никифор</td>
-            <td>Федот</td>
-            <td>Мужик</td>
-            <td>Программист</td>
-          </tr>
-          <tr>
-            <td>Никифор</td>
-            <td>Федот</td>
-            <td>Мужик</td>
-            <td>Программист</td>
-          </tr>
-          <tr>
-            <td>Никифор</td>
-            <td>Федот</td>
-            <td>Мужик</td>
-            <td>Программист</td>
-          </tr>
-          <tr>
-            <td>Никифор</td>
-            <td>Федот</td>
-            <td>Мужик</td>
-            <td>Программист</td>
-          </tr>
-          <tr>
-            <td>Никифор</td>
-            <td>Федот</td>
-            <td>Мужик</td>
-            <td>Программист</td>
-          </tr>
-        </tbody>
-      </table>
+        <table class="table">
+          <thead class="head">
+            <tr>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Пол</th>
+              <th>Должность</th>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Пол</th>
+              <th>Должность</th>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Пол</th>
+              <th>Должность</th>
+            </tr>
+          </thead>
+          <tbody class="body">
+            <tr>
+              <td>Леха</td>
+              <td>Степан</td>
+              <td>Мужик</td>
+              <td>Инженер</td>
+              <td>Леха</td>
+              <td>Степан</td>
+              <td>Мужик</td>
+              <td>Инженер</td>
+              <td>Леха</td>
+              <td>Степан</td>
+              <td>Мужик</td>
+              <td>Инженер</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+            <tr>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+              <td>Программист</td>
+              <td>Никифор</td>
+              <td>Федот</td>
+              <td>Мужик</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="pages">
         <div class="previous-page element button disabled">❮</div>

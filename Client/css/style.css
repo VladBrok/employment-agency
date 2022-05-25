@@ -1,6 +1,11 @@
 @import url("common.css");
 @import url("navigation.css");
 
+.search {
+  margin: 0.2rem 0;
+  text-align: left;
+}
+
 .search .input {
   outline: none;
   padding: 0.2rem;

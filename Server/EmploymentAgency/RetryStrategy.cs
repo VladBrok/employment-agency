@@ -6,10 +6,7 @@ public class RetryStrategy
     private readonly int _initialDelayMs;
     private readonly int _delayMultiplier;
 
-    public RetryStrategy(
-        int maxRetryCount,
-        int initialDelayMs,
-        int delayMultiplier)
+    public RetryStrategy(int maxRetryCount, int initialDelayMs, int delayMultiplier)
     {
         if (maxRetryCount < 1)
         {

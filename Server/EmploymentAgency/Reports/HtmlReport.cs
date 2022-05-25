@@ -4,10 +4,7 @@ namespace EmploymentAgency.Reports;
 
 public class HtmlReport : IReport
 {
-    public async Task BuildAsync(
-        IEnumerable<Entity> entities,
-        string outputFile,
-        string title)
+    public async Task BuildAsync(IEnumerable<Entity> entities, string outputFile, string title)
     {
         var report = new StringBuilder();
         WriteHeader(entities, report, title);
@@ -17,7 +14,9 @@ public class HtmlReport : IReport
 
     private void WriteHeader(IEnumerable<Entity> entities, StringBuilder report, string title)
     {
-        report.Append(@"
+        report
+            .Append(
+                @"
             <style>
               th, td {
                   border: 1px solid black;
@@ -32,7 +31,8 @@ public class HtmlReport : IReport
                   flex-direction: column;
                   align-items: center;
               }
-            </style>")
+            </style>"
+            )
             .Append("<div><h1>")
             .Append(title)
             .Append("</h1><table><tr>");

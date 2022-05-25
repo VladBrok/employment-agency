@@ -13,6 +13,7 @@ public static class Select
        JOIN districts d ON d.id = a.district_id
        JOIN streets s ON d.id = s.district_id";
     }
+
     public static string FromSeekers()
     {
         return $@"SELECT s.id, s.first_name, s.last_name, s.patronymic,
@@ -27,6 +28,7 @@ public static class Select
         JOIN districts d ON d.id = a.district_id
         JOIN streets st ON d.id = st.district_id";
     }
+
     public static string FromAddresses()
     {
         return $@"SELECT a.id, d.district, s.street, a.building_number, s.postal_code
@@ -34,6 +36,7 @@ public static class Select
         JOIN districts d ON d.id = a.district_id
         JOIN streets s ON d.id = s.district_id";
     }
+
     public static string FromVacancies()
     {
         return $@"SELECT v.id, v.employer_id, p.position, v.employer_day,
@@ -41,6 +44,7 @@ public static class Select
         FROM vacancies v
         JOIN positions p ON p.id = v.position_id";
     }
+
     public static string FromApplications()
     {
         return $@"SELECT a.id, a.seeker_id, p.position, et.type,
@@ -49,12 +53,14 @@ public static class Select
         JOIN positions p ON p.id = a.position_id
         JOIN employment_types et ON et.id = a.employment_type_id";
     }
+
     public static string FromStreets()
     {
         return $@"SELECT s.id, d.district, s.street, s.postal_code
         FROM streets s
         JOIN districts d ON d.id = s.district_id";
     }
+
     public static string From(string target)
     {
         return $"SELECT * FROM {target}";

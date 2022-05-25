@@ -1,14 +1,11 @@
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
 namespace EmploymentAgency.Reports;
 
 public class ExcelReport : IReport
 {
-    public async Task BuildAsync(
-        IEnumerable<Entity> entities,
-        string outputFile,
-        string title)
+    public async Task BuildAsync(IEnumerable<Entity> entities, string outputFile, string title)
     {
         DeleteIfExists(outputFile);
 
@@ -51,8 +48,8 @@ public class ExcelReport : IReport
         sheet.Cells[$"A1:{(char)(64 + entities.First().Keys.Count)}1"].Merge = true;
 
         var range = sheet.Cells["A2"].LoadFromArrays(
-            entities.Select(e => e.Values.ToArray())
-                .Prepend(entities.First().Keys.ToArray()));
+            entities.Select(e => e.Values.ToArray()).Prepend(entities.First().Keys.ToArray())
+        );
         range.AutoFitColumns();
     }
 }
