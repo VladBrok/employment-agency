@@ -48,6 +48,33 @@ main.addEventListener("click", async (e) => {
 
   if (e.target.classList.contains("search-button")) {
     await updateTable(e.target);
+    return;
+  }
+
+  if (e.target.classList.contains("create")) {
+    // dup with tr
+    const labels = Array.from(
+      e.target.closest("[data-endpoint]").querySelectorAll("th")
+    )
+      .map((x) => x.textContent)
+      .slice(1); // skip an id
+    const form = `
+      <form class="crud-form">
+        ${(
+          await Promise.all(
+            labels.map(
+              async (l, i) => `
+                <div class="element">
+                  <label for="l${i}">${l}:</label>
+                  ${await columns[l]?.convertToInput(`l${i}`)}
+                </div>`
+            )
+          )
+        ).join("")}
+        <button type="submit" class="search-button button">Создать</button>
+      </form>`;
+    main.innerHTML = form;
+    return;
   }
 });
 
@@ -75,6 +102,7 @@ function makeTable(title, data, endpoint, parameterNames) {
             .join("") ?? ""
         }
       </table>
+      <img class='create' src='images/create.png'></img>
     </div>
     <div class="table-wrapper">
     <table class="table">

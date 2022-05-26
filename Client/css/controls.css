@@ -1,0 +1,60 @@
+.radio-wrapper {
+  width: 11rem;
+  display: flex;
+  align-items: center;
+  flex-flow: row-reverse;
+  justify-content: start;
+}
+
+.radio-wrapper input {
+  margin-right: 0.4rem;
+}
+
+.radio-wrapper:first-child {
+  margin-bottom: 0.5rem;
+}
+
+.search {
+  margin: 0.2rem 0;
+  text-align: left;
+}
+
+.input,
+.select {
+  outline: none;
+  padding: 0.2rem;
+  margin: 0 0.5em;
+  border: 0.1rem solid var(--secondary-color);
+  border-radius: 0.2rem;
+  width: 11rem;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--button-color);
+}
+
+.button {
+  color: var(--button-color);
+  font-weight: bolder;
+  border: 0.1rem solid var(--button-color);
+  border-radius: 0.4rem;
+  background: transparent;
+  user-select: none;
+}
+
+.button:hover {
+  cursor: pointer;
+  color: var(--tertiary-color);
+  background: var(--button-color);
+}
+
+.button.disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.search-button {
+  padding: 0.4rem 0.7rem;
+  text-transform: uppercase;
+}

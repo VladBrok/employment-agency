@@ -1,118 +1,29 @@
 @import url("common.css");
 @import url("navigation.css");
+@import url("controls.css");
+@import url("table.css");
 
-.search {
-  margin: 0.2rem 0;
-  text-align: left;
-}
-
-.search .input {
-  outline: none;
-  padding: 0.2rem;
-  margin: 0 0.5em;
+.crud-form {
+  padding: 1rem;
+  margin: 2rem 0;
   border: 0.1rem solid var(--secondary-color);
-  border-radius: 0.2rem;
+  border-radius: 0.7rem;
 }
 
-.search .input:focus {
-  border-color: var(--button-color);
-}
-
-.button {
-  color: var(--button-color);
-  font-weight: bolder;
-  border: 0.1rem solid var(--button-color);
-  border-radius: 0.4rem;
-  background: transparent;
-  user-select: none;
-}
-
-.button:hover {
-  cursor: pointer;
-  color: var(--tertiary-color);
-  background: var(--button-color);
-}
-
-.button.disabled {
-  opacity: 0.65;
-  pointer-events: none;
-}
-
-.search-button {
-  padding: 0.4rem 0.7rem;
+.crud-form label::first-letter {
   text-transform: uppercase;
 }
 
-.main {
-  min-width: 0;
-  flex-grow: 1;
+.crud-form .element {
+  max-width: 30rem;
+  margin: 1rem 0;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 
-.table-container {
-  width: 80%;
-  margin: 1rem 0;
-  font-size: 0.8rem;
-}
-
-.table-container .title {
-  color: var(--primary-color);
-  margin: 2.5rem 0;
-  font-size: 1.6rem;
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.table {
-  padding: 1rem;
-  border-collapse: collapse;
-  overflow: hidden;
-  border-radius: 0.4rem;
-  box-shadow: 0.1rem 0.1rem 0.7rem var(--secondary-color);
-  width: 100%;
-  text-align: center;
-  margin: 1.3rem 0;
-}
-
-.table .head {
-  background: var(--secondary-color);
-  color: var(--primary-color);
-  text-transform: uppercase;
-}
-
-.table .body {
-  background: white;
-  color: black;
-}
-
-.table tr {
-  border: 0.08rem solid var(--secondary-color);
-}
-
-.table th {
-  padding: 0.7rem;
-}
-
-.table td {
-  padding: 0.5rem;
-}
-
-.pages {
-  margin: 1rem 0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.pages .element {
-  padding: 0.1rem 0.6rem;
-  margin: 0 0.2rem;
-}
-
-.pages .current-page {
-  opacity: 1;
-  padding-top: 0.3rem;
+.crud-form .button {
+  display: block;
+  margin: 0 auto;
+  margin-top: 2rem;
 }
