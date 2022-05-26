@@ -88,6 +88,8 @@ main.addEventListener("click", async (e) => {
       .map((x) => x.textContent)
       .slice(1);
 
+    console.log(values);
+
     const form = `
       <form class="crud-form">
         ${(
@@ -170,8 +172,7 @@ function extractRows(data) {
                 ([colName, value]) =>
                   columns[colName]?.convertValue(value) ?? value // todo: make proxy to return value
               )
-              .join("</td><td>")}
-            </td>`
+              .join("</td><td>")}</td>`
         )
         .join("</tr><tr>")}</tr>`
     : "<tr><td colspan='100'><h2 class='title'>Результатов нет.</h2></td></tr>";
