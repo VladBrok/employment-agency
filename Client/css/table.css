@@ -29,6 +29,10 @@
   filter: drop-shadow(0.04rem 0.04rem 0.1rem #009060);
 }
 
+.table-container[data-access="readonly"] .create {
+  display: none;
+}
+
 .table {
   padding: 1rem;
   border-collapse: collapse;
@@ -63,7 +67,11 @@
   padding: 0.5rem;
 }
 
-.table .body tr:hover {
+.table-container[data-access="readonly"] .table tr {
+  pointer-events: none;
+}
+
+.table-container .table tr:hover {
   background: var(--secondary-color);
   cursor: pointer;
 }

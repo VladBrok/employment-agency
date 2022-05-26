@@ -9,13 +9,14 @@ navigation.addEventListener("click", async (e) => {
   const endpoint = e.target.dataset.endpoint;
 
   if (endpoint) {
-    const title = e.target.textContent;
     const parameterNames = e.target.dataset.parameters?.split(",");
     const data = await fetchJson({
       endpoint,
       parameters: parameterNames?.map((p) => values[p].defaultValue),
     });
-    makeTable(title, data, endpoint, parameterNames);
+    const title = e.target.textContent;
+    const access = e.target.dataset.access;
+    makeTable(title, data, endpoint, parameterNames, access);
   }
 });
 
@@ -67,9 +68,15 @@ main.addEventListener("click", async (e) => {
   }
 });
 
-function makeTable(title, data, endpoint, parameterNames) {
+function makeTable(
+  title,
+  data,
+  endpoint,
+  parameterNames = null,
+  access = "full"
+) {
   main.innerHTML = `
-  <div class="table-container" data-endpoint="${endpoint}">
+  <div class="table-container" data-endpoint="${endpoint}" data-access="${access}">
     <h2 class="title">${title}</h2>  
     <div class="before-table">
       <table>
