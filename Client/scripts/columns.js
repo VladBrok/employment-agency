@@ -8,22 +8,31 @@ class Column {
     this.convertValue = convertValue ?? ((v) => v);
   }
 
-  async makeSelect(id, endpoint) {
+  async makeSelect(id, endpoint, value) {
     const options = await fetchAllJson(endpoint);
+
     return `<select class="select" id=${id}>${options
-      .map((o) => `<option>${o[this.realName]}</option>`)
+      .map(
+        (o) =>
+          `<option ${
+            o[this.realName].toLowerCase() === value?.trim().toLowerCase()
+              ? "selected"
+              : ""
+          }>${o[this.realName]}</option>`
+      )
       .join("")}</select>`;
   }
 
-  makeRadio(...options) {
+  makeRadio(value, ...options) {
     const name = `${this.realName}-name`;
+
     return `<div>${options
       .map(
         (o, i) => `
           <div class="radio-wrapper">
             <label for="${o}${i}">${o}</label>
             <input type="radio" name="${name}" class="radio-input" ${
-          i === 0 ? "checked" : ""
+          o.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
         }>
           </div>`
       )
@@ -35,23 +44,23 @@ const columnInfo = [
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
   new Column("time_modified", "время совершения операции"),
-  new Column("property", "тип собственности", async function (id) {
-    return await this.makeSelect(id, "/properties");
+  new Column("property", "тип собственности", async function (id, value) {
+    return await this.makeSelect(id, "/properties", value);
   }),
-  new Column("position", "должность", async function (id) {
-    return await this.makeSelect(id, "/positions");
+  new Column("position", "должность", async function (id, value) {
+    return await this.makeSelect(id, "/positions", value);
   }),
-  new Column("status", "социальный статус", async function (id) {
-    return await this.makeSelect(id, "/statuses");
+  new Column("status", "социальный статус", async function (id, value) {
+    return await this.makeSelect(id, "/statuses", value);
   }),
-  new Column("type", "тип занятости", async function (id) {
-    return await this.makeSelect(id, "/employment_types");
+  new Column("type", "тип занятости", async function (id, value) {
+    return await this.makeSelect(id, "/employment_types", value);
   }),
-  new Column("district", "район", async function (id) {
-    return await this.makeSelect(id, "/districts");
+  new Column("district", "район", async function (id, value) {
+    return await this.makeSelect(id, "/districts", value);
   }),
-  new Column("street", "улица", async function (id) {
-    return await this.makeSelect(id, "/streets");
+  new Column("street", "улица", async function (id, value) {
+    return await this.makeSelect(id, "/streets", value);
   }),
   new Column("postal_code", "почтовый индекс", (id) =>
     makeNumberInput(id, 1, 10000)
@@ -78,8 +87,8 @@ const columnInfo = [
   new Column(
     "vacancy_end",
     "вакансия закрыта",
-    function () {
-      return this.makeRadio("Да", "Нет");
+    function (_, value) {
+      return this.makeRadio(value, "Да", "Нет");
     },
     (v) => (v === "True" ? "да" : "нет")
   ),
@@ -104,16 +113,16 @@ const columnInfo = [
   new Column(
     "recommended",
     "рекомендован",
-    function () {
-      return this.makeRadio("Да", "Нет");
+    function (_, value) {
+      return this.makeRadio(value, "Да", "Нет");
     },
     (v) => (v === "True" ? "да" : "нет")
   ),
   new Column(
     "pol",
     "пол",
-    function () {
-      return this.makeRadio("Мужской", "Женский");
+    function (_, value) {
+      return this.makeRadio(value, "Мужской", "Женский");
     },
     (v) => (v === "True" ? "мужской" : "женский")
   ),
@@ -189,7 +198,9 @@ function makeInput(id, type, required = false) {
   const input = document.createElement("input");
   input.setAttribute("id", id);
   input.setAttribute("type", type);
-  input.setAttribute("required", required);
+  if (required) {
+    input.setAttribute("required", "");
+  }
   input.className = "input";
   return input;
 }

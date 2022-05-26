@@ -76,6 +76,36 @@ main.addEventListener("click", async (e) => {
     main.innerHTML = form;
     return;
   }
+
+  if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
+    // dup with create
+    const labels = Array.from(
+      e.target.closest("[data-endpoint]").querySelectorAll("th")
+    )
+      .map((x) => x.textContent)
+      .slice(1); // skip an id
+    const values = Array.from(e.target.parentElement.querySelectorAll("td"))
+      .map((x) => x.textContent)
+      .slice(1);
+
+    const form = `
+      <form class="crud-form">
+        ${(
+          await Promise.all(
+            labels.map(
+              async (l, i) => `
+                <div class="element">
+                  <label for="l${i}">${l}:</label>
+                  ${await columns[l]?.convertToInput(`label${i}`, values[i])}
+                </div>`
+            )
+          )
+        ).join("")}
+        <button type="submit" class="search-button button">Обновить</button>
+      </form>`;
+    main.innerHTML = form;
+    return;
+  }
 });
 
 function makeTable(title, data, endpoint, parameterNames) {
