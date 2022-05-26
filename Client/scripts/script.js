@@ -155,6 +155,7 @@ async function updateTable(tableChild, page = 0) {
 }
 
 async function makeForm(tableChild, buttonText, values = null) {
+  const calledEndpoint = tableChild.closest("[data-endpoint]").dataset.endpoint;
   const labels = Array.from(
     tableChild.closest("[data-endpoint]").querySelectorAll("th")
   )
@@ -169,7 +170,11 @@ async function makeForm(tableChild, buttonText, values = null) {
             async (l, i) => `
               <div class="element">
                 <label for="label${i}">${l}:</label>
-                ${await columns[l]?.convertToInput(`label${i}`, values?.[i])}
+                  ${await columns[l]?.convertToInput(
+                    `label${i}`,
+                    values?.[i],
+                    calledEndpoint
+                  )}
               </div>`
           )
         )

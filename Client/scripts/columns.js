@@ -8,17 +8,45 @@ class Column {
     this.convertValue = convertValue ?? ((v) => v);
   }
 
-  async makeSelect(id, endpoint, value) {
-    const options = await fetchAllJson(endpoint);
+  async makeSelect(id, targetEndpoint, value, calledEndpoint) {
+    const words = (await fetchAllJson(targetEndpoint)).map(
+      (o) => o[this.realName]
+    );
 
-    return `<select class="select" id=${id}>${options
+    if (calledEndpoint === targetEndpoint) {
+      const disallowedWords = words
+        .map((word) =>
+          word
+            .split("")
+            .map(
+              (letter) =>
+                `${
+                  letter.match(/\s/)
+                    ? "[\\s]+"
+                    : `[${letter.toLowerCase()}${letter.toUpperCase()}]`
+                }`
+            )
+            .join("")
+        )
+        .join("|");
+
+      return makeTextInput(
+        id,
+        value,
+        1,
+        20,
+        true,
+        `^(?!(?:${disallowedWords})(?=\/|$))[^$*()+&\^@!?:;.,-]+`,
+        "Значение должно быть уникальным"
+      );
+    }
+
+    return `<select class="select" id=${id}>${words
       .map(
-        (o) =>
+        (word) =>
           `<option ${
-            o[this.realName].toLowerCase() === value?.trim().toLowerCase()
-              ? "selected"
-              : ""
-          }>${o[this.realName]}</option>`
+            word.toLowerCase() === value?.trim().toLowerCase() ? "selected" : ""
+          }>${word}</option>`
       )
       .join("")}</select>`;
   }
@@ -44,23 +72,44 @@ const columnInfo = [
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
   new Column("time_modified", "время совершения операции"),
-  new Column("property", "тип собственности", async function (id, value) {
-    return await this.makeSelect(id, "/properties", value);
+  new Column("property", "тип собственности", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/properties", value, calledEndpoint);
   }),
-  new Column("position", "должность", async function (id, value) {
-    return await this.makeSelect(id, "/positions", value);
+  new Column("position", "должность", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/positions", value, calledEndpoint);
   }),
-  new Column("status", "социальный статус", async function (id, value) {
-    return await this.makeSelect(id, "/statuses", value);
+  new Column("status", "социальный статус", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/statuses", value, calledEndpoint);
   }),
-  new Column("type", "тип занятости", async function (id, value) {
-    return await this.makeSelect(id, "/employment_types", value);
+  new Column("type", "тип занятости", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(
+      id,
+      "/employment_types",
+      value,
+      calledEndpoint
+    );
   }),
-  new Column("district", "район", async function (id, value) {
-    return await this.makeSelect(id, "/districts", value);
+  new Column("district", "район", async function (id, value, calledEndpoint) {
+    return await this.makeSelect(id, "/districts", value, calledEndpoint);
   }),
-  new Column("street", "улица", async function (id, value) {
-    return await this.makeSelect(id, "/streets", value);
+  new Column("street", "улица", async function (id, value, calledEndpoint) {
+    return await this.makeSelect(id, "/streets", value, calledEndpoint);
   }),
   new Column("postal_code", "почтовый индекс", (id, value) =>
     makeNumberInput(id, value, 1, 100000)
