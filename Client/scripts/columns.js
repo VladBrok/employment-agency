@@ -63,7 +63,7 @@ const columnInfo = [
     return await this.makeSelect(id, "/streets", value);
   }),
   new Column("postal_code", "почтовый индекс", (id, value) =>
-    makeNumberInput(id, value, 1, 10000)
+    makeNumberInput(id, value, 1, 100000)
   ),
   new Column("building_number", "номер дома", (id, value) =>
     makeNumberInput(id, value, 1, 1000000, true)
@@ -190,7 +190,7 @@ function makeDateInput(id, value, min, max, required = false) {
 }
 
 function makeNumberInput(id, value, min, max, required = false) {
-  const comma = value.indexOf(",");
+  const comma = value?.indexOf(",") ?? -1;
   return makeMinMaxInput(
     id,
     comma === -1 ? value : value.slice(0, comma),
@@ -237,7 +237,9 @@ function makeInput(id, value, type, required = false) {
   const input = document.createElement("input");
   input.setAttribute("id", id);
   input.setAttribute("type", type);
-  input.setAttribute("value", value);
+  if (value) {
+    input.setAttribute("value", value);
+  }
   if (required) {
     input.setAttribute("required", "");
   }
@@ -251,6 +253,9 @@ function formatDate(date) {
 }
 
 function formatDateTime(value) {
+  if (!value) {
+    return;
+  }
   const dateTime = value.split(" ");
   return `${formatDate(dateTime[0])}T${dateTime[1].padStart(8, "0")}`;
 }

@@ -52,60 +52,17 @@ main.addEventListener("click", async (e) => {
   }
 
   if (e.target.classList.contains("create")) {
-    // dup with tr
-    const labels = Array.from(
-      e.target.closest("[data-endpoint]").querySelectorAll("th")
-    )
-      .map((x) => x.textContent)
-      .slice(1); // skip an id
-    const form = `
-      <form class="crud-form">
-        ${(
-          await Promise.all(
-            labels.map(
-              async (l, i) => `
-                <div class="element">
-                  <label for="l${i}">${l}:</label>
-                  ${await columns[l]?.convertToInput(`l${i}`)}
-                </div>`
-            )
-          )
-        ).join("")}
-        <button type="submit" class="search-button button">Создать</button>
-      </form>`;
-    main.innerHTML = form;
+    makeForm(e.target, "Создать");
     return;
   }
 
   if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
-    // dup with create
-    const labels = Array.from(
-      e.target.closest("[data-endpoint]").querySelectorAll("th")
-    )
-      .map((x) => x.textContent)
-      .slice(1); // skip an id
     const values = Array.from(e.target.parentElement.querySelectorAll("td"))
       .map((x) => x.textContent)
       .slice(1);
-
     console.log(values);
 
-    const form = `
-      <form class="crud-form">
-        ${(
-          await Promise.all(
-            labels.map(
-              async (l, i) => `
-                <div class="element">
-                  <label for="l${i}">${l}:</label>
-                  ${await columns[l]?.convertToInput(`label${i}`, values[i])}
-                </div>`
-            )
-          )
-        ).join("")}
-        <button type="submit" class="search-button button">Обновить</button>
-      </form>`;
-    main.innerHTML = form;
+    makeForm(e.target, "Обновить", values);
     return;
   }
 });
@@ -188,4 +145,29 @@ async function updateTable(tableChild, page = 0) {
 
   const data = await fetchJson({ endpoint, page, filter, parameters });
   tableContainer.querySelector(".body").innerHTML = extractRows(data);
+}
+
+async function makeForm(tableChild, buttonText, values = null) {
+  const labels = Array.from(
+    tableChild.closest("[data-endpoint]").querySelectorAll("th")
+  )
+    .map((x) => x.textContent)
+    .slice(1); // skip an id
+
+  const form = `
+    <form class="crud-form">
+      ${(
+        await Promise.all(
+          labels.map(
+            async (l, i) => `
+              <div class="element">
+                <label for="label${i}">${l}:</label>
+                ${await columns[l]?.convertToInput(`label${i}`, values?.[i])}
+              </div>`
+          )
+        )
+      ).join("")}
+      <button type="submit" class="search-button button">${buttonText}</button>
+    </form>`;
+  main.innerHTML = form;
 }
