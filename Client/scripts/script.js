@@ -15,8 +15,8 @@ navigation.addEventListener("click", async (e) => {
       parameters: parameterNames?.map((p) => values[p].defaultValue),
     });
     const title = e.target.textContent;
-    const access = e.target.dataset.access;
-    makeTable(title, data, endpoint, parameterNames, access);
+    const access = e.target.dataset.access; // todo: bind an access and children to an endpoint
+    main.innerHTML = makeTable(title, data, endpoint, parameterNames, access);
   }
 });
 
@@ -75,7 +75,7 @@ function makeTable(
   parameterNames = null,
   access = "full"
 ) {
-  main.innerHTML = `
+  return `
   <div class="table-container" data-endpoint="${endpoint}" data-access="${access}">
     <h2 class="title">${title}</h2>  
     <div class="before-table">
@@ -139,7 +139,7 @@ function extractRows(data) {
               .join("</td><td>")}</td>`
         )
         .join("</tr><tr>")}</tr>`
-    : "<tr><td colspan='100'><h2 class='title'>Результатов нет.</h2></td></tr>";
+    : "<tr class='not-a-data-row'><td colspan='100'><h2 class='title'>Результатов нет.</h2></td></tr>";
 }
 
 async function updateTable(tableChild, page = 0) {
@@ -156,27 +156,29 @@ async function updateTable(tableChild, page = 0) {
 
 async function makeForm(tableChild, buttonText, values = null) {
   const calledEndpoint = tableChild.closest("[data-endpoint]").dataset.endpoint;
-  const labels = Array.from(
+  const names = Array.from(
     tableChild.closest("[data-endpoint]").querySelectorAll("th")
   )
-    .map((x) => x.textContent)
-    .slice(1); // skip an id
+    .slice(1) // skip an id
+    .map((x) => x.textContent);
 
   const form = `
     <form class="crud-form">
       ${(
         await Promise.all(
-          labels.map(
-            async (l, i) => `
-              <div class="element">
-                <label for="label${i}">${l}:</label>
-                  ${await columns[l]?.convertToInput(
-                    `label${i}`,
-                    values?.[i],
-                    calledEndpoint
-                  )}
-              </div>`
-          )
+          names.map(async (name, i) => {
+            const input = await columns[name]?.convertToInput(
+              `name${i}`,
+              values?.[i],
+              calledEndpoint
+            );
+            return input === null
+              ? ""
+              : `<div class="element">
+                  <label for="name${i}">${name}:</label>
+                  ${input}
+                </div>`;
+          })
         )
       ).join("")}
       <button type="submit" class="search-button button">${buttonText}</button>

@@ -9,14 +9,12 @@ class Column {
   }
 
   async makeSelect(id, targetEndpoint, value, calledEndpoint) {
-    const words = (await fetchAllJson(targetEndpoint)).map(
-      (o) => o[this.realName]
-    );
+    const options = await fetchAllJson(targetEndpoint);
 
     if (calledEndpoint === targetEndpoint) {
-      const disallowedWords = words
-        .map((word) =>
-          word
+      const disallowedWords = options
+        .map((option) =>
+          option[this.realName]
             .split("")
             .map(
               (letter) =>
@@ -41,12 +39,17 @@ class Column {
       );
     }
 
-    return `<select class="select" id=${id}>${words
+    if (!value) {
+      value = options[0][this.realName];
+    }
+    return `<select class="select" id=${id}>${options
       .map(
-        (word) =>
-          `<option ${
-            word.toLowerCase() === value?.trim().toLowerCase() ? "selected" : ""
-          }>${word}</option>`
+        (option) =>
+          `<option data-id="${option.id}" ${
+            option[this.realName].toLowerCase() === value.trim().toLowerCase()
+              ? "selected"
+              : ""
+          }>${option[this.realName]}</option>`
       )
       .join("")}</select>`;
   }
@@ -67,6 +70,11 @@ class Column {
       .join("")}</div>`;
   }
 }
+
+let districtSelectId = null;
+let streetSelectId = null;
+let firstStreetChangeCompleted = true;
+let preventStreetsChange = false;
 
 const columnInfo = [
   new Column("table_name", "название таблицы"),
@@ -106,13 +114,17 @@ const columnInfo = [
     );
   }),
   new Column("district", "район", async function (id, value, calledEndpoint) {
+    districtSelectId = id;
     return await this.makeSelect(id, "/districts", value, calledEndpoint);
   }),
   new Column("street", "улица", async function (id, value, calledEndpoint) {
+    streetSelectId = id;
+    firstStreetChangeCompleted = false;
+    preventStreetsChange = "/streets" === calledEndpoint;
     return await this.makeSelect(id, "/streets", value, calledEndpoint);
   }),
-  new Column("postal_code", "почтовый индекс", (id, value) =>
-    makeNumberInput(id, value, 1, 100000)
+  new Column("postal_code", "почтовый индекс", (id, value, calledEndpoint) =>
+    calledEndpoint === "/streets" ? makeNumberInput(id, value, 1, 100000) : null
   ),
   new Column("building_number", "номер дома", (id, value) =>
     makeNumberInput(id, value, 1, 1000000, true)
@@ -308,5 +320,35 @@ function formatDateTime(value) {
   const dateTime = value.split(" ");
   return `${formatDate(dateTime[0])}T${dateTime[1].padStart(8, "0")}`;
 }
+
+async function changeStreets(districtSelect) {
+  if (preventStreetsChange) {
+    return;
+  }
+
+  const districtId =
+    districtSelect.options[districtSelect.selectedIndex].dataset.id;
+  document.getElementById(streetSelectId).outerHTML = await columns[
+    "street"
+  ].makeSelect(streetSelectId, `/streets/district_id/${districtId}`);
+}
+
+document.body.addEventListener("change", async (e) => {
+  if (e.target.id !== districtSelectId) {
+    return;
+  }
+
+  await changeStreets(e.target);
+});
+
+const observer = new MutationObserver(async () => {
+  if (firstStreetChangeCompleted || !document.getElementById(streetSelectId)) {
+    return;
+  }
+
+  firstStreetChangeCompleted = true;
+  await changeStreets(document.getElementById(districtSelectId));
+});
+observer.observe(document.body, { childList: true, subtree: true });
 
 export default columns;
