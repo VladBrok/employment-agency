@@ -3,23 +3,28 @@ namespace EmploymentAgency.EndpointMappers;
 public static class CrudQueriesMapper
 {
     private static PostgreSql _postgres;
-    private static Dictionary<string, string> _columnNames;
-
-    static CrudQueriesMapper() {
-
-    }
 
     public static void Map(WebApplication app, PostgreSql postgres)
     {
         _postgres = postgres;
-        var mainTables = new (string Name, string Command, string? Alias)[]
+        var mainTables = new (string Name, string Command, string? Alias, string[]? ParentIds)[]
         {
-            ("addresses", Select.FromAddresses(), "a"),
-            ("applications", Select.FromApplications(), "a"),
-            ("employers", Select.FromEmployers(), "e"),
-            ("seekers", Select.FromSeekers(), "s"),
-            ("streets", Select.FromStreets(), "s"),
-            ("vacancies", Select.FromVacancies(), "v"),
+            ("addresses", Select.FromAddresses(), "a", new[] { "street_id" }),
+            (
+                "applications",
+                Select.FromApplications(),
+                "a",
+                new[] { "seeker_id", "position_id", "employment_type_id" }
+            ),
+            ("employers", Select.FromEmployers(), "e", new[] { "property_id", "address_id" }),
+            (
+                "seekers",
+                Select.FromSeekers(),
+                "s",
+                new[] { "status_id", "address_id", "speciality_id" }
+            ),
+            ("streets", Select.FromStreets(), "s", new[] { "district_id" }),
+            ("vacancies", Select.FromVacancies(), "v", new[] { "employer_id", "position_id" }),
         };
         var referenceTableNames = new[]
         {
@@ -31,10 +36,26 @@ public static class CrudQueriesMapper
             "statuses"
         };
         var allTables = mainTables.Concat(
-            referenceTableNames.Select<string, (string Name, string Command, string? Alias)>(
-                n => (n, Select.From(n), null)
-            )
+            referenceTableNames.Select<
+                string,
+                (string Name, string Command, string? Alias, string[]? ParentIds)
+            >(n => (n, Select.From(n), null, null))
         );
+
+        foreach (var table in mainTables)
+        {
+            foreach (var parentId in table.ParentIds)
+            {
+                app.MapGet(
+                    $"{getEndpoint(table.Name)}/{parentId}/{{id}}",
+                    async (int page, int pageSize, string? filter, int id) =>
+                    {
+                        var command = $"{table.Command} WHERE {table.Alias}.{parentId} = {id}";
+                        return await postgres.ReadPageAsync(page, pageSize, command, filter);
+                    }
+                );
+            }
+        }
 
         foreach (var table in allTables)
         {
@@ -77,8 +98,6 @@ public static class CrudQueriesMapper
         string getEndpoint(string table) => $"api/{table}";
         string getEndpointWithId(string table) => $"{getEndpoint(table)}/{{id}}";
     }
-
-    private static IEnumerable<Entity> ConvertColumnNames(IEnumerable<Entity> entities) { }
 
     private static async Task<IResult> ReadSingleAsync(int id, string? tableAlias, string command)
     {

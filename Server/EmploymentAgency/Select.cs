@@ -10,8 +10,8 @@ public static class Select
        FROM employers e
        JOIN properties p ON p.id = e.property_id
        JOIN addresses a ON a.id = e.address_id
-       JOIN districts d ON d.id = a.district_id
-       JOIN streets s ON d.id = s.district_id";
+       JOIN streets s ON s.id = a.street_id
+       JOIN districts d ON d.id = s.district_id";
     }
 
     public static string FromSeekers()
@@ -25,16 +25,16 @@ public static class Select
         JOIN statuses stat ON stat.id = s.status_id
         JOIN positions p ON p.id = s.speciality_id
         JOIN addresses a ON a.id = s.address_id
-        JOIN districts d ON d.id = a.district_id
-        JOIN streets st ON d.id = st.district_id";
+        JOIN streets st ON st.id = a.street_id
+        JOIN districts d ON d.id = st.district_id";
     }
 
     public static string FromAddresses()
     {
         return $@"SELECT a.id, d.district, s.street, a.building_number, s.postal_code
         FROM addresses a
-        JOIN districts d ON d.id = a.district_id
-        JOIN streets s ON d.id = s.district_id";
+        JOIN streets s ON s.id = a.street_id
+        JOIN districts d ON d.id = s.district_id";
     }
 
     public static string FromVacancies()

@@ -1,4 +1,4 @@
-const URL = "https://localhost:5001/api";
+const URL = "https://localhost:7288/api";
 const PAGE_SIZE = 15;
 
 async function fetchJson({
