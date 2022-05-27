@@ -5,13 +5,13 @@ async function fetchJson({
   endpoint,
   page = 0,
   filter = null,
-  parameters = null,
+  parameters = [],
   pageSize = PAGE_SIZE,
 }) {
   const response = await fetch(
-    `${URL}${
-      parameters ? `${endpoint}/${parameters.join("/")}` : endpoint
-    }?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
+    `${URL}${`${endpoint}/${parameters.join(
+      "/"
+    )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
   );
   return await response.json();
 }
