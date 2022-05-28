@@ -25,12 +25,12 @@ async function makeTable(title, endpoint, id = null) {
         ${
           parameters
             .map(
-              (param, i) =>
-                `<tr class="search">
-        <td><label for="search${i}">${param.name}:</label></td>
-        <td><input type="${param.type}" id="search${i}" class="input" value="${param.defaultValue}"></td>
-        <td><button class="search-button button enter-button">Ввод</button></td>
-            </tr>`
+              (param, i) => `
+                <tr class="search">
+                  <td><label for="search${i}">${param.name}:</label></td>
+                  <td>${param.convertToInput(`search${i}`)}</td>
+                  <td><button class="search-button button enter-button">Ввод</button></td>
+                </tr>`
             )
             .join("") ?? ""
         }

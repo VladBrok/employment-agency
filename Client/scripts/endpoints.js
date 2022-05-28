@@ -1,8 +1,9 @@
+import { makeNumberInput } from "./inputs.js";
+
 class Parameter {
-  constructor(name, type, defaultValue) {
+  constructor(name, convertToInput) {
     this.name = name;
-    this.type = type;
-    this.defaultValue = defaultValue;
+    this.convertToInput = convertToInput;
   }
 }
 
@@ -22,7 +23,6 @@ class Endpoint {
   }
 }
 
-// FIXME: когда вызываю обновление streets/district_id, то input не появляется. Нужно объединить streets и streets/district_id
 const endpointInfo = [
   new Endpoint("/vacancies/employer_id", [], "full", [], "Вакансии"),
   new Endpoint(
@@ -89,12 +89,12 @@ const endpointInfo = [
   new Endpoint("/special/num_vacancies_from_each_employer"),
   new Endpoint("/special/applications_without_experience"),
   new Endpoint("/special/applications_percent_after", [], "readonly", [
-    new Parameter("Год", "number", 2017),
+    new Parameter("Год", (id) => makeNumberInput(id, 2017, 1980, 2022)),
   ]),
   new Endpoint("/special/applications_percent_by_positions_after"),
   new Endpoint("/special/application_count_by_positions", [], "readonly", [
-    new Parameter("Год", "number", 2017),
-    new Parameter("Месяц", "number", 5),
+    new Parameter("Год", (id) => makeNumberInput(id, 2017, 1980, 2022)),
+    new Parameter("Месяц", (id) => makeNumberInput(id, 5, 1, 12)),
   ]),
   new Endpoint("/special/num_applications_for_each_employment_type"),
   new Endpoint("/special/seekers_in_district"),
