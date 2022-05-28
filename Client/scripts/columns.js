@@ -309,6 +309,9 @@ function makeInput(id, value, type, required = false) {
 }
 
 function formatDate(date) {
+  if (!date) {
+    return;
+  }
   const dayMonthYear = date.split(".");
   return dayMonthYear.reverse().join("-");
 }

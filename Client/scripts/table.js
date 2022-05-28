@@ -2,15 +2,16 @@ import endpoints from "./endpoints.js";
 import columns from "./columns.js";
 import fetchJson from "./api.js";
 
-async function makeTable(title, endpoint) {
+async function makeTable(title, endpoint, id = null) {
+  const endpointForFetching = id ? `${endpoint}/${id}` : endpoint;
   const parameters = endpoints[endpoint].parameters;
   const data = await fetchJson({
-    endpoint,
-    parameters: parameters.map((p) => p.defaultValue),
+    endpoint: endpointForFetching,
+    parameterValues: parameters.map((p) => p.defaultValue),
   });
 
   return `
-  <div class="table-container" data-endpoint="${endpoint}" data-access="${
+  <div class="table-container" data-endpoint="${endpointForFetching}" data-access="${
     endpoints[endpoint].access
   }">
     <h2 class="title">${title}</h2>  
@@ -84,9 +85,14 @@ async function updateTable(tableChild, page = 0) {
 
   const inputs = Array.from(tableContainer.querySelectorAll(".input"));
   const filter = inputs[0].value;
-  const parameters = inputs.slice(1).map((x) => x.value);
+  const parameterValues = inputs.slice(1).map((x) => x.value);
 
-  const data = await fetchJson({ endpoint, page, filter, parameters });
+  const data = await fetchJson({
+    endpoint,
+    page,
+    filter,
+    parameterValues,
+  });
   tableContainer.querySelector(".body").innerHTML = extractRows(data);
 }
 

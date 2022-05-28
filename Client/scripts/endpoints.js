@@ -7,30 +7,79 @@ class Parameter {
 }
 
 class Endpoint {
-  constructor(main, children = [], access = "readonly", parameters = []) {
+  constructor(
+    main,
+    children = [],
+    access = "readonly",
+    parameters = [],
+    title = "?"
+  ) {
     this.main = main;
     this.children = children;
     this.access = access;
     this.parameters = parameters;
+    this.title = title;
   }
 }
 
+// FIXME: когда вызываю обновление streets/district_id, то input не появляется. Нужно объединить streets и streets/district_id
 const endpointInfo = [
-  new Endpoint("/employers", ["/vacancies"], "full"),
-  new Endpoint("/seekers", ["/applications"], "full"),
+  new Endpoint("/vacancies/employer_id", [], "full", [], "Вакансии"),
+  new Endpoint(
+    "/applications/seeker_id",
+    [],
+    "full",
+    [],
+    "Заявки на трудоустройство"
+  ),
+  new Endpoint("/employers/address_id", [], "full", [], "Работодатели"),
+  new Endpoint("/seekers/address_id", [], "full", [], "Соискатели"),
+  new Endpoint(
+    "/applications/position_id",
+    [],
+    "full",
+    [],
+    "Заявки на трудоустройство"
+  ),
+  new Endpoint("/seekers/position_id", [], "full", [], "Соискатели"),
+  new Endpoint("/vacancies/position_id", [], "full", [], "Вакансии"),
+  new Endpoint("/employers/property_id", [], "full", [], "Работодатели"),
+  new Endpoint("/streets/district_id", [], "full", [], "Улицы"),
+  new Endpoint(
+    "/applications/employment_type_id",
+    [],
+    "full",
+    [],
+    "Заявки на трудоустройство"
+  ),
+  new Endpoint("/seekers/status_id", [], "full", [], "Соискатели"),
+  new Endpoint("/employers", ["/vacancies/employer_id"], "full"),
+  new Endpoint("/seekers", ["/applications/seeker_id"], "full"),
   new Endpoint("/vacancies", [], "full"),
   new Endpoint("/applications", [], "full"),
-  new Endpoint("/addresses", ["/employers", "/seekers"], "full"),
   new Endpoint(
-    "/positions",
-    ["/applications", "/seekers", "/vacancies"],
+    "/addresses",
+    ["/employers/address_id", "/seekers/address_id"],
     "full"
   ),
-  new Endpoint("/properties", ["/employers"], "full"),
+  new Endpoint(
+    "/positions",
+    [
+      "/applications/position_id",
+      "/seekers/position_id",
+      "/vacancies/position_id",
+    ],
+    "full"
+  ),
+  new Endpoint("/properties", ["/employers/property_id"], "full"),
   new Endpoint("/streets", [], "full"),
-  new Endpoint("/districts", ["/streets"], "full"),
-  new Endpoint("/employment_types", ["/applications"], "full"),
-  new Endpoint("/statuses", ["/seekers"], "full"),
+  new Endpoint("/districts", ["/streets/district_id"], "full"),
+  new Endpoint(
+    "/employment_types",
+    ["/applications/employment_type_id"],
+    "full"
+  ),
+  new Endpoint("/statuses", ["/seekers/status_id"], "full"),
   new Endpoint("/special/average_seeker_ages_by_positions"),
   new Endpoint("/special/vacancies_and_salaries"),
   new Endpoint("/special/employer_addresses"),

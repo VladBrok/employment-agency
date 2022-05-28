@@ -5,14 +5,18 @@ async function fetchJson({
   endpoint,
   page = 0,
   filter = null,
-  parameters = [],
+  parameterValues = [],
   pageSize = PAGE_SIZE,
 }) {
   const response = await fetch(
-    `${URL}${`${endpoint}/${parameters.join(
+    `${URL}${`${endpoint}/${parameterValues.join(
       "/"
     )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
   );
+
+  if (response.status === 404) {
+    return [];
+  }
   return await response.json();
 }
 

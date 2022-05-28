@@ -1,4 +1,5 @@
 import columns from "./columns.js";
+import endpoints from "./endpoints.js";
 import { makeTable, updateTable } from "./table.js";
 
 const navigation = document.querySelector(".navigation");
@@ -46,7 +47,7 @@ main.addEventListener("click", async (e) => {
   }
 
   if (e.target.classList.contains("create")) {
-    makeForm(e.target, "Создать");
+    await makeForm(e.target, "Создать");
     return;
   }
 
@@ -54,10 +55,9 @@ main.addEventListener("click", async (e) => {
     const values = Array.from(e.target.parentElement.querySelectorAll("td"))
       .map((x) => x.textContent)
       .slice(1);
-
     console.log(values);
 
-    makeForm(e.target, "Обновить", values);
+    await makeForm(e.target, "Обновить", values);
     return;
   }
 });
@@ -91,5 +91,17 @@ async function makeForm(tableChild, buttonText, values = null) {
       ).join("")}
       <button type="submit" class="search-button button">${buttonText}</button>
     </form>`;
-  main.innerHTML = form;
+
+  const id = tableChild.closest("tr")?.querySelector("td").textContent; // todo: make data-id
+  const childTables =
+    id == null
+      ? []
+      : await Promise.all(
+          endpoints[calledEndpoint]?.children.map(
+            async (endpoint) =>
+              await makeTable(endpoints[endpoint].title, endpoint, id)
+          ) ?? []
+        );
+
+  main.innerHTML = `${form}${childTables.join("")}`;
 }
