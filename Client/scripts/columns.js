@@ -50,10 +50,10 @@ class Column {
     if (!value) {
       value = options[0][this.realName];
     }
-    return `<select class="select" id=${id}>${options
+    return `<select class="select input" id=${id}>${options
       .map(
         (option) =>
-          `<option data-id="${option.id}" ${
+          `<option data-id="${option.id}" value="${option.id}" ${
             option[this.realName].toLowerCase() === value.trim().toLowerCase()
               ? "selected"
               : ""
@@ -67,11 +67,11 @@ class Column {
 
     return `<div>${options
       .map(
-        (o, i) => `
-          <div class="radio-wrapper">
-            <label for="${o}${i}">${o}</label>
+        (options, i) => `
+          <div class="radio-wrapper input">
+            <label for="${options}${i}">${options}</label>
             <input type="radio" name="${name}" class="radio-input" ${
-          o.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
+          options.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
         }>
           </div>`
       )
@@ -216,9 +216,7 @@ const columnInfo = [
   new Column("seeker_day", "дата публикации", (id, value) =>
     makeDateTimeInput(id, value, true)
   ),
-  new Column("information", "информация", (id, value) =>
-    makeTextInput(id, value)
-  ),
+  new Column("information", "информация", makeTextInput),
   new Column("photo", "фото", (id, value) =>
     makeFileInput(id, value, "image/png, image/jpeg")
   ),

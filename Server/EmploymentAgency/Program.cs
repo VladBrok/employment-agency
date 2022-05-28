@@ -3,9 +3,6 @@ using EmploymentAgency.EndpointMappers;
 using EmploymentAgency.Models;
 
 /**
-    * В адресе должна быть улица, иначе появляются дубликаты при запросе seekers
-    * Get by parent id (select * from applications where seeker_id = 1)
-    
     * Performance
     * Security
     * Error handling
@@ -42,7 +39,7 @@ void UseRequiredMiddlewares()
 
     app.UseHttpsRedirection();
     app.UseAuthorization();
-    app.UseCors(builder => builder.AllowAnyOrigin());
+    app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod());
 }
 
 PostgreSql MakePostgres()
@@ -64,5 +61,5 @@ void MapAllEndpoints()
 {
     CrudQueriesMapper.Map(app, postgres);
     SpecialQueriesMapper.Map(app, postgres);
-    ReportsMapper.Map(app);
+    FileMapper.Map(app);
 }

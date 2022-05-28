@@ -2,7 +2,13 @@ import columns from "./columns.js";
 import endpoints from "./endpoints.js";
 import { makeTable } from "./table.js";
 
-async function makeForm(tableChild, buttonText, values = null) {
+async function makeForm(
+  tableChild,
+  buttonText,
+  className,
+  values = null,
+  entityId = null
+) {
   let endpoint = tableChild.closest("[data-endpoint]").dataset.endpoint;
   const subEndpoint = endpoint.indexOf("/", 1);
   if (subEndpoint !== -1) {
@@ -16,7 +22,7 @@ async function makeForm(tableChild, buttonText, values = null) {
     .map((x) => x.textContent);
 
   const form = `
-    <form class="crud-form">
+    <form class="crud-form" data-endpoint="${endpoint}" data-id="${entityId}">
       ${(
         await Promise.all(
           names.map(async (name, i) => {
@@ -34,17 +40,17 @@ async function makeForm(tableChild, buttonText, values = null) {
           })
         )
       ).join("")}
-      <button type="submit" class="search-button button">${buttonText}</button>
+      <button type="submit" class="search-button button ${className}">${buttonText}</button>
     </form>`;
 
   const id = tableChild.closest("tr")?.querySelector("td").textContent; // todo: make data-id
   const childTables =
-    id == null
+    entityId == null
       ? []
       : await Promise.all(
           endpoints[endpoint]?.children.map(
             async (endpoint) =>
-              await makeTable(endpoints[endpoint].title, endpoint, id)
+              await makeTable(endpoints[endpoint].title, endpoint, entityId)
           ) ?? []
         );
 

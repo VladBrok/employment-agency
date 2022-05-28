@@ -1,4 +1,4 @@
-const URL = "https://localhost:5001/api";
+const URL = "https://localhost:7288/api";
 const PAGE_SIZE = 15;
 
 async function fetchJson({
@@ -24,5 +24,13 @@ async function fetchAllJson(endpoint) {
   return await fetchJson({ endpoint, page: 0, pageSize: 1e6 });
 }
 
-export { fetchAllJson };
+async function put(endpoint, id, formData) {
+  await fetch(`${URL}${endpoint}/${id}`, { method: "PUT", body: formData });
+}
+
+async function post(endpoint, formData) {
+  await fetch(`${URL}${endpoint}`, { method: "POST", body: formData });
+}
+
+export { fetchAllJson, put, post };
 export default fetchJson;

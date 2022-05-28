@@ -1,5 +1,7 @@
 import { makeTable, updateTable } from "./table.js";
 import makeForm from "./form.js";
+import columns from "./columns.js";
+import { put } from "./api.js";
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
@@ -40,13 +42,18 @@ main.addEventListener("click", async (e) => {
     return;
   }
 
+  if (e.target.classList.contains("update-button")) {
+    await update();
+    return;
+  }
+
   if (e.target.classList.contains("search-button")) {
     await updateTable(e.target);
     return;
   }
 
   if (e.target.classList.contains("create")) {
-    main.innerHTML = await makeForm(e.target, "Создать");
+    main.innerHTML = await makeForm(e.target, "Создать", "create-button");
     return;
   }
 
@@ -56,7 +63,49 @@ main.addEventListener("click", async (e) => {
       .slice(1);
     console.log(values);
 
-    main.innerHTML = await makeForm(e.target, "Обновить", values);
+    main.innerHTML = await makeForm(
+      e.target,
+      "Обновить",
+      "update-button",
+      values,
+      e.target.parentElement.querySelector("td").textContent
+    );
     return;
   }
 });
+
+async function update() {
+  const form = document.querySelector(".crud-form");
+  const names = [];
+  const values = [];
+
+  for (const input of form.querySelectorAll(".input")) {
+    if (!input.checkValidity()) {
+      return;
+    }
+
+    values.push(input.value);
+  }
+
+  for (const label of form.querySelectorAll("label")) {
+    let name = columns[label.textContent.slice(0, -1)].realName;
+
+    // FIXME: it's dirty (i shouldn't know about SELECT type)
+    if (
+      document.getElementById(label.getAttribute("for")).tagName === "SELECT"
+    ) {
+      name += "_id";
+    }
+
+    names.push(name);
+  }
+
+  for (let i = 0; i < names.length; i++) {
+    console.log(names[i], " = ", values[i]);
+  }
+  console.log("Are equal: ", names.length === values.length);
+
+  const formData = new FormData();
+  names.map((name, i) => formData.append(name, values[i]));
+  await put(form.dataset.endpoint, form.dataset.id, formData);
+}

@@ -71,22 +71,23 @@ public static class CrudQueriesMapper
 
             app.MapPost(
                 getEndpoint(table.Name),
-                async (Entity entity) =>
+                async (HttpRequest request) =>
                 {
+                    var entity = request.Form;
                     await postgres.ExecuteAsync(
-                        $@"INSERT INTO {table.Name} ({string.Join(", ", entity.Keys)}) 
-                        VALUES ('{string.Join("', '", entity.Values)}')"
+                        $@"INSERT INTO {table.Name} ({string.Join(", ", entity.Select(e => e.Key))}) 
+                        VALUES ('{string.Join("', '", entity.Select(e => e.Value))}')"
                     );
                 }
             );
             app.MapPut(
                 getEndpointWithId(table.Name),
-                async (int id, Entity entity) =>
+                async (int id, HttpRequest request) =>
                     await ReadSingleAsync(
                         id,
                         null,
                         $@"UPDATE {table.Name} 
-                        SET {string.Join(", ", entity.Select(e => $"{e.Key} = '{e.Value}'"))}"
+                        SET {string.Join(", ", request.Form.Select(e => $"{e.Key} = {(e.Value == "" ? "DEFAULT" : $"'{e.Value}'")}"))}"
                     )
             );
             app.MapDelete(
