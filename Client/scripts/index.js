@@ -5,14 +5,7 @@ import { post, put } from "./api.js";
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 
-navigation.addEventListener("click", async (e) => {
-  const endpoint = e.target.dataset.endpoint;
-
-  if (endpoint) {
-    const title = e.target.textContent;
-    main.innerHTML = await makeTable(title, endpoint);
-  }
-});
+navigation.addEventListener("click", handleNavigationClick);
 
 main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("previous-page")) {
@@ -82,3 +75,11 @@ main.addEventListener("click", async (e) => {
     return;
   }
 });
+
+async function handleNavigationClick(e) {
+  const endpoint = e.target.dataset.endpoint;
+  if (endpoint) {
+    const title = e.target.textContent;
+    main.innerHTML = await makeTable(title, endpoint);
+  }
+}
