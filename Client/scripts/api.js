@@ -9,7 +9,7 @@ async function fetchJson({
   pageSize = PAGE_SIZE,
 }) {
   const response = await fetch(
-    `${URL}${`${endpoint}/${parameterValues.join(
+    `${`${makeUrl(endpoint)}/${parameterValues.join(
       "/"
     )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
   );
@@ -25,11 +25,15 @@ async function fetchAllJson(endpoint) {
 }
 
 async function put(endpoint, id, formData) {
-  await fetch(`${URL}${endpoint}/${id}`, { method: "PUT", body: formData });
+  await fetch(`${makeUrl(endpoint)}/${id}`, { method: "PUT", body: formData });
 }
 
 async function post(endpoint, formData) {
-  await fetch(`${URL}${endpoint}`, { method: "POST", body: formData });
+  await fetch(makeUrl(endpoint), { method: "POST", body: formData });
+}
+
+function makeUrl(endpoint) {
+  return `${URL}${endpoint}`;
 }
 
 export { fetchAllJson, put, post };

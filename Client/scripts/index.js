@@ -43,12 +43,17 @@ main.addEventListener("click", async (e) => {
   }
 
   if (e.target.classList.contains("update-button")) {
-    await update();
+    await sendForm(
+      async (form, data) =>
+        await put(form.dataset.endpoint, form.dataset.id, data)
+    );
     return;
   }
 
   if (e.target.classList.contains("create-button")) {
-    await create();
+    await sendForm(
+      async (form, data) => await post(form.dataset.endpoint, data)
+    );
     return;
   }
 
@@ -79,7 +84,7 @@ main.addEventListener("click", async (e) => {
   }
 });
 
-async function update() {
+async function sendForm(callback) {
   const form = document.querySelector(".crud-form");
   const names = [];
   const values = [];
@@ -127,58 +132,5 @@ async function update() {
 
   const formData = new FormData();
   names.map((name, i) => formData.append(name, values[i]));
-  await put(form.dataset.endpoint, form.dataset.id, formData);
-}
-
-async function create() {
-  // fixme: dup with update
-
-  const form = document.querySelector(".crud-form");
-  const names = [];
-  const values = [];
-
-  for (const input of form.querySelectorAll(".input, input:checked")) {
-    if (input.checkValidity && !input.checkValidity()) {
-      return;
-    }
-
-    values.push(
-      input.getAttribute("type") === "file" ? input.files[0] ?? "" : input.value
-    );
-  }
-
-  for (const label of form.querySelectorAll("label")) {
-    if (!label.textContent.endsWith(":")) {
-      continue;
-    }
-
-    let name = columns[label.textContent.slice(0, -1)].realName;
-    if (
-      document.getElementById(label.getAttribute("for"))?.tagName === "SELECT"
-    ) {
-      name += "_id";
-    }
-    if (name === "position_id" && form.dataset.endpoint === "/seekers") {
-      name = "speciality_id";
-    }
-    if (name === "type_id" && form.dataset.endpoint === "/applications") {
-      name = "employment_type_id";
-    }
-
-    names.push(name);
-  }
-
-  for (let i = 0; i < names.length; i++) {
-    console.log(names[i], "=", values[i]);
-  }
-  console.log(
-    "Are equal:",
-    names.length === values.length,
-    names.length,
-    values.length
-  );
-
-  const formData = new FormData();
-  names.map((name, i) => formData.append(name, values[i]));
-  await post(form.dataset.endpoint, formData);
+  callback(form, formData);
 }
