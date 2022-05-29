@@ -66,3 +66,76 @@ public static class Select
         return $"SELECT * FROM {target}";
     }
 }
+
+public static class Update
+{
+    public static string Table(string table, HttpRequest request)
+    {
+        return $@"UPDATE {table} 
+        SET {string.Join(", ", request.Form.Select(e => $"{e.Key} = {Default.IfEmpty(e.Value)}"))}";
+    }
+
+    public static string Addresses(string table, HttpRequest request)
+    {
+        var entity = request.Form;
+        return $@"UPDATE streets SET district_id = {entity["district_id"]} WHERE id = {entity["street_id"]};
+        UPDATE {table} SET street_id = {entity["street_id"]}, building_number = {entity["building_number"]}";
+    }
+
+    public static string Applications()
+    {
+        return "";
+    }
+
+    public static string Employers(string table, HttpRequest request)
+    {
+        var entity = request.Form;
+        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        UPDATE {table} SET employer = '{entity["employer"]}',
+            email = {Default.IfEmpty(entity["email"])},
+            phone = {Default.IfEmpty(entity["phone"])},
+            property_id = '{entity["property_id"]}',
+            address_id = (SELECT max(id) FROM addresses)";
+    }
+
+    public static string Seekers(string table, HttpRequest request)
+    {
+        var entity = request.Form;
+        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        UPDATE {table} SET first_name = '{entity["first_name"]}',
+            last_name = '{entity["last_name"]}',
+            patronymic = {Default.IfEmpty(entity["patronymic"])},
+            phone = {Default.IfEmpty(entity["phone"])},
+            birthday = {Default.IfEmpty(entity["birthday"])},
+            registration_city = {Default.IfEmpty(entity["registration_city"])},
+            recommended = {Default.IfEmpty(entity["recommended"])},
+            pol = {Default.IfEmpty(entity["pol"])},
+            education = {Default.IfEmpty(entity["education"])},
+            status_id = {entity["status_id"]},
+            speciality_id = {entity["speciality_id"]},
+            address_id = (SELECT max(id) FROM addresses)";
+    }
+
+    public static string Vacancies()
+    {
+        return "";
+    }
+}
+
+public static class Create
+{
+    public static string Table(string table, HttpRequest request)
+    {
+        var entity = request.Form;
+        return $@"INSERT INTO {table} ({string.Join(", ", entity.Select(e => e.Key))}) 
+        VALUES ('{string.Join("', '", entity.Select(e => e.Value))}')";
+    }
+}
+
+public static class Default
+{
+    public static string IfEmpty(string value)
+    {
+        return value == "" ? "DEFAULT" : $"'{value}'";
+    }
+}

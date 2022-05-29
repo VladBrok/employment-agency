@@ -63,8 +63,9 @@ public class PostgreSql
         {
             command =
                 $@"{command}
+                ORDER BY 1
                 OFFSET {page * pageSize}
-                LIMIT {pageSize};";
+                LIMIT {pageSize}";
             return await ExecuteAsync(command);
         }
 

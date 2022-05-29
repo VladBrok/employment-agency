@@ -7,25 +7,58 @@ public static class CrudQueriesMapper
     public static void Map(WebApplication app, PostgreSql postgres)
     {
         _postgres = postgres;
-        var mainTables = new (string Name, string Command, string? Alias, string[]? ParentIds)[]
-        {
-            ("addresses", Select.FromAddresses(), "a", new[] { "street_id" }),
-            (
-                "applications",
-                Select.FromApplications(),
-                "a",
-                new[] { "seeker_id", "position_id", "employment_type_id" }
-            ),
-            ("employers", Select.FromEmployers(), "e", new[] { "property_id", "address_id" }),
-            (
-                "seekers",
-                Select.FromSeekers(),
-                "s",
-                new[] { "status_id", "address_id", "speciality_id" }
-            ),
-            ("streets", Select.FromStreets(), "s", new[] { "district_id" }),
-            ("vacancies", Select.FromVacancies(), "v", new[] { "employer_id", "position_id" }),
-        };
+        var mainTables =
+            new (string Name, string Select, Delegate Update, Delegate Create, string? Alias, string[]? ParentIds)[]
+            {
+                (
+                    "addresses",
+                    Select.FromAddresses(),
+                    Update.Addresses,
+                    Create.Table,
+                    "a",
+                    new[] { "street_id" }
+                ),
+                (
+                    "applications",
+                    Select.FromApplications(),
+                    Update.Applications,
+                    Create.Table,
+                    "a",
+                    new[] { "seeker_id", "position_id", "employment_type_id" }
+                ),
+                (
+                    "employers",
+                    Select.FromEmployers(),
+                    Update.Employers,
+                    Create.Table,
+                    "e",
+                    new[] { "property_id", "address_id" }
+                ),
+                (
+                    "seekers",
+                    Select.FromSeekers(),
+                    Update.Seekers,
+                    Create.Table,
+                    "s",
+                    new[] { "status_id", "address_id", "speciality_id" }
+                ),
+                (
+                    "streets",
+                    Select.FromStreets(),
+                    Update.Table,
+                    Create.Table,
+                    "s",
+                    new[] { "district_id" }
+                ),
+                (
+                    "vacancies",
+                    Select.FromVacancies(),
+                    Update.Vacancies,
+                    Create.Table,
+                    "v",
+                    new[] { "employer_id", "position_id" }
+                ),
+            };
         var referenceTableNames = new[]
         {
             "change_log",
@@ -38,8 +71,8 @@ public static class CrudQueriesMapper
         var allTables = mainTables.Concat(
             referenceTableNames.Select<
                 string,
-                (string Name, string Command, string? Alias, string[]? ParentIds)
-            >(n => (n, Select.From(n), null, null))
+                (string Name, string Select, Delegate Update, Delegate Create, string? Alias, string[]? ParentIds)
+            >(n => (n, Select.From(n), Update.Table, Create.Table, null, null))
         );
 
         foreach (var table in mainTables)
@@ -50,7 +83,7 @@ public static class CrudQueriesMapper
                     $"{getEndpoint(table.Name)}/{parentId}/{{id}}",
                     async (int page, int pageSize, string? filter, int id) =>
                     {
-                        var command = $"{table.Command} WHERE {table.Alias}.{parentId} = {id}";
+                        var command = $"{table.Select} WHERE {table.Alias}.{parentId} = {id}";
                         return await postgres.ReadPageAsync(page, pageSize, command, filter);
                     }
                 );
@@ -62,23 +95,19 @@ public static class CrudQueriesMapper
             app.MapGet(
                 getEndpoint(table.Name),
                 async (int page, int pageSize, string? filter) =>
-                    await postgres.ReadPageAsync(page, pageSize, table.Command, filter)
+                    await postgres.ReadPageAsync(page, pageSize, table.Select, filter)
             );
             app.MapGet(
                 getEndpointWithId(table.Name),
-                async (int id) => await ReadSingleAsync(id, table.Alias, table.Command)
+                async (int id) => await ReadSingleAsync(id, table.Alias, table.Select)
             );
 
             app.MapPost(
                 getEndpoint(table.Name),
                 async (HttpRequest request) =>
-                {
-                    var entity = request.Form;
                     await postgres.ExecuteAsync(
-                        $@"INSERT INTO {table.Name} ({string.Join(", ", entity.Select(e => e.Key))}) 
-                        VALUES ('{string.Join("', '", entity.Select(e => e.Value))}')"
-                    );
-                }
+                        table.Create.DynamicInvoke(table.Name, request).ToString()
+                    )
             );
             app.MapPut(
                 getEndpointWithId(table.Name),
@@ -86,8 +115,7 @@ public static class CrudQueriesMapper
                     await ReadSingleAsync(
                         id,
                         null,
-                        $@"UPDATE {table.Name} 
-                        SET {string.Join(", ", request.Form.Select(e => $"{e.Key} = {(e.Value == "" ? "DEFAULT" : $"'{e.Value}'")}"))}"
+                        table.Update.DynamicInvoke(table.Name, request).ToString()
                     )
             );
             app.MapDelete(

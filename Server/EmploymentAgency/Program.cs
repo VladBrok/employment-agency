@@ -3,9 +3,9 @@ using EmploymentAgency.EndpointMappers;
 using EmploymentAgency.Models;
 
 /**
-    * Performance
     * Security
     * Error handling
+    * Performance
     * update или delete нарушает ограничение внешнего клуча
 */
 

@@ -43,6 +43,7 @@ main.addEventListener("click", async (e) => {
   }
 
   if (e.target.classList.contains("update-button")) {
+    e.preventDefault();
     await update();
     return;
   }
@@ -79,8 +80,9 @@ async function update() {
   const names = [];
   const values = [];
 
-  for (const input of form.querySelectorAll(".input")) {
-    if (!input.checkValidity()) {
+  for (const input of form.querySelectorAll(".input, input:checked")) {
+    console.log(input);
+    if (input.checkValidity && !input.checkValidity()) {
       return;
     }
 
@@ -88,22 +90,32 @@ async function update() {
   }
 
   for (const label of form.querySelectorAll("label")) {
-    let name = columns[label.textContent.slice(0, -1)].realName;
+    if (!label.textContent.endsWith(":")) {
+      continue;
+    }
 
-    // FIXME: it's dirty (i shouldn't know about SELECT type)
+    let name = columns[label.textContent.slice(0, -1)].realName;
     if (
-      document.getElementById(label.getAttribute("for")).tagName === "SELECT"
+      document.getElementById(label.getAttribute("for"))?.tagName === "SELECT"
     ) {
       name += "_id";
+    }
+    if (name === "position_id" && form.dataset.endpoint === "/seekers") {
+      name = "speciality_id";
     }
 
     names.push(name);
   }
 
   for (let i = 0; i < names.length; i++) {
-    console.log(names[i], " = ", values[i]);
+    console.log(names[i], "=", values[i]);
   }
-  console.log("Are equal: ", names.length === values.length);
+  console.log(
+    "Are equal:",
+    names.length === values.length,
+    names.length,
+    values.length
+  );
 
   const formData = new FormData();
   names.map((name, i) => formData.append(name, values[i]));

@@ -9,11 +9,18 @@ import {
 } from "./inputs.js";
 
 class Column {
-  constructor(realName, displayName, convertToInput, convertValue) {
+  constructor(
+    realName,
+    displayName,
+    convertToInput,
+    convertValue,
+    convertFromValue
+  ) {
     this.realName = realName;
     this.displayName = displayName;
     this.convertToInput = convertToInput;
     this.convertValue = convertValue ?? ((v) => v);
+    this.convertFromValue = convertFromValue ?? ((v) => v);
   }
 
   async makeSelect(id, targetEndpoint, value, calledEndpoint) {
@@ -67,12 +74,12 @@ class Column {
 
     return `<div>${options
       .map(
-        (options, i) => `
-          <div class="radio-wrapper input">
-            <label for="${options}${i}">${options}</label>
-            <input type="radio" name="${name}" class="radio-input" ${
-          options.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
-        }>
+        (option, i) => `
+          <div class="radio-wrapper">
+            <label for="${option}${i}">${option}</label>
+            <input type="radio" id="${option}${i}" name="${name}" class="radio-input" ${
+          option.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
+        } value="${this.convertFromValue(option)}">
           </div>`
       )
       .join("")}</div>`;
@@ -167,7 +174,8 @@ const columnInfo = [
     function (_, value) {
       return this.makeRadio(value, "Да", "Нет");
     },
-    (v) => (v === "True" ? "да" : "нет")
+    (v) => (v === "True" ? "да" : "нет"),
+    (v) => (v === "Да" ? "True" : "False")
   ),
   new Column("last_name", "фамилия", (id, value) =>
     makeTextInput(id, value, 3, 20, true)
@@ -200,7 +208,8 @@ const columnInfo = [
     function (_, value) {
       return this.makeRadio(value, "Да", "Нет");
     },
-    (v) => (v === "True" ? "да" : "нет")
+    (v) => (v === "True" ? "да" : "нет"),
+    (v) => (v === "Да" ? "True" : "False")
   ),
   new Column(
     "pol",
@@ -208,7 +217,8 @@ const columnInfo = [
     function (_, value) {
       return this.makeRadio(value, "Мужской", "Женский");
     },
-    (v) => (v === "True" ? "мужской" : "женский")
+    (v) => (v === "True" ? "мужской" : "женский"),
+    (v) => (v === "Мужской" ? "True" : "False")
   ),
   new Column("education", "образование", (id, value) =>
     makeTextInput(id, value, 3, 20)
