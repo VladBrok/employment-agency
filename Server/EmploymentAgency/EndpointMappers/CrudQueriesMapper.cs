@@ -14,7 +14,7 @@ public static class CrudQueriesMapper
                     "addresses",
                     Select.FromAddresses(),
                     Update.Addresses,
-                    Create.Table,
+                    Create.Addresses,
                     "a",
                     new[] { "street_id" }
                 ),
@@ -30,7 +30,7 @@ public static class CrudQueriesMapper
                     "employers",
                     Select.FromEmployers(),
                     Update.Employers,
-                    Create.Table,
+                    Create.Employers,
                     "e",
                     new[] { "property_id", "address_id" }
                 ),
@@ -38,7 +38,7 @@ public static class CrudQueriesMapper
                     "seekers",
                     Select.FromSeekers(),
                     Update.Seekers,
-                    Create.Table,
+                    Create.Seekers,
                     "s",
                     new[] { "status_id", "address_id", "speciality_id" }
                 ),
@@ -53,7 +53,7 @@ public static class CrudQueriesMapper
                 (
                     "vacancies",
                     Select.FromVacancies(),
-                    Update.Vacancies,
+                    Update.Table,
                     Create.Table,
                     "v",
                     new[] { "employer_id", "position_id" }

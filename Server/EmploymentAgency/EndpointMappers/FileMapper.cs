@@ -5,8 +5,6 @@ namespace EmploymentAgency.EndpointMappers;
 
 public static class FileMapper
 {
-    private static readonly HashSet<string> _allowedExtensions = new() { ".png", ".jpg", ".jpeg" };
-
     public static void Map(WebApplication app)
     {
         app.MapPost(
@@ -32,32 +30,6 @@ public static class FileMapper
                 bool containsDir = fileName.IndexOf("/") != -1;
                 string file = containsDir ? fileName : $"photos/{fileName}";
                 await SendFileAsync(file, response, "image/png");
-            }
-        );
-
-        app.MapPost(
-            "form/test",
-            async (HttpRequest request) =>
-            {
-                var data = request.Form;
-                foreach (var item in data)
-                {
-                    Console.WriteLine(item.Key + " " + item.Value);
-                }
-
-                var imageFile = request.Form.Files.SingleOrDefault();
-                if (imageFile is null)
-                {
-                    return Results.Ok();
-                }
-                if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
-                {
-                    return Results.BadRequest(imageFile.Name);
-                }
-
-                using var stream = File.Create("photos/user.png");
-                await imageFile.CopyToAsync(stream);
-                return Results.Ok();
             }
         );
     }

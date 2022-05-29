@@ -79,7 +79,7 @@ class Column {
             <label for="${option}${i}">${option}</label>
             <input type="radio" id="${option}${i}" name="${name}" class="radio-input" ${
           option.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
-        } value="${this.convertFromValue(option)}">
+        } value="${this.convertFromValue(option)}" required>
           </div>`
       )
       .join("")}</div>`;
@@ -92,6 +92,8 @@ let firstStreetChangeCompleted = true;
 let preventStreetsChange = false;
 
 const columnInfo = [
+  new Column("employer_id", "ID работодателя", () => null),
+  new Column("seeker_id", "ID соискателя", () => null),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
   new Column("time_modified", "время совершения операции"),
@@ -153,7 +155,7 @@ const columnInfo = [
       value,
       null,
       null,
-      false,
+      true,
       "071[0-9]{7}",
       "Пример: 0710120500"
     )
@@ -162,7 +164,7 @@ const columnInfo = [
   new Column("employer_day", "дата размещения", (id, value) =>
     makeDateTimeInput(id, value, true)
   ),
-  new Column("salary_new", "зарплата", (id, value) =>
+  new Column("salary_new", "предлагаемая зарплата", (id, value) =>
     makeNumberInput(id, value, 1000, 1000000)
   ),
   new Column("chart_new", "график работы", (id, value) =>

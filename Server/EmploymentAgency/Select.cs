@@ -48,7 +48,7 @@ public static class Select
     public static string FromApplications()
     {
         return $@"SELECT a.id, a.seeker_id, p.position, et.type,
-                  a.seeker_day, a.information, a.photo, a.experience
+                  a.seeker_day, a.information, a.photo, a.salary, a.experience
         FROM applications a
         JOIN positions p ON p.id = a.position_id
         JOIN employment_types et ON et.id = a.employment_type_id";
@@ -69,10 +69,15 @@ public static class Select
 
 public static class Update
 {
+    private static readonly HashSet<string> _allowedExtensions = new() { ".png", ".jpg", ".jpeg" };
+
     public static string Table(string table, HttpRequest request)
     {
-        return $@"UPDATE {table} 
-        SET {string.Join(", ", request.Form.Select(e => $"{e.Key} = {Default.IfEmpty(e.Value)}"))}";
+        return UpdateTable(
+            table,
+            request.Form.Select(x => x.Key),
+            request.Form.Select(x => x.Value.ToString())
+        );
     }
 
     public static string Addresses(string table, HttpRequest request)
@@ -82,9 +87,30 @@ public static class Update
         UPDATE {table} SET street_id = {entity["street_id"]}, building_number = {entity["building_number"]}";
     }
 
-    public static string Applications()
+    public static string Applications(string table, HttpRequest request)
     {
-        return "";
+        string imageFileName = "photos/user.png";
+        var imageFile = request.Form.Files.SingleOrDefault();
+
+        if (imageFile is not null)
+        {
+            if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
+            {
+                imageFileName = "";
+            }
+            else
+            {
+                using var stream = File.Create(imageFileName);
+                imageFile.CopyToAsync(stream).Wait();
+            }
+            return UpdateTable(
+                table,
+                request.Form.Select(x => x.Key).Append("photo"),
+                request.Form.Select(x => x.Value.ToString()).Append(imageFileName)
+            );
+        }
+
+        return Table(table, request);
     }
 
     public static string Employers(string table, HttpRequest request)
@@ -116,19 +142,100 @@ public static class Update
             address_id = (SELECT max(id) FROM addresses)";
     }
 
-    public static string Vacancies()
+    private static string UpdateTable(
+        string table,
+        IEnumerable<string> keys,
+        IEnumerable<string> values
+    )
     {
-        return "";
+        return $@"UPDATE {table} 
+        SET {string.Join(", ", keys.Zip(values).Select(e => $"{e.First} = {Default.IfEmpty(e.Second)}"))}";
     }
 }
 
 public static class Create
 {
-    public static string Table(string table, HttpRequest request)
+    private static readonly HashSet<string> _allowedExtensions = new() { ".png", ".jpg", ".jpeg" };
+
+    public static string Table(string table, HttpRequest request) // dup
+    {
+        return CreateTable(
+            table,
+            request.Form.Select(x => x.Key),
+            request.Form.Select(x => x.Value.ToString())
+        );
+    }
+
+    public static string CreateTable(
+        string table,
+        IEnumerable<string> keys,
+        IEnumerable<string> values
+    )
+    {
+        return $@"INSERT INTO {table} ({string.Join(", ", keys)}) 
+        VALUES ({string.Join(", ", values.Select(v => Default.IfEmpty(v)))})";
+    }
+
+    public static string Addresses(string table, HttpRequest request)
     {
         var entity = request.Form;
-        return $@"INSERT INTO {table} ({string.Join(", ", entity.Select(e => e.Key))}) 
-        VALUES ('{string.Join("', '", entity.Select(e => e.Value))}')";
+        return $@"INSERT INTO {table} (street_id, building_number) 
+        VALUES ('{entity["street_id"]}', '{entity["building_number"]}')";
+    }
+
+    // public static string Applications(string table, HttpRequest request)
+    // {
+    //     string imageFileName = "photos/user.png";
+    //     var imageFile = request.Form.Files.SingleOrDefault();
+
+    //     if (imageFile is not null)
+    //     {
+    //         if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
+    //         {
+    //             imageFileName = "";
+    //         }
+    //         else
+    //         {
+    //             using var stream = File.Create(imageFileName);
+    //             imageFile.CopyToAsync(stream).Wait();
+    //         }
+    //         return UpdateTable(
+    //             table,
+    //             request.Form.Select(x => x.Key).Append("photo"),
+    //             request.Form.Select(x => x.Value.ToString()).Append(imageFileName)
+    //         );
+    //     }
+
+    //     return Table(table, request);
+    // }
+
+    public static string Employers(string table, HttpRequest request)
+    {
+        var entity = request.Form;
+        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        INSERT INTO {table} (employer, email, phone, property_id, address_id)
+        VALUES('{entity["employer"]}', {Default.IfEmpty(entity["email"])}, 
+        {Default.IfEmpty(entity["phone"])}, '{entity["property_id"]}', (SELECT max(id) FROM addresses))";
+    }
+
+    public static string Seekers(string table, HttpRequest request)
+    {
+        var entity = request.Form;
+        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        INSERT INTO {table} (first_name, last_name, patronymic, phone, birthday, registration_city, 
+            recommended, pol, education, status_id, speciality_id, address_id)
+        VALUES('{entity["first_name"]}',
+        '{entity["last_name"]}',
+        {Default.IfEmpty(entity["patronymic"])},
+        {Default.IfEmpty(entity["phone"])},
+        {Default.IfEmpty(entity["birthday"])},
+        {Default.IfEmpty(entity["registration_city"])},
+        {Default.IfEmpty(entity["recommended"])},
+        {Default.IfEmpty(entity["pol"])},
+        {Default.IfEmpty(entity["education"])},
+        {entity["status_id"]},
+        {entity["speciality_id"]},
+        (SELECT max(id) FROM addresses))";
     }
 }
 

@@ -58,7 +58,7 @@ async function makeTable(title, endpoint, id = null) {
 function extractColumns(data) {
   return data?.length
     ? `<tr><th>${Object.keys(data[0])
-        .map((k) => columns[k]?.displayName ?? k) // todo: make proxy to return k
+        .map((k) => columns[k]?.displayName ?? k)
         .join("</th><th>")}</th></tr>`
     : "";
 }
@@ -71,7 +71,7 @@ function extractRows(data) {
             `<td>${Object.entries(d)
               .map(
                 ([colName, value]) =>
-                  columns[colName]?.convertValue(value) ?? value // todo: make proxy to return value
+                  columns[colName]?.convertValue(value) ?? value
               )
               .join("</td><td>")}</td>`
         )
