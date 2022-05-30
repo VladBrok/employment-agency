@@ -29,6 +29,23 @@
   filter: drop-shadow(0.04rem 0.04rem 0.1rem #009060);
 }
 
+.before-table .download {
+  background: no-repeat center/1.5rem url(../images/download-report.png);
+  height: 1.8rem;
+  appearance: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .table-container[data-access="readonly"] .create {
   display: none;
 }

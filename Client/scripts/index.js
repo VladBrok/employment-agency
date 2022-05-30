@@ -1,12 +1,26 @@
 import { makeTable, updateTable } from "./table.js";
 import { makeForm, sendForm } from "./form.js";
-import { post, put } from "./api.js";
-import endpoints from "./endpoints.js";
+import { post, put } from "./api.js"; // TODO
+import endpoints from "./endpoints.js"; // TODO
+import downloadReport from "./report.js";
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 
 navigation.addEventListener("click", handleNavigationClick);
+main.addEventListener("change", async (e) => {
+  if (e.target.classList.contains("download")) {
+    const type = e.target.value;
+    e.target.selectedIndex = 0;
+
+    await downloadReport({
+      type,
+      endpoint: e.target.closest("[data-endpoint]").dataset.endpoint,
+      title: e.target.closest("[data-endpoint]").querySelector(".title")
+        .textContent,
+    });
+  }
+});
 
 let pageSnapshot = null;
 

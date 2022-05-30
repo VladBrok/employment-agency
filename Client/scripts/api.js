@@ -28,8 +28,17 @@ async function put(endpoint, id, formData) {
   await fetch(`${makeUrl(endpoint)}/${id}`, { method: "PUT", body: formData });
 }
 
-async function post(endpoint, formData) {
-  await fetch(makeUrl(endpoint), { method: "POST", body: formData });
+async function post(endpoint, data) {
+  const options = {
+    method: "POST",
+    body: data,
+  };
+  if (!(data instanceof FormData)) {
+    options.headers = {
+      "Content-Type": "application/json",
+    };
+  }
+  return await fetch(makeUrl(endpoint), options);
 }
 
 function makeUrl(endpoint) {

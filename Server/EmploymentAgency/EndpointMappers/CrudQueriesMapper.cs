@@ -130,7 +130,7 @@ public static class CrudQueriesMapper
 
     private static async Task<IResult> ReadSingleAsync(int id, string? tableAlias, string command)
     {
-        Entity? result = await _postgres.ReadSingleAsync(id, tableAlias, command);
+        Entity? result = await _postgres!.ReadSingleAsync(id, tableAlias, command);
         return result is null ? Results.NotFound() : Results.Ok(result);
     }
 }

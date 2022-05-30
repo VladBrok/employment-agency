@@ -34,7 +34,14 @@ async function makeTable(title, endpoint, id = null) {
           )
           .join("")}
       </table>
-      <img class='create' src='images/create.png'></img>
+      <div class="actions">
+        <select class="download">
+          <option selected disabled></option>
+          <option>html</option>
+          <option>excel</option>
+        </select>
+        <img class='create' src='images/create.png' alt="Создать" title="Создать">
+      </div>
     </div>
     <div class="table-wrapper">
     <table class="table">

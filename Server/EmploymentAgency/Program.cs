@@ -39,7 +39,7 @@ void UseRequiredMiddlewares()
 
     app.UseHttpsRedirection();
     app.UseAuthorization();
-    app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod());
+    app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 }
 
 PostgreSql MakePostgres()
