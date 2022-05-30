@@ -43,7 +43,7 @@ async function makeTable(title, endpoint, id = null) {
         ${extractColumns(data)}
       </thead>
       <tbody class="body">
-        ${extractRows(data)}
+        ${await extractRows(data)}
       </tbody>
     </table>
     </div>
@@ -63,19 +63,23 @@ function extractColumns(data) {
     : "";
 }
 
-function extractRows(data) {
+async function extractRows(data) {
   return data?.length
-    ? `<tr>${data
-        .map(
-          (d) =>
-            `<td>${Object.entries(d)
-              .map(
-                ([colName, value]) =>
-                  columns[colName]?.convertValue(value) ?? value
-              )
-              .join("</td><td>")}</td>`
+    ? `<tr>${(
+        await Promise.all(
+          data.map(
+            async (d) =>
+              `<td>${(
+                await Promise.all(
+                  Object.entries(d).map(
+                    async ([colName, value]) =>
+                      await (columns[colName]?.convertValue(value) ?? value)
+                  )
+                )
+              ).join("</td><td>")}</td>`
+          )
         )
-        .join("</tr><tr>")}</tr>`
+      ).join("</tr><tr>")}</tr>`
     : "<tr class='not-a-data-row'><td colspan='100'><h2 class='title'>Результатов нет.</h2></td></tr>";
 }
 
@@ -93,7 +97,7 @@ async function updateTable(tableChild, page = 0) {
     filter,
     parameterValues,
   });
-  tableContainer.querySelector(".body").innerHTML = extractRows(data);
+  tableContainer.querySelector(".body").innerHTML = await extractRows(data);
 }
 
 export { makeTable, updateTable };

@@ -1,4 +1,4 @@
-import { fetchAllJson } from "./api.js";
+import fetchJson, { fetchAllJson } from "./api.js";
 import {
   makeFileInput,
   makeDateTimeInput,
@@ -92,8 +92,46 @@ let firstStreetChangeCompleted = true;
 let preventStreetsChange = false;
 
 const columnInfo = [
-  new Column("employer_id", "ID работодателя", () => null),
-  new Column("seeker_id", "ID соискателя", () => null),
+  new Column(
+    "employer_id",
+    "Работодатель",
+    function (_, value) {
+      return `<a class="link-to-table input" data-endpoint="/employers" 
+        value=${this.employers[value]}>${value}</a>`;
+    },
+    async function (id) {
+      const name = (await fetchJson({ endpoint: `/employers/${id}` }))[
+        "employer"
+      ];
+      if (this.employers) {
+        this.employers[name] = id;
+      } else {
+        this.employers = { [name]: id };
+      }
+      return name;
+    }
+  ),
+
+  // Dup!
+  new Column(
+    "seeker_id",
+    "Соискатель",
+    function (_, value) {
+      return `<a class="link-to-table input" data-endpoint="/seekers" 
+        value=${this.seekers[value]}>${value}</a>`;
+    },
+    async function (id) {
+      const name = (await fetchJson({ endpoint: `/seekers/${id}` }))[
+        "first_name"
+      ];
+      if (this.seekers) {
+        this.seekers[name] = id;
+      } else {
+        this.seekers = { [name]: id };
+      }
+      return name;
+    }
+  ),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
   new Column("time_modified", "время совершения операции"),
@@ -162,7 +200,7 @@ const columnInfo = [
   ),
   new Column("email", "почта", makeEmailInput),
   new Column("employer_day", "дата размещения", (id, value) =>
-    makeDateTimeInput(id, value, true)
+    makeDateTimeInput(id, value)
   ),
   new Column("salary_new", "предлагаемая зарплата", (id, value) =>
     makeNumberInput(id, value, 1000, 1000000)
@@ -226,7 +264,7 @@ const columnInfo = [
     makeTextInput(id, value, 3, 20)
   ),
   new Column("seeker_day", "дата публикации", (id, value) =>
-    makeDateTimeInput(id, value, true)
+    makeDateTimeInput(id, value)
   ),
   new Column("information", "информация", makeTextInput),
   new Column("photo", "фото", (id, value) =>

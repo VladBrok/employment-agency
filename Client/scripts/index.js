@@ -1,13 +1,23 @@
 import { makeTable, updateTable } from "./table.js";
 import { makeForm, sendForm } from "./form.js";
 import { post, put } from "./api.js";
+import endpoints from "./endpoints.js";
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 
 navigation.addEventListener("click", handleNavigationClick);
 
+let pageSnapshot = null;
+
 main.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("link-to-table")) {
+    const endpoint = e.target.dataset.endpoint;
+    pageSnapshot = main.innerHTML;
+    main.innerHTML = await makeTable(endpoints[endpoint].title, endpoint);
+    return;
+  }
+
   if (e.target.classList.contains("previous-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
     page.textContent--;
@@ -37,14 +47,16 @@ main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("update-button")) {
     await sendForm(
       async (form, data) =>
-        await put(form.dataset.endpoint, form.dataset.id, data)
+        await put(form.dataset.endpoint, form.dataset.id, data),
+      e
     );
     return;
   }
 
   if (e.target.classList.contains("create-button")) {
     await sendForm(
-      async (form, data) => await post(form.dataset.endpoint, data)
+      async (form, data) => await post(form.dataset.endpoint, data),
+      e
     );
     return;
   }
@@ -60,6 +72,18 @@ main.addEventListener("click", async (e) => {
   }
 
   if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
+    const id = e.target.parentElement.querySelector("td").textContent;
+
+    if (pageSnapshot) {
+      main.innerHTML = pageSnapshot;
+      pageSnapshot = null;
+      const linkToTable = document.querySelector(".link-to-table");
+      linkToTable.setAttribute("value", id);
+      linkToTable.textContent =
+        e.target.parentElement.querySelectorAll("td")[1].textContent;
+      return;
+    }
+
     const values = Array.from(e.target.parentElement.querySelectorAll("td"))
       .map((x) => x.textContent)
       .slice(1);
@@ -70,7 +94,7 @@ main.addEventListener("click", async (e) => {
       "Обновить",
       "update-button",
       values,
-      e.target.parentElement.querySelector("td").textContent //id
+      id
     );
     return;
   }

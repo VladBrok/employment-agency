@@ -54,8 +54,20 @@ const endpointInfo = [
     "Заявки на трудоустройство"
   ),
   new Endpoint("/seekers/status_id", [], "full", [], "Соискатели"),
-  new Endpoint("/employers", ["/vacancies/employer_id"], "full"),
-  new Endpoint("/seekers", ["/applications/seeker_id"], "full"),
+  new Endpoint(
+    "/employers",
+    ["/vacancies/employer_id"],
+    "full",
+    [],
+    "Работодатели"
+  ),
+  new Endpoint(
+    "/seekers",
+    ["/applications/seeker_id"],
+    "full",
+    [],
+    "Соискатели"
+  ),
   new Endpoint("/vacancies", [], "full"),
   new Endpoint("/applications", [], "full"),
   new Endpoint(

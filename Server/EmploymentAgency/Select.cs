@@ -183,31 +183,31 @@ public static class Create
         VALUES ('{entity["street_id"]}', '{entity["building_number"]}')";
     }
 
-    // public static string Applications(string table, HttpRequest request)
-    // {
-    //     string imageFileName = "photos/user.png";
-    //     var imageFile = request.Form.Files.SingleOrDefault();
+    public static string Applications(string table, HttpRequest request) // dup
+    {
+        string imageFileName = "photos/user.png";
+        var imageFile = request.Form.Files.SingleOrDefault();
 
-    //     if (imageFile is not null)
-    //     {
-    //         if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
-    //         {
-    //             imageFileName = "";
-    //         }
-    //         else
-    //         {
-    //             using var stream = File.Create(imageFileName);
-    //             imageFile.CopyToAsync(stream).Wait();
-    //         }
-    //         return UpdateTable(
-    //             table,
-    //             request.Form.Select(x => x.Key).Append("photo"),
-    //             request.Form.Select(x => x.Value.ToString()).Append(imageFileName)
-    //         );
-    //     }
+        if (imageFile is not null)
+        {
+            if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
+            {
+                imageFileName = "";
+            }
+            else
+            {
+                using var stream = File.Create(imageFileName);
+                imageFile.CopyToAsync(stream).Wait();
+            }
+            return CreateTable(
+                table,
+                request.Form.Select(x => x.Key).Append("photo"),
+                request.Form.Select(x => x.Value.ToString()).Append(imageFileName)
+            );
+        }
 
-    //     return Table(table, request);
-    // }
+        return Table(table, request);
+    }
 
     public static string Employers(string table, HttpRequest request)
     {

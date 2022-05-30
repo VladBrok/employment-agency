@@ -2,7 +2,7 @@ namespace EmploymentAgency.EndpointMappers;
 
 public static class CrudQueriesMapper
 {
-    private static PostgreSql _postgres;
+    private static PostgreSql? _postgres;
 
     public static void Map(WebApplication app, PostgreSql postgres)
     {
@@ -22,7 +22,7 @@ public static class CrudQueriesMapper
                     "applications",
                     Select.FromApplications(),
                     Update.Applications,
-                    Create.Table,
+                    Create.Applications,
                     "a",
                     new[] { "seeker_id", "position_id", "employment_type_id" }
                 ),

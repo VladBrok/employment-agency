@@ -22,3 +22,12 @@
   margin: 0 auto;
   margin-top: 2rem;
 }
+
+.link-to-table {
+  display: inline-block;
+  text-align: center;
+  text-decoration: underline;
+  color: var(--highlight-color);
+  cursor: pointer;
+  border: none;
+}

@@ -57,7 +57,7 @@ async function makeForm(
   return `${form}${childTables.join("")}`;
 }
 
-async function sendForm(callback) {
+async function sendForm(callback, e) {
   const form = document.querySelector(".crud-form");
   const names = [];
   const values = [];
@@ -68,7 +68,9 @@ async function sendForm(callback) {
     }
 
     values.push(
-      input.getAttribute("type") === "file" ? input.files[0] ?? "" : input.value
+      input.getAttribute("type") === "file"
+        ? input.files[0] ?? ""
+        : input.value ?? input.getAttribute("value")
     );
   }
 
@@ -105,6 +107,7 @@ async function sendForm(callback) {
 
   const formData = new FormData();
   names.map((name, i) => formData.append(name, values[i]));
+  e.preventDefault();
   callback(form, formData);
 }
 
