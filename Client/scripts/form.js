@@ -95,20 +95,10 @@ async function sendForm(callback, e) {
     names.push(name);
   }
 
-  for (let i = 0; i < names.length; i++) {
-    console.log(names[i], "=", values[i]);
-  }
-  console.log(
-    "Are equal:",
-    names.length === values.length,
-    names.length,
-    values.length
-  );
-
   const formData = new FormData();
   names.map((name, i) => formData.append(name, values[i]));
-  e.preventDefault();
   callback(form, formData);
+  e.preventDefault();
 }
 
 export { makeForm, sendForm };

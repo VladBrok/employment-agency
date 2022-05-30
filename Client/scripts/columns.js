@@ -78,11 +78,29 @@ class Column {
           <div class="radio-wrapper">
             <label for="${option}${i}">${option}</label>
             <input type="radio" id="${option}${i}" name="${name}" class="radio-input" ${
-          option.toLowerCase() === value?.trim().toLowerCase() ? "checked" : ""
+          !value || option.toLowerCase() === value.trim().toLowerCase()
+            ? "checked"
+            : ""
         } value="${this.convertFromValue(option)}" required>
           </div>`
       )
       .join("")}</div>`;
+  }
+
+  makeLink(value, endpoint) {
+    return `<a class="link-to-table input" data-endpoint="${endpoint}" value=${
+      this.ids[value] ?? ""
+    }>${value ?? "Выбрать... <input class='link-input input' required>"}</a>`;
+  }
+
+  async getName(id, endpoint, column) {
+    const name = (await fetchJson({ endpoint: `${endpoint}/${id}` }))[column];
+    if (this.ids) {
+      this.ids[name] = id;
+    } else {
+      this.ids = { [name]: id };
+    }
+    return name;
   }
 }
 
@@ -96,40 +114,20 @@ const columnInfo = [
     "employer_id",
     "Работодатель",
     function (_, value) {
-      return `<a class="link-to-table input" data-endpoint="/employers" 
-        value=${this.employers[value]}>${value}</a>`;
+      return this.makeLink(value, "/employers");
     },
     async function (id) {
-      const name = (await fetchJson({ endpoint: `/employers/${id}` }))[
-        "employer"
-      ];
-      if (this.employers) {
-        this.employers[name] = id;
-      } else {
-        this.employers = { [name]: id };
-      }
-      return name;
+      return await this.getName(id, "/employers", "employer");
     }
   ),
-
-  // Dup!
   new Column(
     "seeker_id",
     "Соискатель",
     function (_, value) {
-      return `<a class="link-to-table input" data-endpoint="/seekers" 
-        value=${this.seekers[value]}>${value}</a>`;
+      return this.makeLink(value, "/seekers");
     },
     async function (id) {
-      const name = (await fetchJson({ endpoint: `/seekers/${id}` }))[
-        "first_name"
-      ];
-      if (this.seekers) {
-        this.seekers[name] = id;
-      } else {
-        this.seekers = { [name]: id };
-      }
-      return name;
+      return await this.getName(id, "/seekers", "first_name");
     }
   ),
   new Column("table_name", "название таблицы"),

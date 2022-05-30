@@ -19,7 +19,7 @@
   text-align: left;
 }
 
-.input,
+.input:not(.radio-input),
 .select {
   outline: none;
   padding: 0.2rem;

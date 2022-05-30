@@ -21,26 +21,24 @@ main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("previous-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
     page.textContent--;
-
-    await updateTable(page, page.textContent - 1);
-
     if (+page.textContent === 1) {
       e.target.classList.add("disabled");
     }
+
+    await updateTable(page, page.textContent - 1);
     return;
   }
 
   if (e.target.classList.contains("next-page")) {
     const page = e.target.parentElement.querySelector(".current-page");
     page.textContent++;
-
-    await updateTable(page, page.textContent - 1);
-
     if (+page.textContent === 2) {
       e.target.parentElement
         .querySelector(".previous-page")
         .classList.remove("disabled");
     }
+
+    await updateTable(page, page.textContent - 1);
     return;
   }
 
