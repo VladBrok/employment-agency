@@ -48,8 +48,7 @@ async function makeForm(
       ? []
       : await Promise.all(
           endpoints[endpoint]?.children.map(
-            async (endpoint) =>
-              await makeTable(endpoints[endpoint].title, endpoint, entityId)
+            async (endpoint) => await makeTable(endpoint, entityId)
           ) ?? []
         );
 
@@ -100,4 +99,19 @@ async function sendForm(callback, e) {
   e.preventDefault();
 }
 
-export { makeForm, sendForm };
+async function sendFormAsPut(e) {
+  await sendForm(
+    async (form, data) =>
+      await put(form.dataset.endpoint, form.dataset.id, data),
+    e
+  );
+}
+
+async function sendFormAsPost(e) {
+  await sendForm(
+    async (form, data) => await post(form.dataset.endpoint, data),
+    e
+  );
+}
+
+export { makeForm, sendFormAsPut, sendFormAsPost };

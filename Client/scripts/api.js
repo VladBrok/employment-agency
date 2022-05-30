@@ -20,6 +20,27 @@ async function fetchJson({
   return await response.json();
 }
 
+async function fetchJsonFromTable({
+  tableChild,
+  page = 0,
+  pageSize = PAGE_SIZE,
+}) {
+  const tableContainer = tableChild.closest("[data-endpoint]");
+  const endpoint = tableContainer.dataset.endpoint;
+
+  const inputs = Array.from(tableContainer.querySelectorAll(".input"));
+  const filter = inputs[0].value;
+  const parameterValues = inputs.slice(1).map((x) => x.value);
+
+  return await fetchJson({
+    endpoint,
+    page,
+    filter,
+    parameterValues,
+    pageSize,
+  });
+}
+
 async function fetchAllJson(endpoint) {
   return await fetchJson({ endpoint, page: 0, pageSize: 1e6 });
 }
@@ -45,5 +66,5 @@ function makeUrl(endpoint) {
   return `${URL}${endpoint}`;
 }
 
-export { fetchAllJson, put, post };
+export { fetchJsonFromTable, fetchAllJson, put, post };
 export default fetchJson;

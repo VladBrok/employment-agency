@@ -1,7 +1,5 @@
 import { makeTable, updateTable } from "./table.js";
-import { makeForm, sendForm } from "./form.js";
-import { post, put } from "./api.js"; // TODO
-import endpoints from "./endpoints.js"; // TODO
+import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
 import downloadReport from "./report.js";
 
 const navigation = document.querySelector(".navigation");
@@ -13,12 +11,7 @@ main.addEventListener("change", async (e) => {
     const type = e.target.value;
     e.target.selectedIndex = 0;
 
-    await downloadReport({
-      type,
-      endpoint: e.target.closest("[data-endpoint]").dataset.endpoint,
-      title: e.target.closest("[data-endpoint]").querySelector(".title")
-        .textContent,
-    });
+    await downloadReport(e.target, type);
   }
 });
 
@@ -28,7 +21,7 @@ main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("link-to-table")) {
     const endpoint = e.target.dataset.endpoint;
     pageSnapshot = main.innerHTML;
-    main.innerHTML = await makeTable(endpoints[endpoint].title, endpoint);
+    main.innerHTML = await makeTable(endpoint);
     return;
   }
 
@@ -57,19 +50,12 @@ main.addEventListener("click", async (e) => {
   }
 
   if (e.target.classList.contains("update-button")) {
-    await sendForm(
-      async (form, data) =>
-        await put(form.dataset.endpoint, form.dataset.id, data),
-      e
-    );
+    await sendFormAsPut(e);
     return;
   }
 
   if (e.target.classList.contains("create-button")) {
-    await sendForm(
-      async (form, data) => await post(form.dataset.endpoint, data),
-      e
-    );
+    await sendFormAsPost(e);
     return;
   }
 
@@ -116,6 +102,6 @@ async function handleNavigationClick(e) {
   const endpoint = e.target.dataset.endpoint;
   if (endpoint) {
     const title = e.target.textContent;
-    main.innerHTML = await makeTable(title, endpoint);
+    main.innerHTML = await makeTable(endpoint, null, title);
   }
 }

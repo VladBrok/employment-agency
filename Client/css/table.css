@@ -22,6 +22,7 @@
 
 .before-table .create {
   max-width: 1.5rem;
+  margin: 0 0.5rem;
 }
 
 .before-table .create:hover {

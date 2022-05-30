@@ -1,8 +1,12 @@
 import endpoints from "./endpoints.js";
 import columns from "./columns.js";
-import fetchJson from "./api.js";
+import fetchJson, { fetchJsonFromTable } from "./api.js";
 
-async function makeTable(title, endpoint, id = null) {
+async function makeTable(
+  endpoint,
+  id = null,
+  title = endpoints[endpoint].title
+) {
   const endpointForFetching = id ? `${endpoint}/${id}` : endpoint;
   const parameters = endpoints[endpoint].parameters;
 
@@ -87,20 +91,9 @@ async function extractCells(row) {
 }
 
 async function updateTable(tableChild, page = 0) {
-  const tableContainer = tableChild.closest("[data-endpoint]");
-  const endpoint = tableContainer.dataset.endpoint;
-
-  const inputs = Array.from(tableContainer.querySelectorAll(".input"));
-  const filter = inputs[0].value;
-  const parameterValues = inputs.slice(1).map((x) => x.value);
-
-  const data = await fetchJson({
-    endpoint,
-    page,
-    filter,
-    parameterValues,
-  });
-  tableContainer.querySelector(".body").innerHTML = await extractRows(data);
+  const data = await fetchJsonFromTable({ tableChild, page });
+  tableChild.closest("[data-endpoint]").querySelector(".body").innerHTML =
+    await extractRows(data);
 }
 
 export { makeTable, updateTable };

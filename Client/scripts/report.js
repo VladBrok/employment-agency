@@ -1,9 +1,11 @@
 import columns from "./columns.js";
-import { fetchAllJson, post } from "./api.js";
+import { fetchJsonFromTable, post } from "./api.js";
 
-// Параметры не учитываются !
-async function downloadReport({ type, endpoint, title }) {
-  const data = await fetchAllJson(endpoint);
+async function downloadReport(tableChild, type) {
+  const data = await fetchJsonFromTable({
+    tableChild,
+    pageSize: 1e6,
+  });
   let first = {};
   Object.keys(data[0]).forEach(
     (k) => (first = { ...first, [columns[k]?.displayName ?? k]: data[0][k] })
@@ -12,7 +14,9 @@ async function downloadReport({ type, endpoint, title }) {
 
   const fileName = `report.${type}`;
   const report = await post(
-    `/reports/${type}?fileName=${fileName}&title=${title}`,
+    `/reports/${type}?fileName=${fileName}&title=${
+      tableChild.closest("[data-endpoint]").querySelector(".title").textContent
+    }`,
     JSON.stringify(data)
   );
 
