@@ -130,9 +130,9 @@ const endpointInfo = [
   new Endpoint("/special/max_salaries_for_position"),
 ];
 
-const endpoints = {};
-for (const info of endpointInfo) {
-  endpoints[info.main] = info;
-}
+const endpoints = endpointInfo.reduce((map, info) => {
+  map[info.main] = info;
+  return map;
+}, {});
 
 export default endpoints;

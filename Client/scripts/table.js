@@ -5,6 +5,7 @@ import fetchJson from "./api.js";
 async function makeTable(title, endpoint, id = null) {
   const endpointForFetching = id ? `${endpoint}/${id}` : endpoint;
   const parameters = endpoints[endpoint].parameters;
+
   const data = await fetchJson({
     endpoint: endpointForFetching,
     parameterValues: parameters.map((p) => p.defaultValue),
@@ -22,18 +23,16 @@ async function makeTable(title, endpoint, id = null) {
           <td><input type="text" id="search" class="input" required></td>
           <td><button class="search-button button find">Поиск</button></td>
         </tr>
-        ${
-          parameters
-            .map(
-              (param, i) => `
+        ${parameters
+          .map(
+            (param, i) => `
                 <tr class="search">
                   <td><label for="search${i}">${param.name}:</label></td>
                   <td>${param.convertToInput(`search${i}`)}</td>
                   <td><button class="search-button button enter-button">Ввод</button></td>
                 </tr>`
-            )
-            .join("") ?? ""
-        }
+          )
+          .join("")}
       </table>
       <img class='create' src='images/create.png'></img>
     </div>
@@ -65,22 +64,19 @@ function extractColumns(data) {
 
 async function extractRows(data) {
   return data?.length
-    ? `<tr>${(
-        await Promise.all(
-          data.map(
-            async (d) =>
-              `<td>${(
-                await Promise.all(
-                  Object.entries(d).map(
-                    async ([colName, value]) =>
-                      await (columns[colName]?.convertValue(value) ?? value)
-                  )
-                )
-              ).join("</td><td>")}</td>`
-          )
-        )
-      ).join("</tr><tr>")}</tr>`
+    ? `${(await Promise.all(data.map(extractCells))).join("")}`
     : "<tr class='not-a-data-row'><td colspan='100'><h2 class='title'>Результатов нет.</h2></td></tr>";
+}
+
+async function extractCells(row) {
+  return `<tr><td>${(
+    await Promise.all(
+      Object.entries(row).map(
+        async ([colName, value]) =>
+          await (columns[colName]?.convertValue(value) ?? value)
+      )
+    )
+  ).join("</td><td>")}</td></tr>`;
 }
 
 async function updateTable(tableChild, page = 0) {

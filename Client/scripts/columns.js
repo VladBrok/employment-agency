@@ -279,12 +279,6 @@ const columnInfo = [
   ),
 ];
 
-const columns = {};
-for (const info of columnInfo) {
-  columns[info.realName] = info;
-  columns[info.displayName] = info;
-}
-
 async function changeStreets(districtSelect) {
   if (preventStreetsChange) {
     return;
@@ -314,5 +308,10 @@ const observer = new MutationObserver(async () => {
   await changeStreets(document.getElementById(districtSelectId));
 });
 observer.observe(document.body, { childList: true, subtree: true });
+
+const columns = columnInfo.reduce((map, info) => {
+  map[info.realName] = map[info.displayName] = info;
+  return map;
+}, {});
 
 export default columns;

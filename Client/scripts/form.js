@@ -18,7 +18,7 @@ async function makeForm(
   const names = Array.from(
     tableChild.closest("[data-endpoint]").querySelectorAll("th")
   )
-    .slice(1) // skip an id
+    .slice(1)
     .map((x) => x.textContent);
 
   const form = `
@@ -43,7 +43,6 @@ async function makeForm(
       <button type="submit" class="search-button button ${className}">${buttonText}</button>
     </form>`;
 
-  const id = tableChild.closest("tr")?.querySelector("td").textContent; // todo: make data-id
   const childTables =
     entityId == null
       ? []
