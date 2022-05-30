@@ -39,12 +39,12 @@ async function makeTable(
           .join("")}
       </table>
       <div class="actions">
-        <select class="download">
+        <select class="download" title="Скачать отчет">
           <option selected disabled></option>
           <option>html</option>
           <option>excel</option>
         </select>
-        <img class='create' src='images/create.png' alt="Создать" title="Создать">
+        <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись">
       </div>
     </div>
     <div class="table-wrapper">

@@ -27,7 +27,7 @@
 
 .before-table .create:hover {
   cursor: pointer;
-  filter: drop-shadow(0.04rem 0.04rem 0.1rem #009060);
+  filter: drop-shadow(0.08rem 0.08rem 0.06rem #009060);
 }
 
 .before-table .download {
@@ -36,9 +36,14 @@
   appearance: none;
   border: none;
   outline: none;
-  cursor: pointer;
   padding: 0.5rem;
   font-size: 1rem;
+  filter: drop-shadow(1px 1px 0 #4590f9);
+}
+
+.before-table .download:hover {
+  cursor: pointer;
+  filter: drop-shadow(0.07rem 0.07rem 0.04rem #4590f9);
 }
 
 .actions {
