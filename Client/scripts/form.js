@@ -1,6 +1,7 @@
 import columns from "./columns.js";
 import endpoints from "./endpoints.js";
 import { makeTable } from "./table.js";
+import { put, post } from "./api.js";
 
 async function makeForm(
   tableChild,
@@ -22,27 +23,32 @@ async function makeForm(
     .map((x) => x.textContent);
 
   const form = `
-    <form class="crud-form" data-endpoint="${endpoint}" data-id="${entityId}">
-      ${(
-        await Promise.all(
-          names.map(async (name, i) => {
-            const input = await columns[name]?.convertToInput(
-              `name${i}`,
-              values?.[i],
-              endpoint
-            );
-            return input === null
-              ? ""
-              : `<div class="element">
-                  <label for="name${i}">${name}:</label>
-                  ${input}
-                </div>`;
-          })
-        )
-      ).join("")}
-      <button type="submit" class="search-button button ${className}">${buttonText}</button>
-    </form>`;
-
+    <div class="form-container">
+      <img src="images/delete.png" alt="Удалить" 
+        title="Удалить" class="delete" style="visibility:${
+          entityId ? "visible" : "hidden"
+        }">
+      <form class="crud-form" data-endpoint="${endpoint}" data-id="${entityId}">
+        ${(
+          await Promise.all(
+            names.map(async (name, i) => {
+              const input = await columns[name]?.convertToInput(
+                `name${i}`,
+                values?.[i],
+                endpoint
+              );
+              return input === null
+                ? ""
+                : `<div class="element">
+                    <label for="name${i}">${name}:</label>
+                    ${input}
+                  </div>`;
+            })
+          )
+        ).join("")}
+        <button type="submit" class="search-button button ${className}">${buttonText}</button>
+      </form>
+    </div>`;
   const childTables =
     entityId == null
       ? []

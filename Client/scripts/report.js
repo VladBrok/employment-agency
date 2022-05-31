@@ -8,7 +8,7 @@ async function downloadReport(tableChild, type) {
   });
   let first = {};
   Object.keys(data[0]).forEach(
-    (k) => (first = { ...first, [columns[k]?.displayName ?? k]: data[0][k] })
+    (k) => (first = { ...first, [columns[k].displayName]: data[0][k] })
   );
   data[0] = first;
 

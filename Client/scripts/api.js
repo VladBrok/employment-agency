@@ -62,9 +62,13 @@ async function post(endpoint, data) {
   return await fetch(makeUrl(endpoint), options);
 }
 
+async function deleteEntity(endpoint, id) {
+  return await fetch(`${makeUrl(endpoint)}/${id}`, { method: "DELETE" });
+}
+
 function makeUrl(endpoint) {
   return `${URL}${endpoint}`;
 }
 
-export { fetchJsonFromTable, fetchAllJson, put, post };
+export { fetchJsonFromTable, fetchAllJson, put, post, deleteEntity };
 export default fetchJson;

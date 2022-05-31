@@ -110,6 +110,7 @@ let firstStreetChangeCompleted = true;
 let preventStreetsChange = false;
 
 const columnInfo = [
+  new Column("id", "№"),
   new Column(
     "employer_id",
     "Работодатель",
@@ -309,9 +310,17 @@ const observer = new MutationObserver(async () => {
 });
 observer.observe(document.body, { childList: true, subtree: true });
 
-const columns = columnInfo.reduce((map, info) => {
+let columns = columnInfo.reduce((map, info) => {
   map[info.realName] = map[info.displayName] = info;
   return map;
 }, {});
+columns = new Proxy(columns, {
+  get(target, prop) {
+    if (prop in target) {
+      return target[prop];
+    }
+    return new Column(prop, prop);
+  },
+});
 
 export default columns;

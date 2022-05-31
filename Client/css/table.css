@@ -4,12 +4,6 @@
   font-size: 0.8rem;
 }
 
-.table-container .title {
-  color: var(--primary-color);
-  margin: 2.5rem 0;
-  font-size: 1.6rem;
-}
-
 .table-wrapper {
   overflow-x: auto;
 }
@@ -44,12 +38,6 @@
 .before-table .download:hover {
   cursor: pointer;
   filter: drop-shadow(0.07rem 0.07rem 0.04rem #4590f9);
-}
-
-.actions {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
 }
 
 .table-container[data-access="readonly"] .create {

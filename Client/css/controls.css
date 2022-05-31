@@ -58,3 +58,12 @@
   padding: 0.4rem 0.7rem;
   text-transform: uppercase;
 }
+
+.delete-button {
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.delete-button:hover {
+  background: var(--danger-color);
+}

@@ -1,0 +1,40 @@
+:root {
+  --gap: 1.8rem;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 200;
+}
+
+.confirm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--tertiary-color);
+  width: 20rem;
+  border-radius: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  row-gap: var(--gap);
+  padding: var(--gap) 0.5rem;
+}
+
+.confirm .title {
+  font-size: 1.7rem;
+}
+
+.confirm .actions {
+  padding: 0 1.5rem;
+}
+
+.confirm > * {
+  margin: 0;
+}

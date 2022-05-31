@@ -68,7 +68,7 @@ async function makeTable(
 function extractColumns(data) {
   return data?.length
     ? `<tr><th>${Object.keys(data[0])
-        .map((k) => columns[k]?.displayName ?? k)
+        .map((k) => columns[k].displayName)
         .join("</th><th>")}</th></tr>`
     : "";
 }
@@ -83,8 +83,7 @@ async function extractCells(row) {
   return `<tr><td>${(
     await Promise.all(
       Object.entries(row).map(
-        async ([colName, value]) =>
-          await (columns[colName]?.convertValue(value) ?? value)
+        async ([colName, value]) => await columns[colName].convertValue(value)
       )
     )
   ).join("</td><td>")}</td></tr>`;

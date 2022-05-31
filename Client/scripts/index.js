@@ -1,6 +1,8 @@
 import { makeTable, updateTable } from "./table.js";
 import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
 import downloadReport from "./report.js";
+import confirmDelete from "./confirm.js";
+import { deleteEntity } from "./api.js";
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
@@ -66,6 +68,17 @@ main.addEventListener("click", async (e) => {
 
   if (e.target.classList.contains("create")) {
     main.innerHTML = await makeForm(e.target, "Создать", "create-button");
+    return;
+  }
+
+  if (e.target.classList.contains("delete")) {
+    const confirmed = await confirmDelete();
+    if (confirmed) {
+      await deleteEntity(
+        main.querySelector("[data-endpoint]").dataset.endpoint,
+        main.querySelector("[data-id]").dataset.id
+      );
+    }
     return;
   }
 

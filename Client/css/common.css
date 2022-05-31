@@ -4,6 +4,7 @@
   --primary-color: #464457;
   --secondary-color: #e1e0e9;
   --tertiary-color: #f5f6fa;
+  --danger-color: #c22727;
 }
 
 * {
@@ -36,5 +37,21 @@ button {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  color: var(--primary-color);
+  margin: 2.3rem 0;
+  font-size: 1.6rem;
+}
+
+.text {
+  color: var(--primary-color);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
   align-items: center;
 }
