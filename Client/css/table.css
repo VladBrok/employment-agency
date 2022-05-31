@@ -65,9 +65,10 @@
   background: white;
 }
 
-.table .photo {
+.photo {
   max-width: 100%;
   border-radius: 50%;
+  display: block;
 }
 
 .table tr {

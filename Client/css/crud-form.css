@@ -3,6 +3,8 @@
   margin: 0 0 2rem 0;
   border: 0.1rem solid var(--secondary-color);
   border-radius: 0.7rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .crud-form label::first-letter {
@@ -15,6 +17,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.compound-form {
+  width: 100%;
+  height: 100%;
+}
+
+.photo-container {
+  max-width: 11rem;
+  text-indent: -9999px;
+  margin-top: -1rem;
+}
+
+.crud-form .photo-container {
+  padding: 0.2rem;
+  margin: 0 0.5em;
+}
+
+.crud-form .photo {
+  margin-bottom: 0.3rem;
+}
+
+.crud-form .photo-container .input {
+  margin: 0;
+}
+
+.crud-form .first {
+  order: -1;
 }
 
 .crud-form .button {
@@ -56,4 +86,8 @@
 .delete:hover {
   cursor: pointer;
   filter: drop-shadow(0.06rem 0.06rem 0.035rem var(--danger-color));
+}
+
+input[type="file"] {
+  display: block;
 }

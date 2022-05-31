@@ -14,16 +14,23 @@ main.addEventListener("change", async (e) => {
     e.target.selectedIndex = 0;
 
     await downloadReport(e.target, type);
+    return;
+  }
+
+  if (e.target.files) {
+    // TODO: check an extension
+    main.querySelector(".photo").src = URL.createObjectURL(e.target.files[0]);
   }
 });
 
-let pageSnapshot = null;
+let choosing = false;
 
 main.addEventListener("click", async (e) => {
   if (e.target.classList.contains("link-to-table")) {
     const endpoint = e.target.dataset.endpoint;
-    pageSnapshot = main.innerHTML;
-    main.innerHTML = await makeTable(endpoint);
+    main.querySelector(".compound-form").style.visibility = "hidden";
+    main.insertAdjacentHTML("afterbegin", await makeTable(endpoint));
+    choosing = true;
     return;
   }
 
@@ -85,9 +92,10 @@ main.addEventListener("click", async (e) => {
   if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
     const id = e.target.parentElement.querySelector("td").textContent;
 
-    if (pageSnapshot) {
-      main.innerHTML = pageSnapshot;
-      pageSnapshot = null;
+    if (choosing) {
+      main.querySelector(".table-container").remove();
+      main.querySelector(".compound-form").style.visibility = "visible";
+      choosing = false;
       const linkToTable = document.querySelector(".link-to-table");
       linkToTable.setAttribute("value", id);
       linkToTable.textContent =

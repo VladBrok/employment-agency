@@ -37,9 +37,10 @@ async function makeForm(
                 values?.[i],
                 endpoint
               );
+              const first = input?.indexOf("photo") !== -1;
               return input === null
                 ? ""
-                : `<div class="element">
+                : `<div class="element ${first ? "first" : ""}">
                     <label for="name${i}">${name}:</label>
                     ${input}
                   </div>`;
@@ -58,7 +59,7 @@ async function makeForm(
           ) ?? []
         );
 
-  return `${form}${childTables.join("")}`;
+  return `<div class="compound-form main">${form}${childTables.join("")}</div>`;
 }
 
 async function sendForm(callback, e) {

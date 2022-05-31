@@ -269,14 +269,28 @@ const columnInfo = [
   new Column(
     "photo",
     "фото",
-    (id, value) => makeFileInput(id, value, "image/png, image/jpeg"),
-    async (photoPath) => {
-      const photo = await fetchBlob(`/${photoPath}`);
-      const link = URL.createObjectURL(photo);
+    function (id, path) {
+      return `<div class="photo-container">${
+        this.images[path] ?? "<img class='photo'>"
+      }${makeFileInput(id, path, "image/png, image/jpeg")}</div>`;
+    },
+    async function (path) {
+      // TODO: pick a photo from this.images if it exists
       const img = document.createElement("img");
       img.classList.add("photo");
-      img.src = link;
-      return img.outerHTML;
+      if (path) {
+        const photo = await fetchBlob(`/${path}`);
+        const link = URL.createObjectURL(photo);
+        img.src = link;
+        if (this.images) {
+          this.images[path] = img.outerHTML;
+        } else {
+          this.images = { [path]: img.outerHTML };
+        }
+      }
+      return `<div class="photo-container">${path}${img.outerHTML}${
+        path ? "" : "Фото нет"
+      }</div>`;
     }
   ),
   new Column("salary", "зарплата", (id, value) =>
