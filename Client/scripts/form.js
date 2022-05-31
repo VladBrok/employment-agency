@@ -62,6 +62,21 @@ async function makeForm(
   return `<div class="compound-form main">${form}${childTables.join("")}</div>`;
 }
 
+async function sendFormAsPut(e) {
+  await sendForm(
+    async (form, data) =>
+      await put(form.dataset.endpoint, form.dataset.id, data),
+    e
+  );
+}
+
+async function sendFormAsPost(e) {
+  await sendForm(
+    async (form, data) => await post(form.dataset.endpoint, data),
+    e
+  );
+}
+
 async function sendForm(callback, e) {
   const form = document.querySelector(".crud-form");
   const names = [];
@@ -72,11 +87,11 @@ async function sendForm(callback, e) {
       return;
     }
 
-    values.push(
-      input.getAttribute("type") === "file"
-        ? input.files[0] ?? ""
-        : input.value ?? input.getAttribute("value")
-    );
+    if (input.getAttribute("type") === "file") {
+      values.push(input.files[0] ?? "");
+    } else {
+      values.push(input.value ?? input.getAttribute("value"));
+    }
   }
 
   for (const label of form.querySelectorAll("label")) {
@@ -104,21 +119,6 @@ async function sendForm(callback, e) {
   names.map((name, i) => formData.append(name, values[i]));
   callback(form, formData);
   e.preventDefault();
-}
-
-async function sendFormAsPut(e) {
-  await sendForm(
-    async (form, data) =>
-      await put(form.dataset.endpoint, form.dataset.id, data),
-    e
-  );
-}
-
-async function sendFormAsPost(e) {
-  await sendForm(
-    async (form, data) => await post(form.dataset.endpoint, data),
-    e
-  );
 }
 
 export { makeForm, sendFormAsPut, sendFormAsPost };

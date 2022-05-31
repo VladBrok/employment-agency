@@ -19,7 +19,9 @@ main.addEventListener("change", async (e) => {
 
   if (e.target.files) {
     // TODO: check an extension
-    main.querySelector(".photo").src = URL.createObjectURL(e.target.files[0]);
+    main.querySelector(".photo").src = e.target.files[0]
+      ? URL.createObjectURL(e.target.files[0])
+      : "";
   }
 });
 
