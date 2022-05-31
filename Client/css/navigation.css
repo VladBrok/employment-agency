@@ -40,6 +40,10 @@
   display: block;
 }
 
+.navigation .selected-item {
+  position: relative;
+}
+
 .navigation .selected-item::before {
   content: "";
   position: absolute;
