@@ -20,6 +20,11 @@ async function fetchJson({
   return await response.json();
 }
 
+async function fetchBlob(endpoint) {
+  const response = await fetch(makeUrl(endpoint));
+  return await response.blob();
+}
+
 async function fetchJsonFromTable({
   tableChild,
   page = 0,
@@ -70,5 +75,5 @@ function makeUrl(endpoint) {
   return `${URL}${endpoint}`;
 }
 
-export { fetchJsonFromTable, fetchAllJson, put, post, deleteEntity };
+export { fetchJsonFromTable, fetchBlob, fetchAllJson, put, post, deleteEntity };
 export default fetchJson;

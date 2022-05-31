@@ -1,4 +1,4 @@
-import fetchJson, { fetchAllJson } from "./api.js";
+import fetchJson, { fetchBlob, fetchAllJson } from "./api.js";
 import {
   makeFileInput,
   makeDateTimeInput,
@@ -266,8 +266,18 @@ const columnInfo = [
     makeDateTimeInput(id, value)
   ),
   new Column("information", "информация", makeTextInput),
-  new Column("photo", "фото", (id, value) =>
-    makeFileInput(id, value, "image/png, image/jpeg")
+  new Column(
+    "photo",
+    "фото",
+    (id, value) => makeFileInput(id, value, "image/png, image/jpeg"),
+    async (photoPath) => {
+      const photo = await fetchBlob(`/${photoPath}`);
+      const link = URL.createObjectURL(photo);
+      const img = document.createElement("img");
+      img.classList.add("photo");
+      img.src = link;
+      return img.outerHTML;
+    }
   ),
   new Column("salary", "зарплата", (id, value) =>
     makeNumberInput(id, value, 1000, 1000000)

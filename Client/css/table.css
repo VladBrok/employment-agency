@@ -65,6 +65,11 @@
   background: white;
 }
 
+.table .photo {
+  max-width: 100%;
+  border-radius: 50%;
+}
+
 .table tr {
   border: 0.08rem solid var(--secondary-color);
 }
