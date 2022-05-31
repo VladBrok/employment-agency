@@ -113,7 +113,13 @@ main.addEventListener("click", async (e) => {
 
 async function handleNavigationClick(e) {
   const endpoint = e.target.dataset.endpoint;
+
   if (endpoint) {
+    const selected = navigation.querySelector(".selected-item");
+    const newSelected = e.target.closest(".item.parent");
+    selected.classList.remove("selected-item");
+    newSelected.classList.add("selected-item");
+
     const title = e.target.textContent;
     main.innerHTML = await makeTable(endpoint, null, title);
   }
