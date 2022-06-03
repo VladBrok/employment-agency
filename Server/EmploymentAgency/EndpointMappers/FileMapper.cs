@@ -27,9 +27,7 @@ public static class FileMapper
             "api/photos/{fileName}",
             async (string fileName, HttpResponse response) =>
             {
-                bool containsDir = fileName.IndexOf("/") != -1;
-                string file = containsDir ? fileName : $"photos/{fileName}";
-                await SendFileAsync(file, response, "image/png");
+                await SendFileAsync($"photos/{fileName}", response, "image/png");
             }
         );
     }

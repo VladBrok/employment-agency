@@ -1,13 +1,45 @@
+:root {
+  --nav-width: 16rem;
+}
+
 .navigation {
   background: var(--primary-color);
   padding: 0.1rem;
-  max-width: 16rem;
+  max-width: var(--nav-width);
   min-height: 100vh;
+  transition: margin 0.4s;
+}
+
+.hidden {
+  margin-left: calc(-1 * var(--nav-width));
+}
+
+.menu {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.8rem;
+  width: 2rem;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.menu.close-menu {
+  width: 1.7rem;
+  filter: invert(1);
 }
 
 .navigation .title {
   color: #fdfdff;
-  margin: 2rem 1rem;
+  margin: 1.4rem 1rem;
+  margin-top: 3.2rem;
+}
+
+.navigation ul {
+  z-index: 10;
+}
+
+.navigation [data-chart]:before {
+  content: "📊";
 }
 
 .navigation .item {
@@ -56,7 +88,7 @@
 
 .navigation .item a {
   display: block;
-  padding: 1.2rem;
+  padding: 1rem;
 }
 
 .navigation .item a:hover {
@@ -70,7 +102,7 @@
   }
 
   .navigation .item a {
-    padding: 0.9rem;
+    padding: 0.8rem;
   }
 
   .navigation .title {

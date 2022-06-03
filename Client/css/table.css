@@ -24,6 +24,15 @@
   filter: drop-shadow(0.08rem 0.08rem 0.06rem #009060);
 }
 
+.before-table .chart {
+  max-width: 1.6rem;
+  filter: drop-shadow(1px 1px 0 black);
+}
+
+.before-table .chart:hover {
+  cursor: pointer;
+}
+
 .before-table .download {
   background: no-repeat center/1.5rem url(../images/download-report.png);
   height: 1.8rem;
@@ -41,6 +50,10 @@
 }
 
 .table-container[data-access="readonly"] .create {
+  display: none;
+}
+
+[data-chart="none"] {
   display: none;
 }
 

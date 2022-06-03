@@ -11,7 +11,7 @@
   text-transform: uppercase;
 }
 
-.crud-form .element {
+.element {
   max-width: 30rem;
   margin: 1rem 0;
   display: flex;

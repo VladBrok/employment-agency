@@ -14,6 +14,7 @@ async function fetchJson({
     )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
   );
 
+  console.log(response.status);
   if (response.status === 404) {
     return [];
   }

@@ -108,7 +108,18 @@ const endpointInfo = [
       "2017"
     ),
   ]),
-  new Endpoint("/special/applications_percent_by_positions_after"),
+  new Endpoint(
+    "/special/applications_percent_by_positions_after",
+    [],
+    "readonly",
+    [
+      new Parameter(
+        "Год",
+        (id) => makeNumberInput(id, "2017", 1980, 2022),
+        "2017"
+      ),
+    ]
+  ),
   new Endpoint("/special/application_count_by_positions", [], "readonly", [
     new Parameter(
       "Год",
@@ -125,7 +136,16 @@ const endpointInfo = [
   new Endpoint("/special/vacancies_posted_on"),
   new Endpoint("/special/latest_vacancy_of_employers_whose_name_contains"),
   new Endpoint(
-    "/special/positions_from_open_vacancies_whose_average_salary_exceeds"
+    "/special/positions_from_open_vacancies_whose_average_salary_exceeds",
+    [],
+    "readonly",
+    [
+      new Parameter(
+        "Зарплата",
+        (id) => makeNumberInput(id, "52000", "10000", "1000000"),
+        "52000"
+      ),
+    ]
   ),
   new Endpoint("/special/max_salaries_for_position"),
 ];

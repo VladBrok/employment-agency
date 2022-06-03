@@ -2,11 +2,12 @@ import endpoints from "./endpoints.js";
 import columns from "./columns.js";
 import fetchJson, { fetchJsonFromTable } from "./api.js";
 
-async function makeTable(
+async function makeTable({
   endpoint,
   id = null,
-  title = endpoints[endpoint].title
-) {
+  title = endpoints[endpoint].title,
+  chartType = "none",
+}) {
   const endpointForFetching = id ? `${endpoint}/${id}` : endpoint;
   const parameters = endpoints[endpoint].parameters;
 
@@ -39,6 +40,8 @@ async function makeTable(
           .join("")}
       </table>
       <div class="actions">
+        <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму" title="Нарисовать диаграмму"
+          data-chart="${chartType}">
         <select class="download" title="Скачать отчет">
           <option selected disabled></option>
           <option>html</option>

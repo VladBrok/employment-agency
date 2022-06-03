@@ -55,7 +55,7 @@ async function makeForm(
       ? []
       : await Promise.all(
           endpoints[endpoint]?.children.map(
-            async (endpoint) => await makeTable(endpoint, entityId)
+            async (endpoint) => await makeTable({ endpoint, id: entityId })
           ) ?? []
         );
 

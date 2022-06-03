@@ -12,7 +12,7 @@ async function downloadReport(tableChild, type) {
   );
   data[0] = first;
 
-  const fileName = `report.${type}`;
+  const fileName = `report.${type === "excel" ? "xlsx" : type}`;
   const report = await post(
     `/reports/${type}?fileName=${fileName}&title=${
       tableChild.closest("[data-endpoint]").querySelector(".title").textContent

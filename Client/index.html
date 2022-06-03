@@ -11,6 +11,8 @@
 </head>
 
 <body>
+  <img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu"
+    title="Закрыть меню">
   <nav class="navigation">
     <h1 class="title">Агентство по трудоустройству</h1>
     <ul class="list">
@@ -48,21 +50,18 @@
                   href="#">Средний возраст соискателей по
                   должностям</a></li>
               <li><a data-endpoint="/special/vacancies_and_salaries"
-                  href="#">Зарплаты
-                  для разных вакансий</a></li>
+                  href="#">Зарплаты для разных вакансий</a></li>
               <li><a data-endpoint="/special/employer_addresses"
-                  href="#">Работодатели и
-                  их адреса</a></li>
+                  href="#">Работодатели и их адреса</a></li>
               <li><a data-endpoint="/special/employment_types_and_salaries"
-                  href="#">Ожидаемые зарплаты для каждого
-                  типа занятости</a>
+                  data-chart="3d" href="#">Средние зарплаты и средний опыт для
+                  каждого типа
+                  занятости</a>
               </li>
               <li><a data-endpoint="/special/employers_and_vacancies"
-                  href="#">Вакансии
-                  каждой компании</a></li>
+                  href="#">Вакансии каждой компании</a></li>
               <li><a data-endpoint="/special/seekers_and_applications"
-                  href="#">Заявки
-                  каждого соискателя</a></li>
+                  href="#">Заявки каждого соискателя</a></li>
               <li><a data-endpoint="/special/num_vacancies_from_each_employer"
                   href="#">Количество вакансий</a></li>
             </ul>
@@ -80,7 +79,8 @@
                       data-endpoint="/special/applications_percent_after">Процент
                       после указанного года</a></li>
                   <li><a href="#"
-                      data-endpoint="/special/applications_percent_by_positions_after">Процент
+                      data-endpoint="/special/applications_percent_by_positions_after"
+                      data-chart="1d">Процент
                       по должностям</a></li>
                   <li><a href="#"
                       data-endpoint="/special/application_count_by_positions">Количество
@@ -129,9 +129,10 @@
                 <a href="#">Должности</a>
                 <ul class="child">
                   <li><a href="#"
-                      data-endpoint="/special/positions_from_open_vacancies_whose_average_salary_exceeds">
-                      Из открытых вакансий, у которых средняя
-                      зарплата выше указанной</a></li>
+                      data-endpoint="/special/positions_from_open_vacancies_whose_average_salary_exceeds"
+                      data-chart="2d">
+                      Из открытых вакансий, у которых средняя зарплата выше
+                      указанной</a></li>
                   <li><a href="#"
                       data-endpoint="/special/max_salaries_for_position">Максимальные
                       зарплаты</a></li>
@@ -147,7 +148,85 @@
     </ul>
   </nav>
   <main class="main">
+    <div class="table-container" data-endpoint="${endpointForFetching}"
+      data-access="${
+      endpoints[endpoint].access
+    }">
+      <h2 class="title">${title}</h2>
+      <div class="before-table">
+        <table>
+          <tr class="search">
+            <td><label for="search">Поиск по подстроке:</label></td>
+            <td><input type="text" id="search" class="input" required></td>
+            <td><button class="search-button button find">Поиск</button></td>
+          </tr>
+          ${parameters
+          .map(
+          (param, i) => `
+          <tr class="search">
+            <td><label for="search${i}">${param.name}:</label></td>
+            <td>${param.convertToInput(`search${i}`)}</td>
+            <td><button class="search-button button enter-button">Ввод</button>
+            </td>
+          </tr>`
+          )
+          .join("")}
+        </table>
+        <div class="actions">
+          <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму"
+            title="Нарисовать диаграмму" data-chart="${chartType}">
+          <select class="download" title="Скачать отчет">
+            <option selected disabled></option>
+            <option>html</option>
+            <option>excel</option>
+          </select>
+          <img class='create' src='images/create.png' alt="Создать"
+            title="Создать новую запись">
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead class="head">
+            <tr>
+              <th>One</th>
+              <th>Two</th>
+            </tr>
+          </thead>
+          <tbody class="body">
+            <tr>
+              <td>Two</td>
+              <td>One</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pages">
+        <div class="previous-page element button disabled">❮</div>
+        <div class="current-page element button disabled">1</div>
+        <div class="next-page element button">❯</div>
+      </div>
+    </div>
   </main>
+
+  <script type="module">
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJuYmYiOjE2NTQyNzE1MTksImV4cCI6MTY1NDI3MTU3OX0._MU-OnwjGHNKo-m43zn322w47ztFpb5dJa-QDUTPVno";
+    const response = await fetch("https://localhost:7288/api/seekers/3", { headers: { Authorization: `Bearer ${token}` } });
+    console.log(response);
+    console.log(await response.json());
+
+    // const user = {
+    //   login: "admin",
+    //   password: "1234"
+    // }
+    // const response = await fetch(
+    //   "https://localhost:7288/api/login", {
+    //   method: "POST",
+    //   body: JSON.stringify(user),
+    //   headers: { "Content-Type": "application/json; charset=UTF-8" },
+    // })
+    // console.log(response);
+    // console.log(await response.json());
+  </script>
 </body>
 
 </html>
