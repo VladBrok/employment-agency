@@ -9,145 +9,127 @@ class Parameter {
 }
 
 class Endpoint {
-  constructor(
-    main,
-    children = [],
-    access = "readonly",
-    parameters = [],
-    title = "?"
-  ) {
+  constructor({ main, children = [], parameters = [], title = "?" }) {
     this.main = main;
     this.children = children;
-    this.access = access;
     this.parameters = parameters;
     this.title = title;
+    this.access = main.indexOf("special") === -1 ? "full" : "readonly";
   }
 }
 
 const endpointInfo = [
-  new Endpoint("/vacancies/employer_id", [], "full", [], "Вакансии"),
-  new Endpoint(
-    "/applications/seeker_id",
-    [],
-    "full",
-    [],
-    "Заявки на трудоустройство"
-  ),
-  new Endpoint("/employers/address_id", [], "full", [], "Работодатели"),
-  new Endpoint("/seekers/address_id", [], "full", [], "Соискатели"),
-  new Endpoint(
-    "/applications/position_id",
-    [],
-    "full",
-    [],
-    "Заявки на трудоустройство"
-  ),
-  new Endpoint("/seekers/position_id", [], "full", [], "Соискатели"),
-  new Endpoint("/vacancies/position_id", [], "full", [], "Вакансии"),
-  new Endpoint("/employers/property_id", [], "full", [], "Работодатели"),
-  new Endpoint("/streets/district_id", [], "full", [], "Улицы"),
-  new Endpoint(
-    "/applications/employment_type_id",
-    [],
-    "full",
-    [],
-    "Заявки на трудоустройство"
-  ),
-  new Endpoint("/seekers/status_id", [], "full", [], "Соискатели"),
-  new Endpoint(
-    "/employers",
-    ["/vacancies/employer_id"],
-    "full",
-    [],
-    "Работодатели"
-  ),
-  new Endpoint(
-    "/seekers",
-    ["/applications/seeker_id"],
-    "full",
-    [],
-    "Соискатели"
-  ),
-  new Endpoint("/vacancies", [], "full"),
-  new Endpoint("/applications", [], "full"),
-  new Endpoint(
-    "/addresses",
-    ["/employers/address_id", "/seekers/address_id"],
-    "full"
-  ),
-  new Endpoint(
-    "/positions",
-    [
+  new Endpoint({ main: "/vacancies/employer_id", title: "Вакансии" }),
+  new Endpoint({
+    main: "/applications/seeker_id",
+    title: "Заявки на трудоустройство",
+  }),
+  new Endpoint({ main: "/employers/address_id", title: "Работодатели" }),
+  new Endpoint({ main: "/seekers/address_id", title: "Соискатели" }),
+  new Endpoint({
+    main: "/applications/position_id",
+    title: "Заявки на трудоустройство",
+  }),
+  new Endpoint({ main: "/seekers/position_id", title: "Соискатели" }),
+  new Endpoint({ main: "/vacancies/position_id", title: "Вакансии" }),
+  new Endpoint({ main: "/employers/property_id", title: "Работодатели" }),
+  new Endpoint({ main: "/streets/district_id", title: "Улицы" }),
+  new Endpoint({
+    main: "/applications/employment_type_id",
+    title: "Заявки на трудоустройство",
+  }),
+  new Endpoint({ main: "/seekers/status_id", title: "Соискатели" }),
+  new Endpoint({
+    main: "/employers",
+    children: ["/vacancies/employer_id"],
+    title: "Работодатели",
+  }),
+  new Endpoint({
+    main: "/seekers",
+    children: ["/applications/seeker_id"],
+    title: "Соискатели",
+  }),
+  new Endpoint({ main: "/vacancies" }),
+  new Endpoint({ main: "/applications" }),
+  new Endpoint({
+    main: "/addresses",
+    children: ["/employers/address_id", "/seekers/address_id"],
+  }),
+  new Endpoint({
+    main: "/positions",
+    children: [
       "/applications/position_id",
       "/seekers/position_id",
       "/vacancies/position_id",
     ],
-    "full"
-  ),
-  new Endpoint("/properties", ["/employers/property_id"], "full"),
-  new Endpoint("/streets", [], "full"),
-  new Endpoint("/districts", ["/streets/district_id"], "full"),
-  new Endpoint(
-    "/employment_types",
-    ["/applications/employment_type_id"],
-    "full"
-  ),
-  new Endpoint("/statuses", ["/seekers/status_id"], "full"),
-  new Endpoint("/special/average_seeker_ages_by_positions"),
-  new Endpoint("/special/vacancies_and_salaries"),
-  new Endpoint("/special/employer_addresses"),
-  new Endpoint("/special/employment_types_and_salaries"),
-  new Endpoint("/special/employers_and_vacancies"),
-  new Endpoint("/special/seekers_and_applications"),
-  new Endpoint("/special/num_vacancies_from_each_employer"),
-  new Endpoint("/special/applications_without_experience"),
-  new Endpoint("/special/applications_percent_after", [], "readonly", [
-    new Parameter(
-      "Год",
-      (id) => makeNumberInput(id, "2017", 1980, 2022),
-      "2017"
-    ),
-  ]),
-  new Endpoint(
-    "/special/applications_percent_by_positions_after",
-    [],
-    "readonly",
-    [
+  }),
+  new Endpoint({ main: "/properties", children: ["/employers/property_id"] }),
+  new Endpoint({ main: "/streets" }),
+  new Endpoint({ main: "/districts", children: ["/streets/district_id"] }),
+  new Endpoint({
+    main: "/employment_types",
+    children: ["/applications/employment_type_id"],
+  }),
+  new Endpoint({ main: "/statuses", children: ["/seekers/status_id"] }),
+  new Endpoint({ main: "/special/average_seeker_ages_by_positions" }),
+  new Endpoint({ main: "/special/vacancies_and_salaries" }),
+  new Endpoint({ main: "/special/employer_addresses" }),
+  new Endpoint({ main: "/special/employment_types_and_salaries" }),
+  new Endpoint({ main: "/special/employers_and_vacancies" }),
+  new Endpoint({ main: "/special/seekers_and_applications" }),
+  new Endpoint({ main: "/special/num_vacancies_from_each_employer" }),
+  new Endpoint({ main: "/special/applications_without_experience" }),
+  new Endpoint({
+    main: "/special/applications_percent_after",
+    parameters: [
       new Parameter(
         "Год",
         (id) => makeNumberInput(id, "2017", 1980, 2022),
         "2017"
       ),
-    ]
-  ),
-  new Endpoint("/special/application_count_by_positions", [], "readonly", [
-    new Parameter(
-      "Год",
-      (id) => makeNumberInput(id, "2017", 1980, 2022),
-      "2017"
-    ),
-    new Parameter("Месяц", (id) => makeNumberInput(id, "5", 1, 12), "5"),
-  ]),
-  new Endpoint("/special/num_applications_for_each_employment_type"),
-  new Endpoint("/special/seekers_in_district"),
-  new Endpoint("/special/seekers_born_after"),
-  new Endpoint("/special/seekers_whose_total_experience_exceeds"),
-  new Endpoint("/special/employers_with_property"),
-  new Endpoint("/special/vacancies_posted_on"),
-  new Endpoint("/special/latest_vacancy_of_employers_whose_name_contains"),
-  new Endpoint(
-    "/special/positions_from_open_vacancies_whose_average_salary_exceeds",
-    [],
-    "readonly",
-    [
+    ],
+  }),
+  new Endpoint({
+    main: "/special/applications_percent_by_positions_after",
+    parameters: [
+      new Parameter(
+        "Год",
+        (id) => makeNumberInput(id, "2017", 1980, 2022),
+        "2017"
+      ),
+    ],
+  }),
+  new Endpoint({
+    main: "/special/application_count_by_positions",
+    parameters: [
+      new Parameter(
+        "Год",
+        (id) => makeNumberInput(id, "2017", 1980, 2022),
+        "2017"
+      ),
+      new Parameter("Месяц", (id) => makeNumberInput(id, "5", 1, 12), "5"),
+    ],
+  }),
+  new Endpoint({ main: "/special/num_applications_for_each_employment_type" }),
+  new Endpoint({ main: "/special/seekers_in_district" }),
+  new Endpoint({ main: "/special/seekers_born_after" }),
+  new Endpoint({ main: "/special/seekers_whose_total_experience_exceeds" }),
+  new Endpoint({ main: "/special/employers_with_property" }),
+  new Endpoint({ main: "/special/vacancies_posted_on" }),
+  new Endpoint({
+    main: "/special/latest_vacancy_of_employers_whose_name_contains",
+  }),
+  new Endpoint({
+    main: "/special/positions_from_open_vacancies_whose_average_salary_exceeds",
+    parameters: [
       new Parameter(
         "Зарплата",
         (id) => makeNumberInput(id, "52000", "10000", "1000000"),
         "52000"
       ),
-    ]
-  ),
-  new Endpoint("/special/max_salaries_for_position"),
+    ],
+  }),
+  new Endpoint({ main: "/special/max_salaries_for_position" }),
 ];
 
 const endpoints = endpointInfo.reduce((map, info) => {
