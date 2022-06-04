@@ -93,12 +93,16 @@ class Column {
     }>${value ?? "Выбрать... <input class='link-input input' required>"}</a>`;
   }
 
-  async getName(id, endpoint, column) {
-    const name = (await fetchJson({ endpoint: `${endpoint}/${id}` }))[column];
+  async fetchName(id, endpoint, column) {
+    const name =
+      this.names?.[id] ??
+      (await fetchJson({ endpoint: `${endpoint}/${id}` }))[column];
     if (this.ids) {
       this.ids[name] = id;
+      this.names[id] = name;
     } else {
       this.ids = { [name]: id };
+      this.names = { [id]: name };
     }
     return name;
   }
@@ -118,7 +122,7 @@ const columnInfo = [
       return this.makeLink(value, "/employers");
     },
     async function (id) {
-      return await this.getName(id, "/employers", "employer");
+      return await this.fetchName(id, "/employers", "employer");
     }
   ),
   new Column(
@@ -128,7 +132,7 @@ const columnInfo = [
       return this.makeLink(value, "/seekers");
     },
     async function (id) {
-      return await this.getName(id, "/seekers", "first_name");
+      return await this.fetchName(id, "/seekers", "first_name");
     }
   ),
   new Column("table_name", "название таблицы"),
@@ -299,21 +303,23 @@ const columnInfo = [
     "фото",
     function (id, path) {
       return `<div class="photo-container">${
-        this.images[path] ?? "<img class='photo'>"
+        this.images[path]?.outerHTML ?? "<img class='photo'>"
       }${makeFileInput(id, path, "image/png, image/jpeg")}</div>`;
     },
     async function (path) {
-      // TODO: pick a photo from this.images if it exists
-      const img = document.createElement("img");
-      img.classList.add("photo");
-      if (path) {
-        const photo = await fetchBlob(`/${path}`);
-        const link = URL.createObjectURL(photo);
-        img.src = link;
-        if (this.images) {
-          this.images[path] = img.outerHTML;
-        } else {
-          this.images = { [path]: img.outerHTML };
+      let img = this.images?.[path];
+      if (!img) {
+        img = document.createElement("img");
+        img.classList.add("photo");
+        if (path) {
+          const photo = await fetchBlob(`/${path}`);
+          const link = URL.createObjectURL(photo);
+          img.src = link;
+          if (this.images) {
+            this.images[path] = img;
+          } else {
+            this.images = { [path]: img };
+          }
         }
       }
       return `<div class="photo-container">${path}${img.outerHTML}${
