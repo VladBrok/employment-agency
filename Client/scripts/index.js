@@ -32,7 +32,7 @@ main.addEventListener("change", async (e) => {
       e.target.reportValidity();
       return;
     }
-    main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "";
+    main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "#";
   }
 });
 
@@ -134,8 +134,6 @@ document.addEventListener("click", async (e) => {
     const values = Array.from(e.target.parentElement.querySelectorAll("td"))
       .map((x) => x.textContent)
       .slice(1);
-    console.log(values);
-
     main.innerHTML = await makeForm(
       e.target,
       "Обновить",

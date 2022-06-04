@@ -79,8 +79,9 @@ async function sendFormAsPost(e) {
 
 async function sendForm(callback, e) {
   const form = document.querySelector(".crud-form");
-  const names = [];
+  let preservePhoto = false;
   const values = [];
+  const names = [];
 
   for (const input of form.querySelectorAll(".input, input:checked")) {
     if (input.checkValidity && !input.checkValidity()) {
@@ -88,14 +89,24 @@ async function sendForm(callback, e) {
     }
 
     if (input.getAttribute("type") === "file") {
-      values.push(input.files[0] ?? "");
+      if (
+        !input.files[0] &&
+        document.querySelector(".photo")?.getAttribute("src") !== "#"
+      ) {
+        preservePhoto = true;
+      } else {
+        values.push(input.files[0] ?? "");
+      }
     } else {
       values.push(input.value ?? input.getAttribute("value"));
     }
   }
 
   for (const label of form.querySelectorAll("label")) {
-    if (!label.textContent.endsWith(":")) {
+    if (
+      !label.textContent.endsWith(":") ||
+      (label.textContent.includes("фото") && preservePhoto)
+    ) {
       continue;
     }
 
@@ -116,7 +127,7 @@ async function sendForm(callback, e) {
   }
 
   const formData = new FormData();
-  names.map((name, i) => formData.append(name, values[i]));
+  values.map((value, i) => formData.append(names[i], value));
   callback(form, formData);
   e.preventDefault();
 }
