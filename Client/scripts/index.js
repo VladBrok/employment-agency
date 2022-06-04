@@ -5,10 +5,6 @@ import confirmDelete from "./confirm.js";
 import { deleteEntity } from "./api.js";
 import drawChart from "./chart.js";
 
-if (!localStorage.getItem("token")) {
-  location.replace("./login.html");
-}
-
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 

@@ -1,12 +1,24 @@
+document.addEventListener("input", (e) => {
+  e.target.setCustomValidity("");
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("button")) {
+    return;
+  }
+
+  [...document.querySelectorAll("[data-error]")]
+    .filter((i) => i.validity.patternMismatch)
+    .forEach((i) => {
+      i.setCustomValidity(i.dataset.error);
+      i.reportValidity();
+    });
+});
+
 function makeFileInput(id, value, accept, required = false) {
   const input = makeInput(id, value, "file", required);
   input.setAttribute("accept", accept);
   return input.outerHTML;
-}
-
-function makeDateTimeInput(id, value, required = false) {
-  return makeInput(id, formatDateTime(value), "datetime-local", required)
-    .outerHTML;
 }
 
 function makeDateInput(id, value, min, max, required = false) {
@@ -39,7 +51,7 @@ function makeTextInput(
   maxlength = null,
   required = false,
   pattern = null,
-  placeholer = null
+  errorMessage = null
 ) {
   const input = makeInput(id, value, "text", required);
   if (minlength) {
@@ -51,8 +63,8 @@ function makeTextInput(
   if (pattern) {
     input.setAttribute("pattern", pattern);
   }
-  if (placeholer) {
-    input.setAttribute("placeholder", placeholer);
+  if (errorMessage) {
+    input.setAttribute("data-error", errorMessage);
   }
   return input.outerHTML;
 }
@@ -83,19 +95,15 @@ function formatDate(date) {
   return dayMonthYear.reverse().join("-");
 }
 
-function formatDateTime(value) {
-  if (!value) {
-    return;
-  }
-  const dateTime = value.split(" ");
-  return `${formatDate(dateTime[0])}T${dateTime[1].padStart(8, "0")}`;
-}
-
+const PATTERNS = {
+  LETTER_ONLY:
+    "[A-Za-zАаБбВвГгДдЕеЁеЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчЩщЪъЫыЬьЭэЮюЯя]+",
+};
 export {
   makeFileInput,
-  makeDateTimeInput,
   makeDateInput,
   makeNumberInput,
   makeTextInput,
   makeEmailInput,
+  PATTERNS,
 };

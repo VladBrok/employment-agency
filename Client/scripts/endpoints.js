@@ -1,4 +1,4 @@
-import { makeDateInput, makeNumberInput, makeTextInput } from "./inputs.js";
+import { makeDateInput, makeNumberInput, makeTextInput } from "./input.js";
 
 class Parameter {
   constructor(name, convertToInput) {

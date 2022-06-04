@@ -1,12 +1,12 @@
 import fetchJson, { fetchBlob, fetchAllJson } from "./api.js";
 import {
   makeFileInput,
-  makeDateTimeInput,
   makeDateInput,
   makeNumberInput,
   makeTextInput,
   makeEmailInput,
-} from "./inputs.js";
+  PATTERNS,
+} from "./input.js";
 
 class Column {
   constructor(
@@ -49,8 +49,8 @@ class Column {
         1,
         20,
         true,
-        `^(?!(?:${disallowedWords})(?=\/|$))[^$*()+&\^@!?:;.,-]+`,
-        "Значение должно быть уникальным"
+        `^(?!(?:${disallowedWords})(?=\/|$))${PATTERNS.LETTER_ONLY}`,
+        "Значение должно быть уникальным и состоять из букв русского или латинского алфавита"
       );
     }
 
@@ -184,7 +184,15 @@ const columnInfo = [
     makeNumberInput(id, value, 1, 1000000, true)
   ),
   new Column("employer", "работодатель", (id, value) =>
-    makeTextInput(id, value, 1, 30, true)
+    makeTextInput(
+      id,
+      value,
+      1,
+      30,
+      true,
+      PATTERNS.LETTER_ONLY,
+      "Название компании должно содержать только буквы русского или латинского алфавита"
+    )
   ),
   new Column("phone", "номер телефона", (id, value) =>
     makeTextInput(
@@ -194,13 +202,11 @@ const columnInfo = [
       null,
       true,
       "071[0-9]{7}",
-      "Пример: 0710120500"
+      "Номер должен содержать 10 цифр и начинаться с 071"
     )
   ),
   new Column("email", "почта", makeEmailInput),
-  new Column("employer_day", "дата размещения", (id, value) =>
-    makeDateTimeInput(id, value)
-  ),
+  new Column("employer_day", "дата размещения", () => null),
   new Column("salary_new", "предлагаемая зарплата", (id, value) =>
     makeNumberInput(id, value, 1000, 1000000)
   ),
@@ -217,13 +223,37 @@ const columnInfo = [
     (v) => (v === "Да" ? "True" : "False")
   ),
   new Column("last_name", "фамилия", (id, value) =>
-    makeTextInput(id, value, 3, 20, true)
+    makeTextInput(
+      id,
+      value,
+      3,
+      20,
+      true,
+      PATTERNS.LETTER_ONLY,
+      "Фамилия должна содержать только буквы русского или латинского алфавита"
+    )
   ),
   new Column("first_name", "имя", (id, value) =>
-    makeTextInput(id, value, 3, 20, true)
+    makeTextInput(
+      id,
+      value,
+      3,
+      20,
+      true,
+      PATTERNS.LETTER_ONLY,
+      "Имя должно содержать только буквы русского или латинского алфавита"
+    )
   ),
   new Column("patronymic", "отчество", (id, value) =>
-    makeTextInput(id, value, 3, 20)
+    makeTextInput(
+      id,
+      value,
+      3,
+      20,
+      false,
+      PATTERNS.LETTER_ONLY,
+      "Отчество должно содержать только буквы русского или латинского алфавита"
+    )
   ),
   new Column(
     "birthday",
@@ -262,9 +292,7 @@ const columnInfo = [
   new Column("education", "образование", (id, value) =>
     makeTextInput(id, value, 3, 20)
   ),
-  new Column("seeker_day", "дата публикации", (id, value) =>
-    makeDateTimeInput(id, value)
-  ),
+  new Column("seeker_day", "дата публикации", () => null),
   new Column("information", "информация", makeTextInput),
   new Column(
     "photo",

@@ -116,7 +116,8 @@ public static class Update
     public static string Employers(string table, HttpRequest request)
     {
         var entity = request.Form;
-        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        return $@"INSERT INTO addresses(street_id, building_number) 
+            VALUES('{entity["street_id"]}', '{entity["building_number"]}');
         UPDATE {table} SET employer = '{entity["employer"]}',
             email = {Default.IfEmpty(entity["email"])},
             phone = {Default.IfEmpty(entity["phone"])},
@@ -127,7 +128,8 @@ public static class Update
     public static string Seekers(string table, HttpRequest request)
     {
         var entity = request.Form;
-        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        return $@"INSERT INTO addresses(street_id, building_number) 
+            VALUES('{entity["street_id"]}', '{entity["building_number"]}');
         UPDATE {table} SET first_name = '{entity["first_name"]}',
             last_name = '{entity["last_name"]}',
             patronymic = {Default.IfEmpty(entity["patronymic"])},
@@ -212,7 +214,8 @@ public static class Create
     public static string Employers(string table, HttpRequest request)
     {
         var entity = request.Form;
-        return $@"INSERT INTO addresses(street_id, building_number) VALUES('{entity["street_id"]}', '{entity["building_number"]}');
+        return $@"INSERT INTO addresses(street_id, building_number) 
+            VALUES('{entity["street_id"]}', '{entity["building_number"]}');
         INSERT INTO {table} (employer, email, phone, property_id, address_id)
         VALUES('{entity["employer"]}', {Default.IfEmpty(entity["email"])}, 
         {Default.IfEmpty(entity["phone"])}, '{entity["property_id"]}', (SELECT max(id) FROM addresses))";
