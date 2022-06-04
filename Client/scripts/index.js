@@ -11,18 +11,28 @@ const main = document.querySelector(".main");
 navigation.addEventListener("click", handleNavigationClick);
 main.addEventListener("change", async (e) => {
   if (e.target.classList.contains("download")) {
-    const type = e.target.value;
+    const reportType = e.target.value;
     e.target.selectedIndex = 0;
 
-    await downloadReport(e.target, type);
+    await downloadReport(e.target, reportType);
     return;
   }
 
   if (e.target.files) {
-    // TODO: check an extension
-    main.querySelector(".photo").src = e.target.files[0]
-      ? URL.createObjectURL(e.target.files[0])
-      : "";
+    const ALLOWED_EXTENSIONS = new Set([".jpg", ".png", ".jpeg"]);
+    const file = e.target.files[0];
+    const extension = file?.name.slice(file.name.indexOf("."));
+
+    if (extension && !ALLOWED_EXTENSIONS.has(extension)) {
+      e.target.setCustomValidity(
+        `Файл должен иметь один из следующих форматов: ${[
+          ...ALLOWED_EXTENSIONS.values(),
+        ].join(", ")}`
+      );
+      e.target.reportValidity();
+      return;
+    }
+    main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "";
   }
 });
 
