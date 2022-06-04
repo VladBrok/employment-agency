@@ -94,15 +94,11 @@ class Column {
   }
 
   async fetchName(id, endpoint, column) {
-    const name =
-      this.names?.[id] ??
-      (await fetchJson({ endpoint: `${endpoint}/${id}` }))[column];
+    const name = (await fetchJson({ endpoint: `${endpoint}/${id}` }))[column];
     if (this.ids) {
       this.ids[name] = id;
-      this.names[id] = name;
     } else {
       this.ids = { [name]: id };
-      this.names = { [id]: name };
     }
     return name;
   }
@@ -307,21 +303,18 @@ const columnInfo = [
       }${makeFileInput(id, path, "image/png, image/jpeg")}</div>`;
     },
     async function (path) {
-      let img = this.images?.[path];
-      if (!img) {
-        img = document.createElement("img");
-        img.classList.add("photo");
-        if (path) {
-          const photo = await fetchBlob(`/photos/${path}`);
-          const link = URL.createObjectURL(photo);
-          img.src = link;
-          if (this.images) {
-            this.images[path] = img;
-          } else {
-            this.images = { [path]: img };
-          }
+      const img = document.createElement("img");
+      img.classList.add("photo");
+      if (path) {
+        const photo = await fetchBlob(`/photos/${path}`);
+        img.src = URL.createObjectURL(photo);
+        if (this.images) {
+          this.images[path] = img;
+        } else {
+          this.images = { [path]: img };
         }
       }
+
       return `<div class="photo-container">${path}${img.outerHTML}${
         path ? "" : "Фото нет"
       }</div>`;
