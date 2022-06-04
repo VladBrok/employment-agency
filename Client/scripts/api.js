@@ -8,7 +8,7 @@ async function fetchJson({
   parameterValues = [],
   pageSize = PAGE_SIZE,
 }) {
-  const response = await fetch(
+  const response = await fetchImpl(
     `${`${makeUrl(endpoint)}/${parameterValues.join(
       "/"
     )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
@@ -22,7 +22,7 @@ async function fetchJson({
 }
 
 async function fetchBlob(endpoint) {
-  const response = await fetch(makeUrl(endpoint));
+  const response = await fetchImpl(makeUrl(endpoint));
   return await response.blob();
 }
 
@@ -52,7 +52,10 @@ async function fetchAllJson(endpoint) {
 }
 
 async function put(endpoint, id, formData) {
-  await fetch(`${makeUrl(endpoint)}/${id}`, { method: "PUT", body: formData });
+  await fetchImpl(`${makeUrl(endpoint)}/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
 }
 
 async function post(endpoint, data) {
@@ -65,15 +68,26 @@ async function post(endpoint, data) {
       "Content-Type": "application/json",
     };
   }
-  return await fetch(makeUrl(endpoint), options);
+  return await fetchImpl(makeUrl(endpoint), options);
 }
 
 async function deleteEntity(endpoint, id) {
-  return await fetch(`${makeUrl(endpoint)}/${id}`, { method: "DELETE" });
+  return await fetchImpl(`${makeUrl(endpoint)}/${id}`, { method: "DELETE" });
 }
 
 function makeUrl(endpoint) {
   return `${URL}${endpoint}`;
+}
+
+async function fetchImpl(url, options) {
+  options = {
+    ...options,
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+  return await fetch(url, options);
 }
 
 export { fetchJsonFromTable, fetchBlob, fetchAllJson, put, post, deleteEntity };

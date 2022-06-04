@@ -1,3 +1,5 @@
+import { post } from "./api.js";
+
 const form = document.querySelector(".crud-form");
 const login = document.getElementById("login");
 const password = document.getElementById("password");
@@ -6,22 +8,26 @@ document.addEventListener("input", (e) => {
   e.target.setCustomValidity("");
 });
 
-form.onsubmit = (e) => {
+form.onsubmit = async (e) => {
   e.preventDefault();
 
-  if (validate(login, "admin", "Неверный логин", e)) {
-    if (validate(password, "1234", "Неверный пароль", e)) {
-      sessionStorage.setItem("logged_in", "yes");
-      location.replace("./index.html");
-    }
+  const user = {
+    login: login.value,
+    password: password.value,
+  };
+  const response = await (await post("/login", JSON.stringify(user))).json();
+
+  if (!response.error) {
+    localStorage.setItem("token", response.access_token);
+    location.replace("./index.html");
+    return;
   }
+
+  const input = response.error.indexOf("логин") === -1 ? password : login;
+  setInvalid(input, response.error);
 };
 
-function validate(input, expected, errorMessage) {
-  if (input.value !== expected) {
-    input.setCustomValidity(errorMessage);
-    input.reportValidity();
-    return false;
-  }
-  return true;
+function setInvalid(input, errorMessage) {
+  input.setCustomValidity(errorMessage);
+  input.reportValidity();
 }

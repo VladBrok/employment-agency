@@ -26,9 +26,8 @@ WebApplication BuildApp()
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddControllers();
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    // builder.Services.AddControllers();
+    // builder.Services.AddEndpointsApiExplorer();
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(
@@ -59,12 +58,6 @@ WebApplication BuildApp()
 
 void UseRequiredMiddlewares()
 {
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
     app.UseHttpsRedirection();
     app.UseCors(
         builder =>
@@ -125,7 +118,7 @@ void MapAllEndpoints()
             var jwt = new JwtSecurityToken(
                 notBefore: now,
                 claims: claimsIdentity.Claims,
-                expires: now.Add(TimeSpan.FromMinutes(1)),
+                expires: now.AddDays(1),
                 signingCredentials: new SigningCredentials(
                     GetSymmetricSecurityKey(),
                     SecurityAlgorithms.HmacSha256
