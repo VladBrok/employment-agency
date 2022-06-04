@@ -2,10 +2,8 @@ import { makeTable, updateTable } from "./table.js";
 import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
 import downloadReport from "./report.js";
 import confirmDelete from "./confirm.js";
-import { deleteEntity, fetchJsonFromTable } from "./api.js";
-import "../node_modules/highcharts/es-modules/masters/highcharts.src.js";
-import "../node_modules/highcharts/es-modules/masters/highcharts-3d.src.js";
-import Highcharts from "../node_modules/highcharts/es-modules/Core/Globals.js";
+import { deleteEntity } from "./api.js";
+import drawChart from "./chart.js";
 
 if (!localStorage.getItem("token")) {
   location.replace("./login.html");
@@ -98,117 +96,7 @@ document.addEventListener("click", async (e) => {
   }
 
   if (e.target.classList.contains("chart")) {
-    const data = await fetchJsonFromTable({
-      tableChild: e.target,
-      pageSize: 1e6,
-    });
-    console.log(data);
-
-    const chartType = e.target.dataset.chart;
-    const title = e.target
-      .closest("[data-endpoint]")
-      .querySelector(".title").textContent;
-
-    // TODO: change
-    switch (chartType) {
-      case "1d":
-        Highcharts.chart(main, {
-          title: {
-            text: title,
-          },
-          tooltip: {
-            pointFormat: "{series.name}: <b>{point.percentage:.2f}%</b>",
-          },
-          plotOptions: {
-            pie: {
-              cursor: "pointer",
-            },
-          },
-          series: [
-            {
-              type: "pie",
-              name: "% заявок",
-              data: data.map((d) => [
-                d["Должность"],
-                +d["% заявок"].replace(",", "."),
-              ]),
-            },
-          ],
-        });
-        break;
-      case "2d":
-        Highcharts.chart(main, {
-          chart: {
-            type: "column",
-          },
-          title: {
-            text: title,
-          },
-          xAxis: {
-            visible: false,
-          },
-          yAxis: {
-            title: {
-              text: "Зарплата",
-            },
-          },
-          tooltip: {
-            headerFormat: "<span></span>",
-          },
-          plotOptions: {
-            column: {
-              pointPadding: 0.2,
-              borderWidth: 0,
-            },
-          },
-          series: data.map((d) => ({
-            name: d["Должность"],
-            data: [+d["Средняя зарплата"]],
-          })),
-        });
-        break;
-      case "3d":
-        const DEPTH = 250;
-        Highcharts.chart(main, {
-          chart: {
-            type: "column",
-            options3d: {
-              enabled: true,
-              alpha: 15,
-              beta: 15,
-              depth: DEPTH,
-              viewDistance: 25,
-            },
-          },
-          yAxis: {
-            title: {
-              text: "Опыт",
-            },
-          },
-          xAxis: {
-            title: {
-              text: "Зарплата",
-            },
-          },
-          title: {
-            text: title,
-          },
-          plotOptions: {
-            column: {
-              depth: DEPTH,
-              pointPadding: 0,
-              borderWidth: 0,
-              groupPadding: -1,
-            },
-          },
-          series: data.map((d) => ({
-            name: d["Тип занятости"],
-            data: [[+d["Средняя зарплата"], +d["Средний опыт"]]],
-          })),
-        });
-        break;
-    }
-    document.querySelector(".highcharts-credits").remove();
+    await drawChart(e.target, e.target.dataset.chart, main);
     return;
   }
 
