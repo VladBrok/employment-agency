@@ -11,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 /**
     * Error handling
     * Performance
-    * update или delete нарушает ограничение внешнего клуча
 */
 
 WebApplication app = BuildApp();

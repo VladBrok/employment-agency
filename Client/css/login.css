@@ -1,8 +1,6 @@
-/* TODO: cleanup */
-
 @import url("common.css");
 @import url("controls.css");
-@import url("crud-form.css");
+@import url("form.css");
 
 .form-container {
   margin: 1rem auto;

@@ -89,24 +89,26 @@ public static class Update
 
     public static string Applications(string table, HttpRequest request)
     {
-        string imageFileName = "photos/user.png";
+        string imageFilePath = "media/photos/user.png";
         var imageFile = request.Form.Files.SingleOrDefault();
 
         if (imageFile is not null)
         {
             if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
             {
-                imageFileName = "";
+                imageFilePath = "";
             }
             else
             {
-                using var stream = File.Create(imageFileName);
+                using var stream = File.Create(imageFilePath);
                 imageFile.CopyToAsync(stream).Wait();
             }
             return UpdateTable(
                 table,
                 request.Form.Select(x => x.Key).Append("photo"),
-                request.Form.Select(x => x.Value.ToString()).Append(imageFileName)
+                request.Form
+                    .Select(x => x.Value.ToString())
+                    .Append(imageFilePath[(imageFilePath.LastIndexOf('/') + 1)..])
             );
         }
 
@@ -187,24 +189,26 @@ public static class Create
 
     public static string Applications(string table, HttpRequest request) // dup
     {
-        string imageFileName = "photos/user.png";
+        string imageFilePath = "media/photos/user.png";
         var imageFile = request.Form.Files.SingleOrDefault();
 
         if (imageFile is not null)
         {
             if (!_allowedExtensions.Contains(Path.GetExtension(imageFile.FileName)))
             {
-                imageFileName = "";
+                imageFilePath = "";
             }
             else
             {
-                using var stream = File.Create(imageFileName);
+                using var stream = File.Create(imageFilePath);
                 imageFile.CopyToAsync(stream).Wait();
             }
             return CreateTable(
                 table,
                 request.Form.Select(x => x.Key).Append("photo"),
-                request.Form.Select(x => x.Value.ToString()).Append(imageFileName)
+                request.Form
+                    .Select(x => x.Value.ToString())
+                    .Append(imageFilePath[(imageFilePath.LastIndexOf('/') + 1)..])
             );
         }
 

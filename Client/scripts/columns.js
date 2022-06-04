@@ -312,7 +312,7 @@ const columnInfo = [
         img = document.createElement("img");
         img.classList.add("photo");
         if (path) {
-          const photo = await fetchBlob(`/${path}`);
+          const photo = await fetchBlob(`/photos/${path}`);
           const link = URL.createObjectURL(photo);
           img.src = link;
           if (this.images) {

@@ -18,8 +18,9 @@ public static class FileMapper
             ) =>
             {
                 var report = new ReportFactory().MakeReport(type);
-                await report.BuildAsync(entities, fileName, title);
-                await SendFileAsync(fileName, response, "application/octet-stream");
+                string file = $"media/reports/{fileName}";
+                await report.BuildAsync(entities, file, title);
+                await SendFileAsync(file, response, "application/octet-stream");
             }
         );
 
@@ -27,7 +28,7 @@ public static class FileMapper
             "api/photos/{fileName}",
             async (string fileName, HttpResponse response) =>
             {
-                await SendFileAsync($"photos/{fileName}", response, "image/png");
+                await SendFileAsync($"media/photos/{fileName}", response, "image/png");
             }
         );
     }
