@@ -14,7 +14,6 @@ async function fetchJson({
     )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
   );
 
-  console.log(response.status);
   if (response.status === 404) {
     return [];
   }
@@ -87,7 +86,9 @@ async function fetchImpl(url, options) {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   };
-  return await fetch(url, options);
+  const response = await fetch(url, options);
+  console.log(response.status);
+  return response;
 }
 
 export { fetchJsonFromTable, fetchBlob, fetchAllJson, put, post, deleteEntity };

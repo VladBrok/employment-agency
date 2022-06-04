@@ -166,7 +166,7 @@ public static class SpecialQueriesMapper
                     page,
                     pageSize,
                     Select.From(
-                        $"get_latest_vacancy_of_employers_whose_name_contains('{{pattern}}')"
+                        $"get_latest_vacancy_of_employers_whose_name_contains('{pattern}')"
                     ),
                     filter
                 )

@@ -93,8 +93,6 @@ async function extractCells(row) {
 }
 
 async function updateTable(tableChild, page = 0) {
-  console.log("table");
-
   const data = await fetchJsonFromTable({ tableChild, page });
   tableChild.closest("[data-endpoint]").querySelector(".body").innerHTML =
     await extractRows(data);
