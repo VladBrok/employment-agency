@@ -1,16 +1,19 @@
 import { post } from "./api.js";
+import loadingDecorator from "./loading.js";
 
 const form = document.querySelector(".crud-form");
 const login = document.getElementById("login");
 const password = document.getElementById("password");
 
-document.addEventListener("input", (e) => {
+document.addEventListener("input", handleInput);
+form.onsubmit = loadingDecorator(handleSubmit);
+
+function handleInput(e) {
   e.target.setCustomValidity("");
-});
+}
 
-form.onsubmit = async (e) => {
+async function handleSubmit(e) {
   e.preventDefault();
-
   const user = {
     login: login.value,
     password: password.value,
@@ -23,9 +26,9 @@ form.onsubmit = async (e) => {
     return;
   }
 
-  const input = response.error.indexOf("логин") === -1 ? password : login;
+  const input = response.error.includes("логин") ? login : password;
   setInvalid(input, response.error);
-};
+}
 
 function setInvalid(input, errorMessage) {
   input.setCustomValidity(errorMessage);
