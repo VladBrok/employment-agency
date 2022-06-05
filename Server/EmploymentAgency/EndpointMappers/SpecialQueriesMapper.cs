@@ -1,5 +1,7 @@
 namespace EmploymentAgency.EndpointMappers;
 
+using EmploymentAgency.Utils;
+
 public static class SpecialQueriesMapper
 {
     public static void Map(WebApplication app, PostgreSql postgres)

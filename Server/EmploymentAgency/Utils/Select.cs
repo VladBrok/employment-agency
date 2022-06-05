@@ -1,4 +1,4 @@
-namespace EmploymentAgency;
+namespace EmploymentAgency.Utils;
 
 public static class Select
 {
@@ -243,13 +243,5 @@ public static class Create
         {entity["status_id"]},
         {entity["speciality_id"]},
         (SELECT max(id) FROM addresses))";
-    }
-}
-
-public static class Default
-{
-    public static string IfEmpty(string value)
-    {
-        return value == "" ? "DEFAULT" : $"'{value}'";
     }
 }

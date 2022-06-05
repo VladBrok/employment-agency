@@ -37,6 +37,7 @@ public class RetryStrategy
             try
             {
                 await callback();
+                Console.WriteLine($"Success on retry #{retry}");
                 return;
             }
             catch (E exception) when (isTransient(exception))

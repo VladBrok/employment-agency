@@ -1,5 +1,7 @@
 namespace EmploymentAgency.EndpointMappers;
 
+using EmploymentAgency.Utils;
+
 public static class CrudQueriesMapper
 {
     private static PostgreSql? _postgres;
