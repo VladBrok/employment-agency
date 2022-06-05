@@ -6,23 +6,32 @@ async function downloadReport(tableChild, type) {
     tableChild,
     pageSize: 1e6,
   });
-  let first = {};
-  Object.keys(data[0]).forEach(
-    (k) => (first = { ...first, [columns[k].displayName]: data[0][k] })
-  );
-  data[0] = first;
+  data[0] = convertColumnNames(data[0]);
 
   const fileName = `report.${type === "excel" ? "xlsx" : type}`;
+  const title = tableChild
+    .closest("[data-endpoint]")
+    .querySelector(".title").textContent;
   const report = await post(
-    `/reports/${type}?fileName=${fileName}&title=${
-      tableChild.closest("[data-endpoint]").querySelector(".title").textContent
-    }`,
+    `/reports/${type}?fileName=${fileName}&title=${title}`,
     JSON.stringify(data)
   );
 
+  download(await report.blob(), fileName);
+}
+
+function convertColumnNames(obj) {
+  let result = {};
+  Object.keys(obj).forEach(
+    (key) => (result = { ...result, [columns[key].displayName]: obj[key] })
+  );
+  return result;
+}
+
+function download(reportBlob, fileName) {
   const link = document.createElement("a");
   link.download = fileName;
-  link.href = URL.createObjectURL(await report.blob());
+  link.href = URL.createObjectURL(reportBlob);
   link.click();
   URL.revokeObjectURL(link.href);
 }

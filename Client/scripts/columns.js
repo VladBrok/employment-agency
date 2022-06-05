@@ -133,7 +133,9 @@ const columnInfo = [
   ),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
-  new Column("time_modified", "время совершения операции"),
+  new Column("time_modified", "время совершения"),
+  new Column("record_id", "id записи"),
+  new Column("user_modified", "пользователь, совершивший операцию"),
   new Column("property", "тип собственности", async function (
     id,
     value,

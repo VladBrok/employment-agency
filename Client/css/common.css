@@ -17,6 +17,7 @@ body {
   background: var(--tertiary-color);
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
+  position: relative;
 }
 
 a {
@@ -54,4 +55,13 @@ button {
   display: flex;
   justify-content: space-around;
   align-items: center;
+}
+
+.loading {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.2rem;
+  visibility: hidden;
+  z-index: 200;
 }

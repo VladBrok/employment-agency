@@ -3,42 +3,36 @@ import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
 import downloadReport from "./report.js";
 import confirmDelete from "./confirm.js";
 import { deleteEntity } from "./api.js";
+import loadingDecorator from "./loading.js";
 import drawChart from "./chart.js";
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 
-navigation.addEventListener("click", handleNavigationClick);
-main.addEventListener("change", async (e) => {
-  if (e.target.classList.contains("download")) {
-    const reportType = e.target.value;
-    e.target.selectedIndex = 0;
+navigation.addEventListener("click", loadingDecorator(handleNavigationClick));
+document.addEventListener("click", loadingDecorator(handleDocumentClick));
+main.addEventListener("change", loadingDecorator(handleChange));
 
-    await downloadReport(e.target, reportType);
+async function handleNavigationClick(e) {
+  if (!e.target.dataset.endpoint) {
     return;
   }
 
-  if (e.target.files) {
-    const ALLOWED_EXTENSIONS = new Set([".jpg", ".png", ".jpeg"]);
-    const file = e.target.files[0];
-    const extension = file?.name.slice(file.name.indexOf("."));
+  const selected = navigation.querySelector(".selected-item");
+  const newSelected =
+    e.target.closest(".item.parent") ?? e.target.closest(".item");
+  selected.classList.remove("selected-item");
+  newSelected.classList.add("selected-item");
 
-    if (extension && !ALLOWED_EXTENSIONS.has(extension)) {
-      e.target.setCustomValidity(
-        `Файл должен иметь один из следующих форматов: ${[
-          ...ALLOWED_EXTENSIONS.values(),
-        ].join(", ")}`
-      );
-      e.target.reportValidity();
-      return;
-    }
-    main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "#";
-  }
-});
+  const endpoint = e.target.dataset.endpoint;
+  const chartType = e.target.dataset.chart;
+  const title = e.target.textContent;
+  main.innerHTML = await makeTable({ endpoint, title, chartType });
+}
 
 let choosing = false;
 
-document.addEventListener("click", async (e) => {
+async function handleDocumentClick(e) {
   if (e.target.classList.contains("menu")) {
     navigation.classList.toggle("hidden");
     document.querySelector(".menu").outerHTML = navigation.classList.contains(
@@ -143,21 +137,31 @@ document.addEventListener("click", async (e) => {
     );
     return;
   }
-});
+}
 
-async function handleNavigationClick(e) {
-  if (!e.target.dataset.endpoint) {
+async function handleChange(e) {
+  if (e.target.classList.contains("download")) {
+    const reportType = e.target.value;
+    e.target.selectedIndex = 0;
+
+    await downloadReport(e.target, reportType);
     return;
   }
 
-  const selected = navigation.querySelector(".selected-item");
-  const newSelected =
-    e.target.closest(".item.parent") ?? e.target.closest(".item");
-  selected.classList.remove("selected-item");
-  newSelected.classList.add("selected-item");
+  if (e.target.files) {
+    const ALLOWED_EXTENSIONS = new Set([".jpg", ".png", ".jpeg"]);
+    const file = e.target.files[0];
+    const extension = file?.name.slice(file.name.indexOf("."));
 
-  const endpoint = e.target.dataset.endpoint;
-  const chartType = e.target.dataset.chart;
-  const title = e.target.textContent;
-  main.innerHTML = await makeTable({ endpoint, title, chartType });
+    if (extension && !ALLOWED_EXTENSIONS.has(extension)) {
+      e.target.setCustomValidity(
+        `Файл должен иметь один из следующих форматов: ${[
+          ...ALLOWED_EXTENSIONS.values(),
+        ].join(", ")}`
+      );
+      e.target.reportValidity();
+      return;
+    }
+    main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "#";
+  }
 }

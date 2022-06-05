@@ -11,12 +11,19 @@ class Parameter {
 }
 
 class Endpoint {
-  constructor({ main, children = [], parameters = [], title = "?" }) {
+  constructor({
+    main,
+    children = [],
+    parameters = [],
+    title = "?",
+    access = null,
+  }) {
     this.main = main;
     this.children = children;
     this.parameters = parameters;
     this.title = title;
-    this.access = main.indexOf("special") === -1 ? "full" : "readonly";
+    this.access =
+      access ?? (main.indexOf("special") === -1 ? "full" : "readonly");
   }
 }
 
@@ -158,6 +165,7 @@ const endpointInfo = [
       new Parameter("Должность", (id) => makeTextInput(id, "Промоутер", 1, 40)),
     ],
   }),
+  new Endpoint({ main: "/change_log", access: "readonly" }),
 ];
 
 const endpoints = endpointInfo.reduce((map, info) => {
