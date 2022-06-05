@@ -3,7 +3,7 @@ document.addEventListener("input", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-  if (!e.target.classList.contains("button")) {
+  if (!e.target.closest("form")) {
     return;
   }
 

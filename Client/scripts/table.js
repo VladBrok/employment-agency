@@ -20,7 +20,10 @@ async function makeTable({
   <div class="table-container" data-endpoint="${endpointForFetching}" data-access="${
     endpoints[endpoint].access
   }">
-    <h2 class="title">${title}</h2>  
+    <h2 class="title">${title}</h2>
+    ${
+      data?.length
+        ? `
     <div class="before-table">
       <table>
         <tr class="search">
@@ -49,7 +52,9 @@ async function makeTable({
         </select>
         <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись">
       </div>
-    </div>
+    </div>`
+        : ""
+    }
     <div class="table-wrapper">
     <table class="table">
       <thead class="head">
@@ -63,16 +68,19 @@ async function makeTable({
     <div class="pages">
       <div class="previous-page element button disabled">❮</div>
       <div class="current-page element button disabled">1</div>
-      <div class="next-page element button">❯</div>
+      <div class="next-page element button ${
+        data?.length ? "" : "disabled"
+      }">❯</div>
     </div>
   </div>`;
 }
 
 function extractColumns(data) {
   return data?.length
-    ? `<tr><th>${Object.keys(data[0])
-        .map((k) => columns[k].displayName)
-        .join("</th><th>")}</th></tr>`
+    ? `<tr><th>
+    ${Object.keys(data[0])
+      .map((k) => columns[k].displayName)
+      .join("</th><th>")}</th></tr>`
     : "";
 }
 
