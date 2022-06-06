@@ -7,15 +7,15 @@ function confirm(message, buttonText) {
       <button class="search-button button danger-button">${buttonText}</button>`
     );
     document.body.querySelector(".cancel-button").onclick = () =>
-      reportResult(resolve, false);
+      hideModal(resolve, false);
     document.body.querySelector(".danger-button").onclick = () =>
-      reportResult(resolve, true);
+      hideModal(resolve, true);
   });
 }
 
 function addModal(content, actions) {
   const modal = `
-      <div class="modal">
+      <div class="modal" tabindex="-1">
         <div class="confirm">
           ${content}
           <div class="actions">
@@ -24,20 +24,20 @@ function addModal(content, actions) {
         </div>
       </div>`;
   document.body.insertAdjacentHTML("beforeend", modal);
+  document.querySelector(".modal").focus();
 }
 
-function reportResult(callback, result) {
+function hideModal(callback, result = null) {
   document.body.querySelector(".modal").remove();
   callback(result);
 }
 
-function showInfo(info) {
+function showInfo(handleOk, info) {
   addModal(
     `<h1 class="title">${info}</h1>`,
     `<button class="search-button button expanded-button ok">Ок</button>`
   );
-  document.body.querySelector(".ok").onclick = () =>
-    location.replace("../index.html");
+  document.body.querySelector(".ok").onclick = () => hideModal(handleOk);
 }
 
 export { confirm, showInfo };

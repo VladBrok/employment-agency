@@ -16,6 +16,8 @@ navigation.addEventListener("click", loadingDecorator(handleNavigationClick));
 document.addEventListener("click", loadingDecorator(handleDocumentClick));
 main.addEventListener("change", loadingDecorator(handleChange));
 
+let displayTable;
+
 async function handleNavigationClick(e) {
   if (!e.target.dataset.endpoint) {
     return;
@@ -34,10 +36,13 @@ async function handleNavigationClick(e) {
   const endpoint = e.target.dataset.endpoint;
   const chartType = e.target.dataset.chart;
   const title = e.target.textContent;
-  main.innerHTML = await makeTable({ endpoint, title, chartType });
+  displayTable = async () =>
+    (main.innerHTML = await makeTable({ endpoint, chartType, title }));
+  displayTable();
 }
 
 let choosing = false;
+const showMessage = showInfo.bind(null, () => displayTable());
 
 async function handleDocumentClick(e) {
   if (e.target.classList.contains("menu")) {
@@ -88,14 +93,16 @@ async function handleDocumentClick(e) {
   }
 
   if (e.target.classList.contains("update-button")) {
-    await sendFormAsPut(e);
-    showInfo("Данные обновлены!");
+    if (await sendFormAsPut(e)) {
+      showMessage("Данные обновлены!");
+    }
     return;
   }
 
   if (e.target.classList.contains("create-button")) {
-    await sendFormAsPost(e);
-    showInfo("Новая запись создана!");
+    if (await sendFormAsPost(e)) {
+      showMessage("Новая запись создана!");
+    }
     return;
   }
 
@@ -124,7 +131,7 @@ async function handleDocumentClick(e) {
         main.querySelector("[data-endpoint]").dataset.endpoint,
         main.querySelector("[data-id]").dataset.id
       );
-      showInfo("Данные удалены!");
+      showMessage("Данные удалены!");
     }
     return;
   }
@@ -136,7 +143,7 @@ async function handleDocumentClick(e) {
     );
     if (confirmed) {
       await fetchJson({ endpoint: e.target.dataset.endpoint });
-      showInfo("Данные сгенерированы!");
+      showMessage("Данные сгенерированы!");
     }
     return;
   }

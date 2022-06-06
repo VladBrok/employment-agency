@@ -63,7 +63,7 @@ async function makeForm(
 }
 
 async function sendFormAsPut(e) {
-  await sendForm(
+  return await sendForm(
     async (form, data) =>
       await put(form.dataset.endpoint, form.dataset.id, data),
     e
@@ -71,7 +71,7 @@ async function sendFormAsPut(e) {
 }
 
 async function sendFormAsPost(e) {
-  await sendForm(
+  return await sendForm(
     async (form, data) => await post(form.dataset.endpoint, data),
     e
   );
@@ -85,7 +85,7 @@ async function sendForm(callback, e) {
 
   for (const input of form.querySelectorAll(".input, input:checked")) {
     if (input.checkValidity && !input.checkValidity()) {
-      return;
+      return false;
     }
 
     if (input.getAttribute("type") === "file") {
@@ -130,6 +130,7 @@ async function sendForm(callback, e) {
   values.map((value, i) => formData.append(names[i], value));
   callback(form, formData);
   e.preventDefault();
+  return true;
 }
 
 export { makeForm, sendFormAsPut, sendFormAsPost };
