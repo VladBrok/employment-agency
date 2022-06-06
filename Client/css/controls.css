@@ -79,3 +79,7 @@
   background: var(--secondary-color);
   color: var(--primary-color);
 }
+
+.expanded-button {
+  font-size: 1.2rem;
+}

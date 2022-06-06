@@ -133,6 +133,15 @@ void MapAllEndpoints()
             return Results.Ok(response);
         }
     );
+
+    app.MapGet(
+        "api/generate",
+        async () =>
+        {
+            string command = await File.ReadAllTextAsync("../sql/employment_agency.sql");
+            await postgres.ExecuteAsync(command);
+        }
+    );
 }
 
 SymmetricSecurityKey GetSymmetricSecurityKey()

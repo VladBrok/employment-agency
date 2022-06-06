@@ -37,7 +37,7 @@ async function makeTable({
                 <tr class="search">
                   <td><label for="search${i}">${param.name}:</label></td>
                   <td>${param.convertToInput(`search${i}`)}</td>
-                  <td><button class="search-button button enter-button">Ввод</button></td>
+                  <td><button class="search-button button find">Ввод</button></td>
                 </tr>`
           )
           .join("")}

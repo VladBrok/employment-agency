@@ -1,8 +1,8 @@
 import { makeTable, updateTable } from "./table.js";
 import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
 import { ensureAuthenticated, exit } from "./auth.js";
-import { deleteEntity } from "./api.js";
-import confirmDelete from "./confirm.js";
+import fetchJson, { deleteEntity } from "./api.js";
+import { confirm, showInfo } from "./modal-windows.js";
 import downloadReport from "./report.js";
 import loadingDecorator from "./loading.js";
 import drawChart from "./chart.js";
@@ -26,6 +26,10 @@ async function handleNavigationClick(e) {
     e.target.closest(".item.parent") ?? e.target.closest(".item");
   selected.classList.remove("selected-item");
   newSelected.classList.add("selected-item");
+
+  if (e.target.dataset.category === "not-a-table") {
+    return;
+  }
 
   const endpoint = e.target.dataset.endpoint;
   const chartType = e.target.dataset.chart;
@@ -85,15 +89,17 @@ async function handleDocumentClick(e) {
 
   if (e.target.classList.contains("update-button")) {
     await sendFormAsPut(e);
+    showInfo("Данные обновлены!");
     return;
   }
 
   if (e.target.classList.contains("create-button")) {
     await sendFormAsPost(e);
+    showInfo("Новая запись создана!");
     return;
   }
 
-  if (e.target.classList.contains("search-button")) {
+  if (e.target.classList.contains("find")) {
     await updateTable(e.target);
     return;
   }
@@ -109,12 +115,28 @@ async function handleDocumentClick(e) {
   }
 
   if (e.target.classList.contains("delete")) {
-    const confirmed = await confirmDelete();
+    const confirmed = await confirm(
+      "Все зависимые записи также удалятся. Данное действие нельзя отменить.",
+      "Удалить"
+    );
     if (confirmed) {
       await deleteEntity(
         main.querySelector("[data-endpoint]").dataset.endpoint,
         main.querySelector("[data-id]").dataset.id
       );
+      showInfo("Данные удалены!");
+    }
+    return;
+  }
+
+  if (e.target.classList.contains("generate-data")) {
+    const confirmed = await confirm(
+      "Таблицы будут заполнены заранее определенными данными. Текущие данные будут потеряны.",
+      "Генерация"
+    );
+    if (confirmed) {
+      await fetchJson({ endpoint: e.target.dataset.endpoint });
+      showInfo("Данные сгенерированы!");
     }
     return;
   }

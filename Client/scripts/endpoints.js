@@ -166,6 +166,7 @@ const endpointInfo = [
     ],
   }),
   new Endpoint({ main: "/change_log", access: "readonly" }),
+  new Endpoint({ main: "/generate" }),
 ];
 
 const endpoints = endpointInfo.reduce((map, info) => {

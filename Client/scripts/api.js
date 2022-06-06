@@ -19,7 +19,13 @@ async function fetchJson({
   if (response.status === 404) {
     return [];
   }
-  return await response.json();
+  let json;
+  try {
+    json = await response.json();
+  } catch (err) {
+    return [];
+  }
+  return json;
 }
 
 async function fetchBlob(endpoint) {
