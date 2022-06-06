@@ -43,6 +43,14 @@ async function handleDocumentClick(e) {
     return;
   }
 
+  if (e.target.classList.contains("exit-button")) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("expires");
+    sessionStorage.removeItem("was_here");
+    location.replace("./login.html");
+    return;
+  }
+
   if (e.target.classList.contains("link-to-table")) {
     const endpoint = e.target.dataset.endpoint;
     main.querySelector(".compound-form").style.visibility = "hidden";

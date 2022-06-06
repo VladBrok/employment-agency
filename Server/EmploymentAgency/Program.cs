@@ -6,13 +6,10 @@ using EmploymentAgency.EndpointMappers;
 using EmploymentAgency.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 
-/**
-    * Error handling
-    * Performance
-*/
-
+Settings settings = GetSettings();
 WebApplication app = BuildApp();
 UseRequiredMiddlewares();
 
@@ -21,10 +18,18 @@ MapAllEndpoints();
 
 app.Run();
 
+Settings GetSettings()
+{
+    return new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false)
+        .Build()
+        .GetSection("Settings")
+        .Get<Settings>();
+}
+
 WebApplication BuildApp()
 {
     var builder = WebApplication.CreateBuilder(args);
-
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(
@@ -70,11 +75,6 @@ void UseRequiredMiddlewares()
 
 PostgreSql MakePostgres()
 {
-    var settings = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false)
-        .Build()
-        .GetSection("Settings")
-        .Get<Settings>();
     var retry = new RetryStrategy(
         settings.MaxRetryCount,
         settings.InitialRetryDelayMs,
@@ -94,11 +94,11 @@ void MapAllEndpoints()
         [AllowAnonymous]
         (User user) =>
         {
-            if (user.Login != "admin")
+            if (user.Login != settings.Admin.Login)
             {
                 return Results.BadRequest(new { error = "Неверный логин" });
             }
-            if (user.Password != "1234")
+            if (Hash(user.Password) != settings.Admin.Password)
             {
                 return Results.BadRequest(new { error = "Неверный пароль" });
             }
@@ -111,18 +111,24 @@ void MapAllEndpoints()
                 null
             );
 
-            var now = DateTime.UtcNow;
+            DateTime now = DateTime.UtcNow;
+            DateTime expirationDate = now.AddMilliseconds(settings.JwtLifetimeMs);
             var jwt = new JwtSecurityToken(
                 notBefore: now,
                 claims: claimsIdentity.Claims,
-                expires: now.AddDays(1),
+                expires: expirationDate,
                 signingCredentials: new SigningCredentials(
                     GetSymmetricSecurityKey(),
                     SecurityAlgorithms.HmacSha256
                 )
             );
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            var response = new { access_token = encodedJwt, login = user.Login };
+            var response = new
+            {
+                access_token = encodedJwt,
+                login = user.Login,
+                expires = new DateTimeOffset(expirationDate).ToUnixTimeMilliseconds()
+            };
 
             return Results.Ok(response);
         }
@@ -131,9 +137,17 @@ void MapAllEndpoints()
 
 SymmetricSecurityKey GetSymmetricSecurityKey()
 {
-    return new SymmetricSecurityKey(
-        Encoding.ASCII.GetBytes("secretsecretsecretsecretsecretsecretsecretsecretsecret")
-    );
+    return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(settings.Secret));
 }
 
-record User(string Login, string Password);
+string Hash(string str)
+{
+    byte[] derivedKey = KeyDerivation.Pbkdf2(
+        str,
+        salt: Array.Empty<byte>(),
+        KeyDerivationPrf.HMACSHA256,
+        iterationCount: 10000,
+        numBytesRequested: 256 / 8
+    );
+    return Convert.ToBase64String(derivedKey);
+}

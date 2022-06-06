@@ -59,11 +59,23 @@
   text-transform: uppercase;
 }
 
-.delete-button {
+.danger-button {
   color: var(--danger-color);
   border-color: var(--danger-color);
 }
 
-.delete-button:hover {
+.danger-button:hover {
   background: var(--danger-color);
+}
+
+.exit-button {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  display: block;
+  margin: 1.5rem auto;
+}
+
+.exit-button:hover {
+  background: var(--secondary-color);
+  color: var(--primary-color);
 }

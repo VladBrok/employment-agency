@@ -8,7 +8,7 @@ function confirmDelete() {
             нельзя отменить.</p>
           <div class="actions">
             <button class="search-button button cancel-button">Отмена</button>
-            <button class="search-button button delete-button">Удалить</button>
+            <button class="search-button button delete-button danger-button">Удалить</button>
           </div>
         </div>
       </div>`;

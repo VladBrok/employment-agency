@@ -79,6 +79,8 @@ function makeUrl(endpoint) {
 }
 
 async function fetchImpl(url, options) {
+  ensureTokenValid();
+
   options = {
     ...options,
     headers: {
@@ -86,9 +88,25 @@ async function fetchImpl(url, options) {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   };
-  const response = await fetch(url, options);
-  console.log(response.status);
+
+  let response;
+  try {
+    response = await fetch(url, options);
+    console.log(response.status);
+  } catch (err) {
+    console.log("response:", err.response);
+  }
+
   return response;
+}
+
+function ensureTokenValid() {
+  const expirationTime = localStorage.getItem("expires");
+  if (expirationTime && Date.now() - expirationTime >= 600000) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("expires");
+    location.replace("./login.html");
+  }
 }
 
 export { fetchJsonFromTable, fetchBlob, fetchAllJson, put, post, deleteEntity };
