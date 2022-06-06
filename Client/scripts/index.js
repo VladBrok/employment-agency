@@ -28,12 +28,20 @@ async function handleNavigationClick(e) {
     e.target.closest(".item.parent") ?? e.target.closest(".item");
   selected.classList.remove("selected-item");
   newSelected.classList.add("selected-item");
+  const endpoint = e.target.dataset.endpoint;
 
-  if (e.target.dataset.category === "not-a-table") {
+  if (e.target.classList.contains("generate-data")) {
+    const confirmed = await confirm(
+      "Таблицы будут заполнены заранее определенными данными. Текущие данные будут потеряны.",
+      "Генерация"
+    );
+    if (confirmed) {
+      await fetchJson({ endpoint });
+      showMessage("Данные сгенерированы!");
+    }
     return;
   }
 
-  const endpoint = e.target.dataset.endpoint;
   const chartType = e.target.dataset.chart;
   const title = e.target.textContent;
   displayTable = async () =>
@@ -107,18 +115,6 @@ async function handleDocumentClick(e) {
     return;
   }
 
-  if (e.target.classList.contains("generate-data")) {
-    const confirmed = await confirm(
-      "Таблицы будут заполнены заранее определенными данными. Текущие данные будут потеряны.",
-      "Генерация"
-    );
-    if (confirmed) {
-      await fetchJson({ endpoint: e.target.dataset.endpoint });
-      showMessage("Данные сгенерированы!");
-    }
-    return;
-  }
-
   if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
     const id = e.target.parentElement.querySelector("td").textContent;
 
@@ -157,14 +153,14 @@ async function handleChange(e) {
   }
 
   if (e.target.files) {
-    const ALLOWED_EXTENSIONS = new Set([".jpg", ".png", ".jpeg"]);
+    const allowedExtensions = new Set([".jpg", ".png", ".jpeg"]);
     const file = e.target.files[0];
     const extension = file?.name.slice(file.name.indexOf("."));
 
-    if (extension && !ALLOWED_EXTENSIONS.has(extension)) {
+    if (extension && !allowedExtensions.has(extension)) {
       e.target.setCustomValidity(
         `Файл должен иметь один из следующих форматов: ${[
-          ...ALLOWED_EXTENSIONS.values(),
+          ...allowedExtensions.values(),
         ].join(", ")}`
       );
       e.target.reportValidity();
