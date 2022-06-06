@@ -1,4 +1,5 @@
 import { post } from "./api.js";
+import { authenticate, wasAuthenticated } from "./auth.js";
 import loadingDecorator from "./loading.js";
 
 adjustTitle();
@@ -10,7 +11,7 @@ document.addEventListener("input", handleInput);
 form.onsubmit = loadingDecorator(handleSubmit);
 
 function adjustTitle() {
-  if (sessionStorage.getItem("was_here")) {
+  if (wasAuthenticated()) {
     document.querySelector(".title").innerHTML =
       "Время сеанса истекло.<br>Пожалуйста, авторизуйтесь снова";
   }
@@ -30,10 +31,7 @@ async function handleSubmit(e) {
   const response = await (await post("/login", JSON.stringify(user))).json();
 
   if (!response.error) {
-    localStorage.setItem("token", response.access_token);
-    localStorage.setItem("expires", response.expires);
-    sessionStorage.setItem("was_here", "yes");
-    location.replace("./index.html");
+    authenticate(response.access_token, response.expires);
     return;
   }
 

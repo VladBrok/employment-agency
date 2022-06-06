@@ -1,10 +1,13 @@
 import { makeTable, updateTable } from "./table.js";
 import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
-import downloadReport from "./report.js";
-import confirmDelete from "./confirm.js";
+import { ensureAuthenticated, exit } from "./auth.js";
 import { deleteEntity } from "./api.js";
+import confirmDelete from "./confirm.js";
+import downloadReport from "./report.js";
 import loadingDecorator from "./loading.js";
 import drawChart from "./chart.js";
+
+ensureAuthenticated();
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
@@ -44,10 +47,7 @@ async function handleDocumentClick(e) {
   }
 
   if (e.target.classList.contains("exit-button")) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("expires");
-    sessionStorage.removeItem("was_here");
-    location.replace("./login.html");
+    exit();
     return;
   }
 

@@ -1,3 +1,5 @@
+import { ensureTokenValid, getToken } from "./auth.js";
+
 const URL = "https://localhost:7288/api";
 const PAGE_SIZE = 15;
 
@@ -85,7 +87,7 @@ async function fetchImpl(url, options) {
     ...options,
     headers: {
       ...options?.headers,
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   };
 
@@ -98,15 +100,6 @@ async function fetchImpl(url, options) {
   }
 
   return response;
-}
-
-function ensureTokenValid() {
-  const expirationTime = localStorage.getItem("expires");
-  if (expirationTime && Date.now() - expirationTime >= 600000) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("expires");
-    location.replace("./login.html");
-  }
 }
 
 export { fetchJsonFromTable, fetchBlob, fetchAllJson, put, post, deleteEntity };
