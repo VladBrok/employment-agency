@@ -1,6 +1,25 @@
 import endpoints from "./endpoints.js";
 import columns from "./columns.js";
-import fetchJson, { fetchJsonFromTable } from "./api.js";
+import fetchJson, { fetchJsonFromTable, PAGE_SIZE } from "./api.js";
+
+document.addEventListener("click", handleClick);
+
+async function handleClick(e) {
+  if (e.target.classList.contains("find")) {
+    await updateTable(e.target);
+    return;
+  }
+
+  if (e.target.classList.contains("change-page")) {
+    const page = e.target.parentElement.querySelector(".current-page");
+    e.target.classList.contains("previous-page")
+      ? page.textContent--
+      : page.textContent++;
+
+    adjustButtonAvailability(".previous-page", +page.textContent === 1);
+    await updateTable(page, page.textContent - 1);
+  }
+}
 
 async function makeTable({
   endpoint,
@@ -14,6 +33,7 @@ async function makeTable({
   const data = await fetchJson({
     endpoint: endpointForFetching,
     parameterValues: parameters.map((p) => p.defaultValue),
+    pageSize: PAGE_SIZE + 1,
   });
 
   return `
@@ -66,10 +86,10 @@ async function makeTable({
     </table>
     </div>
     <div class="pages">
-      <div class="previous-page element button disabled">❮</div>
+      <div class="previous-page change-page element button disabled">❮</div>
       <div class="current-page element button disabled">1</div>
-      <div class="next-page element button ${
-        data?.length ? "" : "disabled"
+      <div class="next-page change-page element button ${
+        data?.length > PAGE_SIZE ? "" : "disabled"
       }">❯</div>
     </div>
   </div>`;
@@ -101,9 +121,19 @@ async function extractCells(row) {
 }
 
 async function updateTable(tableChild, page = 0) {
-  const data = await fetchJsonFromTable({ tableChild, page });
+  const data = await fetchJsonFromTable({
+    tableChild,
+    page,
+    pageSize: PAGE_SIZE + 1,
+  });
+  adjustButtonAvailability(".next-page", data?.length <= PAGE_SIZE);
   tableChild.closest("[data-endpoint]").querySelector(".body").innerHTML =
     await extractRows(data);
 }
 
-export { makeTable, updateTable };
+function adjustButtonAvailability(selector, shouldDisable) {
+  const classList = document.querySelector(selector).classList;
+  shouldDisable ? classList.add("disabled") : classList.remove("disabled");
+}
+
+export { makeTable };

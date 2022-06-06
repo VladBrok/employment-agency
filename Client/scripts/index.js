@@ -1,4 +1,4 @@
-import { makeTable, updateTable } from "./table.js";
+import { makeTable } from "./table.js";
 import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
 import { ensureAuthenticated, exit } from "./auth.js";
 import fetchJson, { deleteEntity } from "./api.js";
@@ -68,30 +68,6 @@ async function handleDocumentClick(e) {
     return;
   }
 
-  if (e.target.classList.contains("previous-page")) {
-    const page = e.target.parentElement.querySelector(".current-page");
-    page.textContent--;
-    if (+page.textContent === 1) {
-      e.target.classList.add("disabled");
-    }
-
-    await updateTable(page, page.textContent - 1);
-    return;
-  }
-
-  if (e.target.classList.contains("next-page")) {
-    const page = e.target.parentElement.querySelector(".current-page");
-    page.textContent++;
-    if (+page.textContent === 2) {
-      e.target.parentElement
-        .querySelector(".previous-page")
-        .classList.remove("disabled");
-    }
-
-    await updateTable(page, page.textContent - 1);
-    return;
-  }
-
   if (e.target.classList.contains("update-button")) {
     if (await sendFormAsPut(e)) {
       showMessage("Данные обновлены!");
@@ -103,11 +79,6 @@ async function handleDocumentClick(e) {
     if (await sendFormAsPost(e)) {
       showMessage("Новая запись создана!");
     }
-    return;
-  }
-
-  if (e.target.classList.contains("find")) {
-    await updateTable(e.target);
     return;
   }
 

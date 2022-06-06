@@ -108,5 +108,13 @@ async function fetchImpl(url, options) {
   return response;
 }
 
-export { fetchJsonFromTable, fetchBlob, fetchAllJson, put, post, deleteEntity };
+export {
+  fetchJsonFromTable,
+  fetchBlob,
+  fetchAllJson,
+  put,
+  post,
+  deleteEntity,
+  PAGE_SIZE,
+};
 export default fetchJson;
