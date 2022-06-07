@@ -27,6 +27,18 @@ DROP INDEX IF EXISTS applications_experience CASCADE;
 DROP INDEX IF EXISTS applications_salary CASCADE;
 DROP INDEX IF EXISTS vacancies_salary_new CASCADE;
 DROP INDEX IF EXISTS vacancies_employer_day CASCADE;
+DROP INDEX IF EXISTS district_id CASCADE;
+DROP INDEX IF EXISTS street_id CASCADE;
+DROP INDEX IF EXISTS property_id CASCADE;
+DROP INDEX IF EXISTS address_id CASCADE;
+DROP INDEX IF EXISTS employer_id CASCADE;
+DROP INDEX IF EXISTS position_id CASCADE;
+DROP INDEX IF EXISTS status_id CASCADE;
+DROP INDEX IF EXISTS address_id CASCADE;
+DROP INDEX IF EXISTS speciality_id CASCADE;
+DROP INDEX IF EXISTS seeker_id CASCADE;
+DROP INDEX IF EXISTS position_id CASCADE;
+DROP INDEX IF EXISTS employment_type_id CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS citext;
 
@@ -189,6 +201,18 @@ CREATE INDEX applications_experience ON applications(experience);
 CREATE INDEX applications_salary ON applications(salary);
 CREATE INDEX vacancies_salary_new ON vacancies(salary_new);
 CREATE INDEX vacancies_employer_day ON vacancies(employer_day);
+CREATE INDEX streets_district_id ON streets(district_id);
+CREATE INDEX addresses_street_id ON addresses(street_id);
+CREATE INDEX employers_property_id ON employers(property_id);
+CREATE INDEX employers_address_id ON employers(address_id);
+CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
+CREATE INDEX vacancies_position_id ON vacancies(position_id);
+CREATE INDEX seekers_status_id ON seekers(status_id);
+CREATE INDEX seekers_address_id ON seekers(address_id);
+CREATE INDEX seekers_speciality_id ON seekers(speciality_id);
+CREATE INDEX applications_seeker_id ON applications(seeker_id);
+CREATE INDEX applications_position_id ON applications(position_id);
+CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
 
 
 INSERT INTO statuses(status)

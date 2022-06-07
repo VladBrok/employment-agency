@@ -63,6 +63,48 @@ let choosing = false;
 const showMessage = showInfo.bind(null, () => displayTable());
 
 async function handleDocumentClick(e) {
+  if (e.target.classList.contains("delete-many")) {
+    if (!main.querySelector(".table .body [type=checkbox]")) {
+      [...main.querySelectorAll(".table tr")].forEach((row) => {
+        row.classList.add("delete-row");
+        row.insertAdjacentHTML(
+          "afterbegin",
+          '<td><input type="checkbox"></td>'
+        );
+      });
+      return;
+    }
+
+    const checked = [
+      ...main.querySelectorAll(".table .body [type=checkbox]"),
+    ].filter((x) => x.checked);
+    if (!checked.length) {
+      await displayTable();
+      return;
+    }
+
+    const confirmed = await confirm(
+      `Все выбранные записи (${checked.length}) и зависимые от них данные будут удалены. Данное действие нельзя отменить.`,
+      "Удалить"
+    );
+    if (!confirmed) {
+      await displayTable();
+      return;
+    }
+
+    await Promise.all(
+      checked.map(
+        async (c) =>
+          await deleteEntity(
+            e.target.closest("[data-endpoint]").dataset.endpoint,
+            +c.parentElement.nextElementSibling.textContent
+          )
+      )
+    );
+    showMessage("Данные удалены!");
+    return;
+  }
+
   if (e.target.classList.contains("menu")) {
     navigation.classList.toggle("hidden");
     document.querySelector(".menu").outerHTML = navigation.classList.contains(
@@ -125,9 +167,25 @@ async function handleDocumentClick(e) {
     return;
   }
 
-  if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
-    const id = e.target.parentElement.querySelector("td").textContent;
+  if (
+    e.target.tagName === "INPUT" &&
+    e.target.closest(".head") !== null &&
+    e.target.checked
+  ) {
+    [...main.querySelectorAll(".table .body [type=checkbox]")].forEach(
+      (c) => (c.checked = true)
+    );
+    return;
+  }
 
+  if (e.target.tagName === "TD" && e.target.closest(".body") !== null) {
+    const checkbox = e.target.parentElement.querySelector("[type=checkbox]");
+    if (checkbox) {
+      checkbox.checked = !checkbox.checked;
+      return;
+    }
+
+    const id = e.target.parentElement.querySelector("td").textContent;
     if (choosing) {
       main.querySelector(".table-container").remove();
       main.querySelector(".compound-form").style.visibility = "visible";

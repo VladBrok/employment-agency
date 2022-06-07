@@ -49,7 +49,9 @@
   filter: drop-shadow(0.07rem 0.07rem 0.04rem #4590f9);
 }
 
-.table-container[data-access="readonly"] .create {
+.table-container[data-access="readonly"] .create,
+.table-container[data-access="read-delete"] .create,
+.table-container[data-access="readonly"] .delete {
   display: none;
 }
 
@@ -97,8 +99,13 @@
 }
 
 .table-container[data-access="readonly"] .table tr,
+.table-container[data-access="read-delete"] .table tr,
 .table-container .table .not-a-data-row {
   pointer-events: none;
+}
+
+.table-container[data-access="read-delete"] .table .delete-row {
+  pointer-events: auto;
 }
 
 .table-container .table tr:hover {

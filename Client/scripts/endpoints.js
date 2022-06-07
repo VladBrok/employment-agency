@@ -165,7 +165,7 @@ const endpointInfo = [
       new Parameter("Должность", (id) => makeTextInput(id, "Промоутер", 1, 40)),
     ],
   }),
-  new Endpoint({ main: "/change_log", access: "readonly" }),
+  new Endpoint({ main: "/change_log", access: "read-delete" }),
   new Endpoint({ main: "/generate" }),
 ];
 

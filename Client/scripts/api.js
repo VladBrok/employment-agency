@@ -96,7 +96,9 @@ async function fetchImpl(url, options) {
     },
   };
 
-  return await fetch(url, options);
+  const response = await fetch(url, options);
+  console.log(response.status);
+  return response;
 }
 
 export {

@@ -35,6 +35,7 @@ async function makeTable({
     parameterValues: parameters.map((p) => p.defaultValue),
     pageSize: PAGE_SIZE + 1,
   });
+  const dataForPage = data?.length > PAGE_SIZE ? data.slice(0, -1) : data;
 
   return `
   <div class="table-container" data-endpoint="${endpointForFetching}" data-access="${
@@ -63,14 +64,15 @@ async function makeTable({
           .join("")}
       </table>
       <div class="actions">
-        <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму" title="Нарисовать диаграмму"
-          data-chart="${chartType}">
-        <select class="download" title="Скачать отчет">
-          <option selected disabled></option>
-          <option>html</option>
-          <option>excel</option>
-        </select>
-        <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись">
+      <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму" title="Нарисовать диаграмму"
+      data-chart="${chartType}">
+      <select class="download" title="Скачать отчет">
+      <option selected disabled></option>
+      <option>html</option>
+      <option>excel</option>
+      </select>
+      <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись">
+      <img src="images/delete.png" alt="Удалить" title="Удалить" class="delete delete-many">
       </div>
     </div>`
         : ""
@@ -78,10 +80,10 @@ async function makeTable({
     <div class="table-wrapper">
     <table class="table">
       <thead class="head">
-        ${extractColumns(data)}
+        ${extractColumns(dataForPage)}
       </thead>
       <tbody class="body">
-        ${await extractRows(data)}
+        ${await extractRows(dataForPage)}
       </tbody>
     </table>
     </div>
@@ -126,9 +128,10 @@ async function updateTable(tableChild, page = 0) {
     page,
     pageSize: PAGE_SIZE + 1,
   });
+  const dataForPage = data?.length > PAGE_SIZE ? data.slice(0, -1) : data;
   adjustButtonAvailability(".next-page", data?.length <= PAGE_SIZE);
   tableChild.closest("[data-endpoint]").querySelector(".body").innerHTML =
-    await extractRows(data);
+    await extractRows(dataForPage);
 }
 
 function adjustButtonAvailability(selector, shouldDisable) {
