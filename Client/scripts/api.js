@@ -88,7 +88,6 @@ function makeUrl(endpoint) {
 
 async function fetchImpl(url, options) {
   ensureTokenValid();
-
   options = {
     ...options,
     headers: {
@@ -97,15 +96,7 @@ async function fetchImpl(url, options) {
     },
   };
 
-  let response;
-  try {
-    response = await fetch(url, options);
-    console.log(response.status);
-  } catch (err) {
-    console.log("response:", err.response);
-  }
-
-  return response;
+  return await fetch(url, options);
 }
 
 export {

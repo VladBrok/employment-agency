@@ -14,9 +14,12 @@ export default function loadingDecorator(func) {
       () => (indicator.style.visibility = "visible"),
       DELAY_IN_MILLISECONDS
     );
-    await func(...args);
-    clearTimeout(id);
-    indicator.style.visibility = "hidden";
-    isLoading = false;
+    try {
+      await func(...args);
+    } finally {
+      clearTimeout(id);
+      indicator.style.visibility = "hidden";
+      isLoading = false;
+    }
   };
 }

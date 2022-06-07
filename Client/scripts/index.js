@@ -12,9 +12,19 @@ ensureAuthenticated();
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 
+window.addEventListener("unhandledrejection", handleError);
 navigation.addEventListener("click", loadingDecorator(handleNavigationClick));
 document.addEventListener("click", loadingDecorator(handleDocumentClick));
 main.addEventListener("change", loadingDecorator(handleChange));
+
+function handleError() {
+  main.innerHTML = `
+    <div class='error-container'>
+      <span class='title'>
+        Не удалось подключиться к серверу. Пожалуйста, повторите попытку позже.
+      </span>
+    </div>`;
+}
 
 let displayTable;
 
@@ -46,7 +56,7 @@ async function handleNavigationClick(e) {
   const title = e.target.textContent;
   displayTable = async () =>
     (main.innerHTML = await makeTable({ endpoint, chartType, title }));
-  displayTable();
+  await displayTable();
 }
 
 let choosing = false;
