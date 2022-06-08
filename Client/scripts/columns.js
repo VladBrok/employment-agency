@@ -14,13 +14,15 @@ class Column {
     displayName,
     convertToInput,
     convertValue,
-    convertFromValue
+    convertFromValue,
+    isFilterable = true
   ) {
     this.realName = realName;
     this.displayName = displayName;
     this.convertToInput = convertToInput;
     this.convertValue = convertValue ?? ((v) => v);
     this.convertFromValue = convertFromValue ?? ((v) => v);
+    this.isFilterable = isFilterable;
   }
 
   async makeSelect(id, targetEndpoint, value, calledEndpoint) {
@@ -320,7 +322,9 @@ const columnInfo = [
       return `<div class="photo-container">${path}${img.outerHTML}${
         path ? "" : "Фото нет"
       }</div>`;
-    }
+    },
+    (v) => v,
+    false
   ),
   new Column("salary", "зарплата", (id, value) =>
     makeNumberInput(id, value, 1000, 1000000)

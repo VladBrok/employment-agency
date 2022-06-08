@@ -33,27 +33,6 @@ async function fetchBlob(endpoint) {
   return await response.blob();
 }
 
-async function fetchJsonFromTable({
-  tableChild,
-  page = 0,
-  pageSize = PAGE_SIZE,
-}) {
-  const tableContainer = tableChild.closest("[data-endpoint]");
-  const endpoint = tableContainer.dataset.endpoint;
-
-  const inputs = Array.from(tableContainer.querySelectorAll(".input"));
-  const filter = inputs[0].value;
-  const parameterValues = inputs.slice(1).map((x) => x.value);
-
-  return await fetchJson({
-    endpoint,
-    page,
-    filter,
-    parameterValues,
-    pageSize,
-  });
-}
-
 async function fetchAllJson(endpoint) {
   return await fetchJson({ endpoint, page: 0, pageSize: 1e6 });
 }
@@ -101,13 +80,5 @@ async function fetchImpl(url, options) {
   return response;
 }
 
-export {
-  fetchJsonFromTable,
-  fetchBlob,
-  fetchAllJson,
-  put,
-  post,
-  deleteEntity,
-  PAGE_SIZE,
-};
+export { fetchBlob, fetchAllJson, put, post, deleteEntity, PAGE_SIZE };
 export default fetchJson;

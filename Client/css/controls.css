@@ -83,3 +83,7 @@
 .expanded-button {
   font-size: 1.2rem;
 }
+
+.select {
+  text-transform: capitalize;
+}

@@ -1,8 +1,9 @@
 import endpoints from "./endpoints.js";
 import columns from "./columns.js";
-import fetchJson, { fetchJsonFromTable, PAGE_SIZE } from "./api.js";
+import fetchJson, { PAGE_SIZE } from "./api.js";
+import loadingDecorator from "./loading.js";
 
-document.addEventListener("click", handleClick);
+document.addEventListener("click", loadingDecorator(handleClick));
 
 async function handleClick(e) {
   if (e.target.classList.contains("find")) {
@@ -11,13 +12,13 @@ async function handleClick(e) {
   }
 
   if (e.target.classList.contains("change-page")) {
-    const page = e.target.parentElement.querySelector(".current-page");
+    const page = document.querySelector(".current-page");
     e.target.classList.contains("previous-page")
       ? page.textContent--
       : page.textContent++;
 
     adjustButtonAvailability(".previous-page", +page.textContent === 1);
-    await updateTable(page, page.textContent - 1);
+    await updateTable(page);
   }
 }
 
@@ -48,7 +49,18 @@ async function makeTable({
     <div class="before-table">
       <table>
         <tr class="search">
-          <td><label for="search">Поиск по подстроке:</label></td>
+          <td><label>Столбец для поиска:</label></td>
+          <td>
+            <select class="select input">
+              ${extractColumnNames(dataForPage)
+                .filter((name) => columns[name].isFilterable)
+                .map((name) => `<option>${name}</option>`)
+                .join("")}
+            </select>
+          </td>
+        </tr>
+        <tr class="search">
+          <td><label for="search">Подстрока для поиска:</label></td>
           <td><input type="text" id="search" class="input" required></td>
           <td><button class="search-button button find">Поиск</button></td>
         </tr>
@@ -100,10 +112,12 @@ async function makeTable({
 function extractColumns(data) {
   return data?.length
     ? `<tr><th>
-    ${Object.keys(data[0])
-      .map((k) => columns[k].displayName)
-      .join("</th><th>")}</th></tr>`
+    ${extractColumnNames(data).join("</th><th>")}</th></tr>`
     : "";
+}
+
+function extractColumnNames(data) {
+  return Object.keys(data[0]).map((key) => columns[key].displayName);
 }
 
 async function extractRows(data) {
@@ -122,7 +136,8 @@ async function extractCells(row) {
   ).join("</td><td>")}</td></tr>`;
 }
 
-async function updateTable(tableChild, page = 0) {
+async function updateTable(tableChild) {
+  const page = document.querySelector(".current-page").textContent - 1;
   const data = await fetchJsonFromTable({
     tableChild,
     page,
@@ -134,9 +149,42 @@ async function updateTable(tableChild, page = 0) {
     await extractRows(dataForPage);
 }
 
+async function fetchJsonFromTable({
+  tableChild,
+  page = 0,
+  pageSize = PAGE_SIZE,
+}) {
+  const tableContainer = tableChild.closest("[data-endpoint]");
+  const endpoint = tableContainer.dataset.endpoint;
+  const inputs = Array.from(tableContainer.querySelectorAll("input.input"));
+  const parameterValues = inputs.slice(1).map((x) => x.value);
+  const filter = inputs[0].value.trim().toLowerCase();
+
+  if (filter === "") {
+    return await fetchJson({
+      endpoint,
+      page,
+      filter,
+      parameterValues,
+      pageSize,
+    });
+  }
+
+  const data = await fetchJson({ endpoint, parameterValues, pageSize: 1e6 });
+  const filterColumn =
+    columns[tableContainer.querySelector(".select").value].realName;
+  const filterColumnIndex = Object.keys(data[0]).indexOf(
+    Object.keys(data[0]).find((key) => filterColumn === key)
+  );
+  const filteredData = data.filter((d) =>
+    Object.values(d)[filterColumnIndex].toLowerCase().includes(filter)
+  );
+  return filteredData.slice(page * pageSize, page * pageSize + pageSize);
+}
+
 function adjustButtonAvailability(selector, shouldDisable) {
   const classList = document.querySelector(selector).classList;
   shouldDisable ? classList.add("disabled") : classList.remove("disabled");
 }
 
-export { makeTable };
+export { makeTable, fetchJsonFromTable };

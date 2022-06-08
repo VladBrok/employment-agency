@@ -42,7 +42,7 @@ async function handleNavigationClick(e) {
 
   if (e.target.classList.contains("generate-data")) {
     const confirmed = await confirm(
-      "Таблицы будут заполнены заранее определенными данными. Текущие данные будут потеряны.",
+      "Таблицы будут заполнены случайными данными. Текущие данные будут потеряны.",
       "Генерация"
     );
     if (confirmed) {

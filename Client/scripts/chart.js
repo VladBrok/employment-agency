@@ -1,7 +1,7 @@
 import "../node_modules/highcharts/es-modules/masters/highcharts.src.js";
 import "../node_modules/highcharts/es-modules/masters/highcharts-3d.src.js";
 import Highcharts from "../node_modules/highcharts/es-modules/Core/Globals.js";
-import { fetchJsonFromTable } from "./api.js";
+import { fetchJsonFromTable } from "./table.js";
 
 const DEPTH = 250;
 const CHART_OPTIONS = {

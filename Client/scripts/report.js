@@ -1,5 +1,6 @@
 import columns from "./columns.js";
-import { fetchJsonFromTable, post } from "./api.js";
+import { post } from "./api.js";
+import { fetchJsonFromTable } from "./table.js";
 
 async function downloadReport(tableChild, type) {
   const data = await fetchJsonFromTable({
