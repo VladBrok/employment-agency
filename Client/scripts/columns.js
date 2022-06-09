@@ -108,7 +108,6 @@ class Column {
 let districtSelectId = null;
 let streetSelectId = null;
 let firstStreetChangeCompleted = true;
-let preventStreetsChange = false;
 
 const columnInfo = [
   new Column("id", "№"),
@@ -193,9 +192,8 @@ const columnInfo = [
     return await this.makeSelect(id, "/districts", value, calledEndpoint);
   }),
   new Column("street", "улица", async function (id, value, calledEndpoint) {
-    streetSelectId = id;
+    streetSelectId = "/streets" === calledEndpoint ? null : id;
     firstStreetChangeCompleted = false;
-    preventStreetsChange = "/streets" === calledEndpoint;
     return await this.makeSelect(id, "/streets", value, calledEndpoint);
   }),
   new Column("postal_code", "почтовый индекс", (id, value, calledEndpoint) =>
@@ -358,7 +356,7 @@ const columnInfo = [
 ];
 
 async function changeStreets(districtSelect) {
-  if (preventStreetsChange) {
+  if (!streetSelectId) {
     return;
   }
 
