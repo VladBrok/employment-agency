@@ -39,7 +39,7 @@ public static class Select
 
     public static string FromVacancies()
     {
-        return $@"SELECT v.id, v.employer_id, e.employer, p.position, v.employer_day,
+        return $@"SELECT v.id, e.employer employer_company, v.employer_id, p.position, v.employer_day,
                v.salary_new, v.chart_new, v.vacancy_end
         FROM vacancies v
         JOIN positions p ON p.id = v.position_id
@@ -48,7 +48,7 @@ public static class Select
 
     public static string FromApplications()
     {
-        return $@"SELECT a.id, a.seeker_id, s.first_name, p.position, et.type,
+        return $@"SELECT a.id, s.first_name seeker_name, a.seeker_id, p.position, et.type,
                   a.seeker_day, a.information, a.photo, a.salary, a.experience
         FROM applications a
         JOIN positions p ON p.id = a.position_id

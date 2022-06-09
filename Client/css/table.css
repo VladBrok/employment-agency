@@ -98,6 +98,11 @@
   padding: 0.5rem;
 }
 
+.table td:empty,
+.table th:empty {
+  display: none;
+}
+
 .table-container[data-access="readonly"] .table tr,
 .table-container[data-access="read-delete"] .table tr,
 .table-container .table .not-a-data-row {

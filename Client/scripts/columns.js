@@ -13,15 +13,15 @@ class Column {
     realName,
     displayName,
     convertToInput,
-    convertValue,
-    convertFromValue,
+    convertValue = (v) => v,
+    convertFromValue = (v) => v,
     isFilterable = true
   ) {
     this.realName = realName;
     this.displayName = displayName;
     this.convertToInput = convertToInput;
-    this.convertValue = convertValue ?? ((v) => v);
-    this.convertFromValue = convertFromValue ?? ((v) => v);
+    this.convertValue = convertValue;
+    this.convertFromValue = convertFromValue;
     this.isFilterable = isFilterable;
   }
 
@@ -132,6 +132,18 @@ const columnInfo = [
     async function (id) {
       return await this.fetchName(id, "/seekers", "first_name");
     }
+  ),
+  new Column(
+    "employer_company",
+    "",
+    () => null,
+    (value) => ""
+  ),
+  new Column(
+    "seeker_name",
+    "",
+    () => null,
+    (value) => ""
   ),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
