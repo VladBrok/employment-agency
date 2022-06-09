@@ -24,6 +24,18 @@
   height: 100%;
 }
 
+.compound-form .title {
+  margin: 1.5rem 0;
+}
+
+.compound-form .crud-form {
+  margin-bottom: 2rem;
+}
+
+.compound-form .table-container {
+  margin: 0;
+}
+
 .photo-container {
   max-width: 11rem;
   text-indent: -9999px;
