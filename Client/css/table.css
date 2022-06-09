@@ -98,8 +98,10 @@
   padding: 0.5rem;
 }
 
-.table td:empty,
-.table th:empty {
+.table td:nth-child(2):empty,
+.table td:nth-child(3):empty,
+.table th:nth-child(2):empty,
+.table th:nth-child(3):empty {
   display: none;
 }
 

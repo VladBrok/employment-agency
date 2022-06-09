@@ -3,10 +3,11 @@ import { post } from "./api.js";
 import { fetchJsonFromTable } from "./table.js";
 
 async function downloadReport(tableChild, type) {
-  const data = await fetchJsonFromTable({
+  let data = await fetchJsonFromTable({
     tableChild,
     pageSize: 1e6,
   });
+  data = await convertValues(data);
   data[0] = convertColumnNames(data[0]);
 
   const fileName = `report.${type === "excel" ? "xlsx" : type}`;
@@ -27,6 +28,21 @@ function convertColumnNames(obj) {
     (key) => (result = { ...result, [columns[key].displayName]: obj[key] })
   );
   return result;
+}
+
+async function convertValues(data) {
+  return await Promise.all(
+    data.map(async (d) =>
+      Object.fromEntries(
+        await Promise.all(
+          Object.entries(d).map(async ([name, value], _, entries) => [
+            name,
+            await columns[name].convertValue(value, entries),
+          ])
+        )
+      )
+    )
+  );
 }
 
 function download(reportBlob, fileName) {

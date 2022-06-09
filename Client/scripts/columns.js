@@ -324,15 +324,18 @@ const columnInfo = [
       }${makeFileInput(id, path, "image/png, image/jpeg")}</div>`;
     },
     async function (path) {
-      const img = document.createElement("img");
-      img.classList.add("photo");
-      if (path) {
-        const photo = await fetchBlob(`/photos/${path}`);
-        img.src = URL.createObjectURL(photo);
-        if (this.images) {
-          this.images[path] = img;
-        } else {
-          this.images = { [path]: img };
+      let img = this.images?.[path];
+      if (!img) {
+        img = document.createElement("img");
+        img.classList.add("photo");
+        if (path) {
+          const photo = await fetchBlob(`/photos/${path}`);
+          img.src = URL.createObjectURL(photo);
+          if (this.images) {
+            this.images[path] = img;
+          } else {
+            this.images = { [path]: img };
+          }
         }
       }
 

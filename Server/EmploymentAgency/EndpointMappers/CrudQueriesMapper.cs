@@ -9,54 +9,56 @@ public static class CrudQueriesMapper
     public static void Map(WebApplication app, PostgreSql postgres)
     {
         _postgres = postgres;
+        var update = new Update();
+        var create = new Create();
         var mainTables =
             new (string Name, string Select, Delegate Update, Delegate Create, string? Alias, string[]? ParentIds)[]
             {
                 (
                     "addresses",
                     Select.FromAddresses(),
-                    Update.Addresses,
-                    Create.Addresses,
+                    update.Addresses,
+                    create.Addresses,
                     "a",
                     new[] { "street_id" }
                 ),
                 (
                     "applications",
                     Select.FromApplications(),
-                    Update.Applications,
-                    Create.Applications,
+                    update.Applications,
+                    create.Applications,
                     "a",
                     new[] { "seeker_id", "position_id", "employment_type_id" }
                 ),
                 (
                     "employers",
                     Select.FromEmployers(),
-                    Update.Employers,
-                    Create.Employers,
+                    update.Employers,
+                    create.Employers,
                     "e",
                     new[] { "property_id", "address_id" }
                 ),
                 (
                     "seekers",
                     Select.FromSeekers(),
-                    Update.Seekers,
-                    Create.Seekers,
+                    update.Seekers,
+                    create.Seekers,
                     "s",
                     new[] { "status_id", "address_id", "speciality_id" }
                 ),
                 (
                     "streets",
                     Select.FromStreets(),
-                    Update.Table,
-                    Create.Table,
+                    update.Table,
+                    create.Table,
                     "s",
                     new[] { "district_id" }
                 ),
                 (
                     "vacancies",
                     Select.FromVacancies(),
-                    Update.Table,
-                    Create.Table,
+                    update.Table,
+                    create.Table,
                     "v",
                     new[] { "employer_id", "position_id" }
                 ),
@@ -74,7 +76,7 @@ public static class CrudQueriesMapper
             referenceTableNames.Select<
                 string,
                 (string Name, string Select, Delegate Update, Delegate Create, string? Alias, string[]? ParentIds)
-            >(n => (n, Select.From(n), Update.Table, Create.Table, null, null))
+            >(n => (n, Select.From(n), update.Table, create.Table, null, null))
         );
 
         foreach (var table in mainTables)

@@ -18,18 +18,30 @@ public class HtmlReport : IReport
             .Append(
                 @"
             <style>
+              th {
+                  text-transform: uppercase;
+              }
               th, td {
                   border: 1px solid black;
-                  padding: 10px;
+                  padding: 6px;
                   text-align: center;
+              }
+              th:empty, td:empty {
+                  display: none;
               }
               table {
                   border-collapse: collapse;
+                  table-layout: fixed;
               }
               div {
                   display: flex;
                   flex-direction: column;
                   align-items: center;
+              }
+              .photo-container {
+                  max-width: 120px;
+                  text-indent: -9999px;
+                  margin-top: -1rem;
               }
             </style>"
             )
