@@ -39,19 +39,21 @@ public static class Select
 
     public static string FromVacancies()
     {
-        return $@"SELECT v.id, v.employer_id, p.position, v.employer_day,
+        return $@"SELECT v.id, v.employer_id, e.employer, p.position, v.employer_day,
                v.salary_new, v.chart_new, v.vacancy_end
         FROM vacancies v
-        JOIN positions p ON p.id = v.position_id";
+        JOIN positions p ON p.id = v.position_id
+        JOIN employers e ON e.id = v.employer_id";
     }
 
     public static string FromApplications()
     {
-        return $@"SELECT a.id, a.seeker_id, p.position, et.type,
+        return $@"SELECT a.id, a.seeker_id, s.first_name, p.position, et.type,
                   a.seeker_day, a.information, a.photo, a.salary, a.experience
         FROM applications a
         JOIN positions p ON p.id = a.position_id
-        JOIN employment_types et ON et.id = a.employment_type_id";
+        JOIN employment_types et ON et.id = a.employment_type_id
+        JOIN seekers s ON s.id = a.seeker_id";
     }
 
     public static string FromStreets()

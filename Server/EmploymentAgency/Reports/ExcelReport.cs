@@ -8,10 +8,8 @@ public class ExcelReport : IReport
     public async Task BuildAsync(IEnumerable<Entity> entities, string outputFile, string title)
     {
         DeleteIfExists(outputFile);
-
         ExcelPackage package = MakePackage(outputFile);
         WriteContent(entities, title, MakeSheet(package));
-
         await package.SaveAsync();
     }
 

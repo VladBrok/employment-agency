@@ -17,7 +17,7 @@ public static class FileMapper
                 HttpResponse response
             ) =>
             {
-                var report = new ReportFactory().MakeReport(type);
+                var report = ReportFactory.MakeReport(type);
                 string file = $"media/reports/{fileName}";
                 await report.BuildAsync(entities, file, title);
                 await SendFileAsync(file, response, "application/octet-stream");

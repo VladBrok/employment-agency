@@ -1,8 +1,8 @@
 namespace EmploymentAgency.Reports;
 
-public class ReportFactory
+public static class ReportFactory
 {
-    public IReport MakeReport(string type)
+    public static IReport MakeReport(string type)
     {
         return type.ToLower() switch
         {

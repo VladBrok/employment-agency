@@ -10,9 +10,3 @@ public record Settings
     public double JwtLifetimeMs { get; init; }
     public User Admin { get; init; } = null!;
 }
-
-public record User
-{
-    public string Login { get; init; } = null!;
-    public string Password { get; init; } = null!;
-}
