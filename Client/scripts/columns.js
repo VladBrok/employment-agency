@@ -1,4 +1,4 @@
-import fetchJson, { fetchBlob, fetchAllJson } from "./api.js";
+import { fetchBlob, fetchAllJson } from "./api.js";
 import {
   makeFileInput,
   makeDateInput,
@@ -95,8 +95,7 @@ class Column {
     }>${value ?? "Выбрать... <input class='link-input input' required>"}</a>`;
   }
 
-  async fetchName(id, endpoint, column) {
-    const name = (await fetchJson({ endpoint: `${endpoint}/${id}` }))[column];
+  saveName(id, name) {
     if (this.ids) {
       this.ids[name] = id;
     } else {
@@ -119,8 +118,11 @@ const columnInfo = [
     function (_, value) {
       return this.makeLink(value, "/employers");
     },
-    async function (id) {
-      return await this.fetchName(id, "/employers", "employer");
+    function (id, entries) {
+      return this.saveName(
+        id,
+        entries.find(([key, _]) => key === "employer_company")[1]
+      );
     }
   ),
   new Column(
@@ -129,21 +131,24 @@ const columnInfo = [
     function (_, value) {
       return this.makeLink(value, "/seekers");
     },
-    async function (id) {
-      return await this.fetchName(id, "/seekers", "first_name");
+    function (id, entries) {
+      return this.saveName(
+        id,
+        entries.find(([key, _]) => key === "seeker_name")[1]
+      );
     }
   ),
   new Column(
     "employer_company",
     "",
     () => null,
-    (value) => ""
+    () => ""
   ),
   new Column(
     "seeker_name",
     "",
     () => null,
-    (value) => ""
+    () => ""
   ),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),

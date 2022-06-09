@@ -87,3 +87,7 @@
 .select {
   text-transform: capitalize;
 }
+
+.select option:empty {
+  display: none;
+}

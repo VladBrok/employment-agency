@@ -130,7 +130,8 @@ async function extractCells(row) {
   return `<tr><td>${(
     await Promise.all(
       Object.entries(row).map(
-        async ([colName, value]) => await columns[colName].convertValue(value)
+        async ([colName, value], _, entries) =>
+          await columns[colName].convertValue(value, entries)
       )
     )
   ).join("</td><td>")}</td></tr>`;
@@ -176,9 +177,15 @@ async function fetchJsonFromTable({
   const filterColumnIndex = Object.keys(data[0]).indexOf(
     Object.keys(data[0]).find((key) => filterColumn === key)
   );
-  const filteredData = data.filter((d) =>
-    Object.values(d)[filterColumnIndex].toLowerCase().includes(filter)
-  );
+
+  const filteredData = data.filter((d) => {
+    const entries = Object.entries(d);
+    const [name, value] = entries[filterColumnIndex];
+    return columns[name]
+      .convertValue(value, entries)
+      .toLowerCase()
+      .includes(filter);
+  });
   return filteredData.slice(page * pageSize, page * pageSize + pageSize);
 }
 
