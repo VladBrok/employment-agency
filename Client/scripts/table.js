@@ -17,8 +17,7 @@ async function handleClick(e) {
       ? page.textContent--
       : page.textContent++;
 
-    adjustButtonAvailability(".previous-page", +page.textContent === 1);
-    await updateTable(page);
+    await updateTable(page, page.textContent - 1);
   }
 }
 
@@ -137,14 +136,17 @@ async function extractCells(row) {
   ).join("</td><td>")}</td></tr>`;
 }
 
-async function updateTable(tableChild) {
-  const page = document.querySelector(".current-page").textContent - 1;
+async function updateTable(tableChild, page = 0) {
+  document.querySelector(".current-page").textContent = page + 1;
+  adjustButtonAvailability(".previous-page", page === 0);
+
   const data = await fetchJsonFromTable({
     tableChild,
     page,
     pageSize: PAGE_SIZE + 1,
   });
   const dataForPage = data?.length > PAGE_SIZE ? data.slice(0, -1) : data;
+
   adjustButtonAvailability(".next-page", data?.length <= PAGE_SIZE);
   tableChild.closest("[data-endpoint]").querySelector(".body").innerHTML =
     await extractRows(dataForPage);
@@ -186,7 +188,7 @@ async function fetchJsonFromTable({
       .toLowerCase()
       .includes(filter);
   });
-  return filteredData.slice(page * pageSize, page * pageSize + pageSize);
+  return filteredData.slice(page * PAGE_SIZE, page * PAGE_SIZE + pageSize);
 }
 
 function adjustButtonAvailability(selector, shouldDisable) {
