@@ -33,7 +33,7 @@ function ensureTokenValid() {
 }
 
 function tokenHasExpired() {
-  return Date.now() - localStorage.getItem("expires") >= 600000;
+  return Date.now() - localStorage.getItem("expires") >= -600000;
 }
 
 function removeTokenInfo() {
