@@ -1,7 +1,11 @@
 function ensureAuthenticated() {
-  if (!localStorage.getItem("token") || tokenHasExpired()) {
+  if (!getToken() || tokenHasExpired()) {
     goToLoginPage();
   }
+}
+
+function getToken() {
+  return localStorage.getItem("token");
 }
 
 function tokenHasExpired() {
@@ -28,25 +32,8 @@ function exit() {
   goToLoginPage({ clearAll: true });
 }
 
-function getToken() {
-  return localStorage.getItem("token");
-}
-
 function wasAuthenticated() {
   return Boolean(sessionStorage.getItem("was_authenticated"));
 }
 
-function ensureTokenValid() {
-  if (localStorage.getItem("expires") && tokenHasExpired()) {
-    goToLoginPage();
-  }
-}
-
-export {
-  ensureAuthenticated,
-  authenticate,
-  exit,
-  getToken,
-  wasAuthenticated,
-  ensureTokenValid,
-};
+export { ensureAuthenticated, authenticate, exit, getToken, wasAuthenticated };

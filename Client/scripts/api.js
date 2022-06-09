@@ -1,4 +1,4 @@
-import { ensureTokenValid, getToken } from "./auth.js";
+import { ensureAuthenticated, getToken } from "./auth.js";
 
 const URL = "https://localhost:7288/api";
 const PAGE_SIZE = 15;
@@ -66,7 +66,8 @@ function makeUrl(endpoint) {
 }
 
 async function fetchImpl(url, options) {
-  ensureTokenValid();
+  ensureAuthenticated();
+
   options = {
     ...options,
     headers: {
