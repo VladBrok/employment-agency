@@ -1,7 +1,20 @@
 function ensureAuthenticated() {
   if (!localStorage.getItem("token") || tokenHasExpired()) {
-    location.replace("./login.html");
+    goToLoginPage();
   }
+}
+
+function tokenHasExpired() {
+  return Date.now() - localStorage.getItem("expires") >= -600000;
+}
+
+function goToLoginPage({ clearAll = false } = {}) {
+  localStorage.removeItem("token");
+  localStorage.removeItem("expires");
+  if (clearAll) {
+    sessionStorage.removeItem("was_authenticated");
+  }
+  location.replace("./login.html");
 }
 
 function authenticate(token, expirationTime) {
@@ -12,9 +25,7 @@ function authenticate(token, expirationTime) {
 }
 
 function exit() {
-  removeTokenInfo();
-  sessionStorage.removeItem("was_authenticated");
-  location.replace("./login.html");
+  goToLoginPage({ clearAll: true });
 }
 
 function getToken() {
@@ -27,18 +38,8 @@ function wasAuthenticated() {
 
 function ensureTokenValid() {
   if (localStorage.getItem("expires") && tokenHasExpired()) {
-    removeTokenInfo();
-    location.replace("./login.html");
+    goToLoginPage();
   }
-}
-
-function tokenHasExpired() {
-  return Date.now() - localStorage.getItem("expires") >= -600000;
-}
-
-function removeTokenInfo() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("expires");
 }
 
 export {
