@@ -44,7 +44,7 @@ async function put(endpoint, id, formData) {
   });
 }
 
-async function post(endpoint, data) {
+async function post(endpoint, data, anonymous = false) {
   const options = {
     method: "POST",
     body: data,
@@ -54,7 +54,7 @@ async function post(endpoint, data) {
       "Content-Type": "application/json",
     };
   }
-  return await fetchImpl(makeUrl(endpoint), options);
+  return await fetchImpl(makeUrl(endpoint), options, anonymous);
 }
 
 async function deleteEntity(endpoint, id) {
@@ -65,8 +65,10 @@ function makeUrl(endpoint) {
   return `${URL}${endpoint}`;
 }
 
-async function fetchImpl(url, options) {
-  ensureAuthenticated();
+async function fetchImpl(url, options, anonymous = false) {
+  if (!anonymous) {
+    ensureAuthenticated();
+  }
 
   options = {
     ...options,

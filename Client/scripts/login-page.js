@@ -3,6 +3,7 @@ import { authenticate, wasAuthenticated } from "./auth.js";
 import loadingDecorator from "./loading.js";
 
 adjustTitle();
+
 const form = document.querySelector(".crud-form");
 const login = document.getElementById("login");
 const password = document.getElementById("password");
@@ -28,7 +29,10 @@ async function handleSubmit(e) {
     login: login.value,
     password: password.value,
   };
-  const response = await (await post("/login", JSON.stringify(user))).json();
+  const anonymous = true;
+  const response = await (
+    await post("/login", JSON.stringify(user), anonymous)
+  ).json();
 
   if (!response.error) {
     authenticate(response.access_token, response.expires);
