@@ -1,4 +1,4 @@
-import { fetchBlob, fetchAllJson } from "./api.js";
+import { fetchBlob, fetchAllJson, makeImageUrl } from "./api.js";
 import {
   makeFileInput,
   makeDateInput,
@@ -316,31 +316,15 @@ const columnInfo = [
   new Column(
     "photo",
     "фото",
-    function (id, path) {
-      return `<div class="photo-container">${
-        this.images[path]?.outerHTML ?? "<img class='photo'>"
-      }${makeFileInput(id, path, "image/png, image/jpeg")}</div>`;
-    },
-    async function (path) {
-      let img = this.images?.[path];
-      if (!img) {
-        img = document.createElement("img");
-        img.classList.add("photo");
-        if (path) {
-          const photo = await fetchBlob(`/photos/${path}`);
-          img.src = URL.createObjectURL(photo);
-          if (this.images) {
-            this.images[path] = img;
-          } else {
-            this.images = { [path]: img };
-          }
-        }
-      }
-
-      return `<div class="photo-container">${path}${img.outerHTML}${
-        path ? "" : "Фото нет"
-      }</div>`;
-    },
+    (id, imageName) =>
+      `<div class="photo-container">
+          <img class="photo" src="${makeImageUrl(imageName)}">
+          ${makeFileInput(id, imageName, "image/png, image/jpeg")}
+        </div>`,
+    (imageName) =>
+      `<div class="photo-container">${imageName}<img class="photo" src="${makeImageUrl(
+        imageName
+      )}">${imageName ? "" : "Фото нет"}</div>`,
     (v) => v,
     false
   ),

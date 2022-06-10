@@ -83,5 +83,17 @@ async function fetchImpl(url, options, anonymous = false) {
   return response;
 }
 
-export { fetchBlob, fetchAllJson, put, post, deleteEntity, PAGE_SIZE };
+function makeImageUrl(imageName) {
+  return `${URL}/photos/${imageName}`;
+}
+
+export {
+  fetchBlob,
+  fetchAllJson,
+  put,
+  post,
+  deleteEntity,
+  PAGE_SIZE,
+  makeImageUrl,
+};
 export default fetchJson;

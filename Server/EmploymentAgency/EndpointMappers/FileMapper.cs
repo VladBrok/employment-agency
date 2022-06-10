@@ -1,4 +1,5 @@
 using EmploymentAgency.Reports;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmploymentAgency.EndpointMappers;
@@ -26,11 +27,15 @@ public static class FileMapper
 
         app.MapGet(
             "api/photos/{fileName}",
-            async (string fileName, HttpResponse response) =>
-            {
-                await SendFileAsync($"media/photos/{fileName}", response, "image/png");
-            }
+            [AllowAnonymous]
+            async (string fileName) => await SendFileAsync($"media/photos/{fileName}")
         );
+    }
+
+    private static async Task<IResult> SendFileAsync(string file)
+    {
+        byte[] bytes = await File.ReadAllBytesAsync(file);
+        return Results.File(bytes, "image/png");
     }
 
     private static async Task SendFileAsync(string file, HttpResponse response, string contentType)

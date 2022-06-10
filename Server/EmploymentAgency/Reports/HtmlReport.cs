@@ -39,9 +39,11 @@ public class HtmlReport : IReport
                   align-items: center;
               }
               .photo-container {
-                  max-width: 120px;
                   text-indent: -9999px;
                   margin-top: -1rem;
+              }
+              img {
+                max-width: 90px
               }
             </style>"
             )
