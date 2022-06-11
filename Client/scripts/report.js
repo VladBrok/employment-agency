@@ -7,7 +7,7 @@ async function downloadReport(tableChild, type) {
     tableChild,
     pageSize: 1e6,
   });
-  data = await convertValues(data.slice(0, 5));
+  data = await convertValues(data);
   data[0] = convertColumnNames(data[0]);
 
   const fileName = `report.${type === "excel" ? "xlsx" : type}`;
