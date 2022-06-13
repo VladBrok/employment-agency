@@ -69,6 +69,7 @@ button {
 }
 
 .loading {
+  color: var(--primary-color);
   position: fixed;
   top: 1rem;
   right: 1rem;
