@@ -41,6 +41,17 @@ button {
   align-items: center;
 }
 
+.main:empty::before {
+  content: "Добро пожаловать!";
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  margin-bottom: 2.5rem;
+}
+
 .title {
   color: var(--primary-color);
   margin: 2.3rem 0;
