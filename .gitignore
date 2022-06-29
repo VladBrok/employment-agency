@@ -11,6 +11,9 @@ nupkg/
 # Visual Studio Code
 .vscode
 
+# Archives
+*.zip
+
 img/
 # Rider
 .idea
