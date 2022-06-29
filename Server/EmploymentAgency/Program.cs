@@ -89,7 +89,7 @@ void MapAllEndpoints()
         "api/generate",
         async () =>
         {
-            string command = await File.ReadAllTextAsync("../sql/employment_agency.sql");
+            string command = await File.ReadAllTextAsync("sql/employment_agency.sql");
             await postgres.ExecuteAsync(command);
         }
     );
