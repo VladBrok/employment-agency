@@ -6,6 +6,7 @@ function confirm(message, buttonText) {
       `<button class="search-button button cancel-button">Отмена</button>
       <button class="search-button button danger-button">${buttonText}</button>`
     );
+
     document.body.querySelector(".cancel-button").onclick = () =>
       hideModal(resolve, false);
     document.body.querySelector(".danger-button").onclick = () =>
@@ -24,7 +25,7 @@ function addModal(content, actions) {
         </div>
       </div>`;
   document.body.insertAdjacentHTML("beforeend", modal);
-  document.querySelector(".modal").focus();
+  document.querySelector(".modal .button").focus();
 }
 
 function hideModal(callback, result = null) {

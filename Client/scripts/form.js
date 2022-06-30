@@ -24,7 +24,7 @@ async function makeForm(
 
   const form = `
     <div class="form-container">
-      <img src="images/delete.png" alt="Удалить" 
+      <img src="images/delete.png" alt="Удалить" tabindex='0'
         title="Удалить" class="delete" style="visibility:${
           entityId ? "visible" : "hidden"
         }">
@@ -50,6 +50,7 @@ async function makeForm(
         <button type="submit" class="search-button button ${className}">${buttonText}</button>
       </form>
     </div>`;
+
   const childTables =
     entityId == null
       ? []
