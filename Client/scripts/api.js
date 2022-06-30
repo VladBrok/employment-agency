@@ -1,6 +1,6 @@
 import { ensureAuthenticated, getToken } from "./auth.js";
+import { apiUrl } from "./config.js";
 
-const URL = "https://localhost:7288/api";
 const PAGE_SIZE = 15;
 
 async function fetchJson({
@@ -62,7 +62,7 @@ async function deleteEntity(endpoint, id) {
 }
 
 function makeUrl(endpoint) {
-  return `${URL}${endpoint}`;
+  return `${apiUrl}${endpoint}`;
 }
 
 async function fetchImpl(url, options, anonymous = false) {
@@ -84,7 +84,7 @@ async function fetchImpl(url, options, anonymous = false) {
 }
 
 function makeImageUrl(imageName) {
-  return `${URL}/photos/${imageName}`;
+  return `${apiUrl}/photos/${imageName}`;
 }
 
 export {
