@@ -90,33 +90,29 @@ const endpointInfo = [
   new Endpoint({
     main: "/special/applications_without_experience",
     parameters: [
-      new Parameter("Должность", (id) => makeTextInput(id, "Промоутер", 1, 40)),
+      new Parameter("Должность", (id) => makeTextInput(id, "Промоутер")),
     ],
   }),
   new Endpoint({
     main: "/special/applications_percent_after",
-    parameters: [
-      new Parameter("Год", (id) => makeNumberInput(id, "2017", 1980, 2022)),
-    ],
+    parameters: [new Parameter("Год", (id) => makeNumberInput(id, "2017"))],
   }),
   new Endpoint({
     main: "/special/applications_percent_by_positions_after",
-    parameters: [
-      new Parameter("Год", (id) => makeNumberInput(id, "2017", 1980, 2022)),
-    ],
+    parameters: [new Parameter("Год", (id) => makeNumberInput(id, "2017"))],
   }),
   new Endpoint({
     main: "/special/application_count_by_positions",
     parameters: [
-      new Parameter("Год", (id) => makeNumberInput(id, "2017", 1980, 2022)),
-      new Parameter("Месяц", (id) => makeNumberInput(id, "5", 1, 12)),
+      new Parameter("Год", (id) => makeNumberInput(id, "2017")),
+      new Parameter("Месяц", (id) => makeNumberInput(id, "5")),
     ],
   }),
   new Endpoint({ main: "/special/num_applications_for_each_employment_type" }),
   new Endpoint({
     main: "/special/seekers_in_district",
     parameters: [
-      new Parameter("Район", (id) => makeTextInput(id, "Ворошиловский", 1, 50)),
+      new Parameter("Район", (id) => makeTextInput(id, "Ворошиловский")),
     ],
   }),
   new Endpoint({
@@ -127,16 +123,12 @@ const endpointInfo = [
   }),
   new Endpoint({
     main: "/special/seekers_whose_total_experience_exceeds",
-    parameters: [
-      new Parameter("Опыт", (id) => makeNumberInput(id, "5", 0, 100)),
-    ],
+    parameters: [new Parameter("Опыт", (id) => makeNumberInput(id, "5"))],
   }),
   new Endpoint({
     main: "/special/employers_with_property",
     parameters: [
-      new Parameter("Тип собственности", (id) =>
-        makeTextInput(id, "Частная", 1, 30)
-      ),
+      new Parameter("Тип собственности", (id) => makeTextInput(id, "Частная")),
     ],
   }),
   new Endpoint({
@@ -154,15 +146,13 @@ const endpointInfo = [
   new Endpoint({
     main: "/special/positions_from_open_vacancies_whose_average_salary_exceeds",
     parameters: [
-      new Parameter("Зарплата", (id) =>
-        makeNumberInput(id, "52000", 10000, 1000000)
-      ),
+      new Parameter("Зарплата", (id) => makeNumberInput(id, "52000")),
     ],
   }),
   new Endpoint({
     main: "/special/max_salaries_for_position",
     parameters: [
-      new Parameter("Должность", (id) => makeTextInput(id, "Промоутер", 1, 40)),
+      new Parameter("Должность", (id) => makeTextInput(id, "Промоутер")),
     ],
   }),
   new Endpoint({ main: "/change_log", access: "read-delete" }),
