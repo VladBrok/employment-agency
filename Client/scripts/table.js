@@ -46,44 +46,46 @@ async function makeTable({
       data?.length
         ? `
     <div class="before-table">
-      <table>
-        <tr class="search">
-          <td><label>Столбец для поиска:</label></td>
-          <td>
+      <form onSubmit="return false;" class="table-form">
+        <div class="search">
+          <span class='td'><label>Столбец для поиска:</label></span>
+          <span class='td'>
             <select class="select input">
               ${extractColumnNames(dataForPage)
                 .filter((name) => columns[name].isFilterable)
                 .map((name) => `<option>${name}</option>`)
                 .join("")}
             </select>
-          </td>
-        </tr>
-        <tr class="search">
-          <td><label for="search">Подстрока для поиска:</label></td>
-          <td><input type="text" id="search" class="input" required></td>
-          <td><button class="search-button button find">Поиск</button></td>
-        </tr>
+          </span>
+        </div>
+        <div class="search">
+          <span class='td'><label for="search">Подстрока для поиска:</label></span>
+          <span class='td'><input type="text" id="search" class="input"></span>
+          <span class='td'><button class="search-button button find">Поиск</button></span>
+        </div>
         ${parameters
           .map(
             (param, i) => `
-                <tr class="search">
-                  <td><label for="search${i}">${param.name}:</label></td>
-                  <td>${param.convertToInput(`search${i}`)}</td>
-                  <td><button class="search-button button find">Ввод</button></td>
-                </tr>`
+                <div class='search'>
+                  <span class='td'><label for="search${i}">${
+              param.name
+            }:</label></span>
+                  <span class='td'>${param.convertToInput(`search${i}`)}</span>
+                  <span class='td'><button class="search-button button find">Ввод</button></span>
+                </div>`
           )
           .join("")}
-      </table>
+      </form>
       <div class="actions">
       <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму" title="Нарисовать диаграмму"
-      data-chart="${chartType}">
-      <select class="download" title="Скачать отчет">
-      <option selected disabled></option>
-      <option>html</option>
-      <option>excel</option>
+      data-chart="${chartType}" tabindex='0'>
+      <select class="download" title="Скачать отчет" tabindex='0'>
+        <option selected disabled></option>
+        <option>html</option>
+        <option>excel</option>
       </select>
-      <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись">
-      <img src="images/delete.png" alt="Удалить" title="Удалить" class="delete delete-many">
+      <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись" tabindex='0'>
+      <img src="images/delete.png" alt="Удалить" title="Удалить" class="delete delete-many" tabindex='0'>
       </div>
     </div>`
         : ""

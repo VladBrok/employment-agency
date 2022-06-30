@@ -94,7 +94,12 @@
   max-width: 27rem;
 }
 
+input[type="file"] {
+  display: block;
+}
+
 .delete {
+  color: var(--danger-color);
   max-width: 1.6rem;
   margin: 0.7rem;
   align-self: flex-end;
@@ -103,8 +108,4 @@
 .delete:hover {
   cursor: pointer;
   filter: drop-shadow(0.06rem 0.06rem 0.035rem var(--danger-color));
-}
-
-input[type="file"] {
-  display: block;
 }
