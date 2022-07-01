@@ -1,6 +1,7 @@
 node_modules/
 media/
 appSettings.json
+appSettings.*.json
 *.swp
 *.*~
 project.lock.json
