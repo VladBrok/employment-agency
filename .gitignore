@@ -1,7 +1,10 @@
-node_modules/
-media/
+# App settings
 appSettings.json
 appSettings.*.json
+
+# Misc
+node_modules/
+media/
 *.swp
 *.*~
 project.lock.json
