@@ -4,8 +4,11 @@ using EmploymentAgency.EndpointMappers;
 using EmploymentAgency.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 Settings settings = GetSettings();
 WebApplication app = BuildApp();
 UseRequiredMiddlewares();
@@ -17,16 +20,11 @@ app.Run();
 
 Settings GetSettings()
 {
-    return new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false)
-        .Build()
-        .GetSection("Settings")
-        .Get<Settings>();
+    return builder.Configuration.GetSection("Settings").Get<Settings>();
 }
 
 WebApplication BuildApp()
 {
-    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(
@@ -51,12 +49,31 @@ WebApplication BuildApp()
                 .Build()
     );
     builder.Services.AddCors();
+    builder.Host.UseSerilog(
+        (context, services, configuration) =>
+            configuration.ReadFrom
+                .Configuration(context.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext()
+    );
+    builder.Services.AddLogging(builder => builder.AddSerilog());
     return builder.Build();
 }
 
 void UseRequiredMiddlewares()
 {
     app.UseHttpsRedirection();
+    string logFolder = "logs";
+    string logPath = Path.Combine(builder.Environment.ContentRootPath, logFolder);
+    Directory.CreateDirectory(logPath);
+    app.UseStaticFiles(
+        new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(logPath),
+            RequestPath = $"/{logFolder}"
+        }
+    );
+    app.UseSerilogRequestLogging();
     app.UseCors(
         builder =>
             builder
@@ -74,9 +91,10 @@ PostgreSql MakePostgres()
     var retry = new RetryStrategy(
         settings.MaxRetryCount,
         settings.InitialRetryDelayMs,
-        settings.RetryDelayMultiplier
+        settings.RetryDelayMultiplier,
+        app.Logger
     );
-    return new PostgreSql(settings.ConnectionString, retry);
+    return new PostgreSql(settings.ConnectionString, retry, app.Logger);
 }
 
 void MapAllEndpoints()

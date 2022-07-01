@@ -1,7 +1,6 @@
 #!/usr/bin/env
 
-dotnet publish -c Release -o build/
-cp -r media/ build/
-cp -r sql/ build/
-mv appsettings.Release.json build/appsettings.json
-powershell Compress-Archive -Path 'build\*' -DestinationPath 'Server.zip'
+dotnet publish -c Release -o bin/build/
+cp -r media/ bin/build/
+cp -r sql/ bin/build/
+powershell Compress-Archive -Path 'bin\build\*' -DestinationPath 'Server.zip' -Force

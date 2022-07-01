@@ -6,11 +6,13 @@ public class PostgreSql
 {
     private readonly string _connection;
     private readonly RetryStrategy _retry;
+    private readonly ILogger _logger;
 
-    public PostgreSql(string connection, RetryStrategy retry)
+    public PostgreSql(string connection, RetryStrategy retry, ILogger logger)
     {
         _connection = connection;
         _retry = retry;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<Entity>> ExecuteAsync(string command)
@@ -85,7 +87,7 @@ public class PostgreSql
 
     private async Task ExecuteReaderAsync(string command, Func<Entity, bool> callback)
     {
-        Console.WriteLine(command);
+        _logger.LogInformation(command);
         await _retry.ExecuteAsync<NpgsqlException>(
             async () =>
             {

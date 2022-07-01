@@ -5,8 +5,9 @@ public class RetryStrategy
     private readonly int _maxRetryCount;
     private readonly int _initialDelayMs;
     private readonly int _delayMultiplier;
+    private readonly ILogger _logger;
 
-    public RetryStrategy(int maxRetryCount, int initialDelayMs, int delayMultiplier)
+    public RetryStrategy(int maxRetryCount, int initialDelayMs, int delayMultiplier, ILogger logger)
     {
         if (maxRetryCount < 1)
         {
@@ -24,6 +25,7 @@ public class RetryStrategy
         _maxRetryCount = maxRetryCount;
         _initialDelayMs = initialDelayMs;
         _delayMultiplier = delayMultiplier;
+        _logger = logger;
     }
 
     public async Task ExecuteAsync<E>(Func<Task> callback, Predicate<E> isTransient)
@@ -37,21 +39,22 @@ public class RetryStrategy
             try
             {
                 await callback();
-                Console.WriteLine($"Success{(retry == 1 ? "" : $" on retry #{retry}")}.");
+
+                _logger.LogInformation($"Success{(retry == 1 ? "" : $" on retry #{retry}")}.");
                 return;
             }
             catch (E exception) when (isTransient(exception))
             {
-                Console.Write($"Failed on retry #{retry}. ");
+                _logger.LogWarning($"Failed on retry #{retry}.");
                 retry++;
 
                 if (retry > _maxRetryCount)
                 {
-                    Console.WriteLine("No retries left.");
+                    _logger.LogWarning("No retries left.");
                     throw;
                 }
 
-                Console.WriteLine($"Next retry will be in {delayMs} ms.");
+                _logger.LogWarning($"Next retry will be in {delayMs} ms.");
                 await Task.Delay(delayMs);
                 delayMs *= _delayMultiplier;
             }
