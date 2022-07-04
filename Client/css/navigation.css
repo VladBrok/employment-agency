@@ -14,13 +14,17 @@
   margin-left: calc(-1 * var(--nav-width));
 }
 
-.menu {
+.menu-wrapper {
   position: absolute;
   top: 0.8rem;
   left: 0.8rem;
   width: 2rem;
   cursor: pointer;
   z-index: 20;
+}
+
+.menu-wrapper .menu {
+  width: 100%;
 }
 
 .menu.close-menu {

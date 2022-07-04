@@ -77,15 +77,14 @@ async function makeTable({
           .join("")}
       </form>
       <div class="actions">
-      <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму" title="Нарисовать диаграмму"
-      data-chart="${chartType}" tabindex='0'>
-      <select class="download" title="Скачать отчет" tabindex='0'>
+      <img class='chart' src='images/chart.png' alt="Нарисовать диаграмму" title="Нарисовать диаграмму" data-chart="${chartType}">
+      <select class="download" title="Скачать отчет">
         <option selected disabled></option>
         <option>html</option>
         <option>excel</option>
       </select>
-      <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись" tabindex='0'>
-      <img src="images/delete.png" alt="Удалить" title="Удалить" class="delete delete-many" tabindex='0'>
+      <img class='create' src='images/create.png' alt="Создать" title="Создать новую запись">
+      <img src="images/delete.png" alt="Удалить" title="Удалить" class="delete delete-many">
       </div>
     </div>`
         : ""

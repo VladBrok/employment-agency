@@ -18,15 +18,6 @@
   align-items: center;
 }
 
-.before-table .create:focus,
-.before-table .chart:focus,
-.before-table .delete:focus,
-.before-table .download:focus {
-  outline: none;
-  box-shadow: 0 0 0 var(--focus-ring) var(--tertiary-color),
-    0 0 0 calc(var(--focus-ring) * 2);
-}
-
 .before-table .create {
   color: #009060;
   max-width: 1.5rem;

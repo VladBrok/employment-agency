@@ -107,11 +107,11 @@ async function handleDocumentClick(e) {
 
   if (e.target.classList.contains("menu")) {
     navigation.classList.toggle("hidden");
-    document.querySelector(".menu").outerHTML = navigation.classList.contains(
-      "hidden"
-    )
-      ? `<img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню">`
-      : `<img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню">`;
+    document.querySelector(".menu-wrapper").outerHTML = `${
+      navigation.classList.contains("hidden")
+        ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
+        : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
+    }`;
     return;
   }
 

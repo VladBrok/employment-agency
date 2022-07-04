@@ -30,7 +30,8 @@ li {
 }
 
 button {
-  outline: none;
+  background: transparent;
+  border: none;
 }
 
 .main {

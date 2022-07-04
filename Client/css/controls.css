@@ -19,9 +19,12 @@
   text-align: left;
 }
 
+.input:not(.radio-input) {
+  outline: none;
+}
+
 .input:not(.radio-input),
 .select {
-  outline: none;
   padding: 0.2rem;
   margin: 0 0.5em;
   border: 0.1rem solid var(--secondary-color);
@@ -50,6 +53,7 @@
 }
 
 .button:focus {
+  outline: none;
   box-shadow: 0 0 0 0.15rem;
 }
 

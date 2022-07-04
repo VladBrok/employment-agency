@@ -24,7 +24,7 @@ async function makeForm(
 
   const form = `
     <div class="form-container">
-      <img src="images/delete.png" alt="Удалить" tabindex='0'
+      <img src="images/delete.png" alt="Удалить"
         title="Удалить" class="delete" style="visibility:${
           entityId ? "visible" : "hidden"
         }">
