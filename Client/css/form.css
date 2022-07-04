@@ -90,6 +90,10 @@
   text-align: center;
 }
 
+.form-container label {
+  text-align: left;
+}
+
 .form-container .title {
   max-width: 27rem;
 }
@@ -108,4 +112,15 @@ input[type="file"] {
 .delete:hover {
   cursor: pointer;
   filter: drop-shadow(0.06rem 0.06rem 0.035rem var(--danger-color));
+}
+
+@media screen and (max-width: 340px) {
+  .curd-form {
+    padding: 0.2rem;
+  }
+
+  .element {
+    max-width: 24rem;
+    margin: 0.5rem 0;
+  }
 }

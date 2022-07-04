@@ -154,3 +154,9 @@
   opacity: 1;
   padding-top: 0.3rem;
 }
+
+@media screen and (max-width: 840px) {
+  .before-table {
+    flex-direction: column;
+  }
+}

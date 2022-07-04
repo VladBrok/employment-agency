@@ -1,5 +1,6 @@
 :root {
   --nav-width: 16rem;
+  --nav-width-sm: 12rem;
 }
 
 .navigation {
@@ -8,6 +9,7 @@
   max-width: var(--nav-width);
   min-height: 100vh;
   transition: margin 0.4s;
+  z-index: 12;
 }
 
 .hidden {
@@ -102,7 +104,11 @@
 
 @media (max-width: 768px) {
   .navigation {
-    max-width: 12rem;
+    max-width: var(--nav-width-sm);
+  }
+
+  .hidden {
+    margin-left: calc(-1 * var(--nav-width-sm));
   }
 
   .navigation .item a {
