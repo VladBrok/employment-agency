@@ -74,10 +74,6 @@
   margin-left: 0.5rem;
 }
 
-.navigation .parent:hover > .child {
-  display: block;
-}
-
 .navigation .selected-item {
   position: relative;
 }

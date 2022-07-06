@@ -29,6 +29,13 @@ function handleError() {
 let displayTable;
 
 async function handleNavigationClick(e) {
+  const subMenu = e.target.nextElementSibling;
+  if (subMenu) {
+    subMenu.style.display =
+      subMenu.style.display === "block" ? "none" : "block";
+    return;
+  }
+
   if (!e.target.dataset.endpoint) {
     return;
   }
