@@ -1,9 +1,7 @@
 :root {
-  --nav-width: 24rem;
-  --nav-width-sm: 19rem;
+  --nav-width: 22rem;
   --delim: 12;
   --sub-menu-margin: calc(var(--nav-width) / var(--delim));
-  --sub-menu-margin-sm: calc(var(--nav-width-sm) / var(--delim));
 }
 
 .navigation {
@@ -95,20 +93,9 @@
   color: #fdfdff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .navigation {
-    max-width: var(--nav-width-sm);
-  }
-
-  .hidden {
-    margin-left: calc(-1 * var(--nav-width-sm));
-  }
-
-  .navigation .item a {
-    padding: 0.8rem;
-  }
-
-  .navigation .title {
-    font-size: 1.2rem;
+    position: absolute;
+    height: 100%;
   }
 }

@@ -38,7 +38,7 @@ async function handleNavigationClick(e) {
       subMenu.style.display = "none";
     } else {
       subMenu.style.display = "block";
-      setTimeout(() => subMenu.querySelector("a").scrollIntoView(false));
+      setTimeout(() => subMenu.querySelector("a")?.scrollIntoView(false));
     }
     return;
   }

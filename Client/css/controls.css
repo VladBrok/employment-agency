@@ -100,3 +100,9 @@
 .select option:empty {
   display: none;
 }
+
+@media (max-width: 400px) {
+  .search-button {
+    padding: 0.3rem 0.5rem;
+  }
+}
