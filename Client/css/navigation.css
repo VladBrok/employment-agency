@@ -1,6 +1,9 @@
 :root {
-  --nav-width: 16rem;
-  --nav-width-sm: 12rem;
+  --nav-width: 24rem;
+  --nav-width-sm: 19rem;
+  --delim: 12;
+  --sub-menu-margin: calc(var(--nav-width) / var(--delim));
+  --sub-menu-margin-sm: calc(var(--nav-width-sm) / var(--delim));
 }
 
 .navigation {
@@ -53,20 +56,14 @@
 }
 
 .navigation .child {
-  position: absolute;
-  left: 100%;
-  top: 0;
+  margin-left: var(--sub-menu-margin);
   background: var(--primary-color);
   display: none;
-  width: max-content;
+  max-width: max-content;
 }
 
 .navigation .child li a {
   padding: 0.6rem 1rem;
-}
-
-.navigation .parent {
-  position: relative;
 }
 
 .navigation .parent > a::after {

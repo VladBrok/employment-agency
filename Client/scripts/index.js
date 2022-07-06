@@ -31,8 +31,15 @@ let displayTable;
 async function handleNavigationClick(e) {
   const subMenu = e.target.nextElementSibling;
   if (subMenu) {
-    subMenu.style.display =
-      subMenu.style.display === "block" ? "none" : "block";
+    if (subMenu.style.display === "block") {
+      for (const child of subMenu.querySelectorAll(".child")) {
+        child.style.display = "none";
+      }
+      subMenu.style.display = "none";
+    } else {
+      subMenu.style.display = "block";
+      setTimeout(() => subMenu.querySelector("a").scrollIntoView(false));
+    }
     return;
   }
 
