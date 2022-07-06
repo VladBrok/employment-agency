@@ -1,5 +1,13 @@
 #!/usr/bin/env
 
-sed -i 's/isDev = true/isDev = false/' ./scripts/config.js
+file=./scripts/config.js
+found=$(grep 'isDev = true' $file)
+found=${found:0:1}
+
+sed -i 's/isDev = true/isDev = false/' $file
 yes "" | surge
-sed -i 's/isDev = false/isDev = true/' ./scripts/config.js
+
+if [ -n "$found" ]
+then
+  sed -i 's/isDev = false/isDev = true/' $file
+fi
