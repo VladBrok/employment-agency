@@ -3,14 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description" content="Поиск работодателей и работников" />
-    <script type="module" src="scripts/login-page.js"></script>
+    <script defer src="scripts/login-page.js"></script>
     <link rel="stylesheet" href="css/login.css" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <title>Агентство По Трудоустройству</title>
   </head>
-
   <body>
     <div class="loading">Загрузка...</div>
     <div class="form-container">
@@ -20,12 +19,10 @@
           <label for="login">Логин:</label>
           <input type="text" id="login" class="input" required />
         </div>
-
         <div class="element">
           <label for="password">Пароль:</label>
           <input type="password" id="password" class="input" required />
         </div>
-
         <button type="submit" class="search-button button">Вход</button>
       </form>
     </div>

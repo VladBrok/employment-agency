@@ -1,6 +1,6 @@
-@import url("common.css");
-@import url("controls.css");
-@import url("form.css");
+@import url("./common.css");
+@import url("./controls.css");
+@import url("./form.css");
 
 .form-container {
   margin: 1rem auto;

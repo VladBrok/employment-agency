@@ -1,5 +1,12 @@
 {
   "dependencies": {
     "highcharts": "^10.1.0"
+  },
+  "scripts": {
+    "dev": "parcel serve *.html",
+    "build": "rm -rf dist/ && parcel build *.html && cp -r images/ dist/images && cp CNAME dist/CNAME"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
   }
 }

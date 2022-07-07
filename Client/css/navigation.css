@@ -1,5 +1,5 @@
 :root {
-  --nav-width: 22rem;
+  --nav-width: 16rem;
   --delim: 12;
   --sub-menu-margin: calc(var(--nav-width) / var(--delim));
 }
@@ -93,7 +93,7 @@
   color: #fdfdff;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 700px) {
   .navigation {
     position: absolute;
     height: 100%;
