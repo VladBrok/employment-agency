@@ -1,3 +1,3 @@
-import { ensureAuthenticated} from "./auth.js";
+import { ensureAuthenticated } from "./auth.js";
 
 ensureAuthenticated();
