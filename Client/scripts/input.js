@@ -1,5 +1,5 @@
 document.addEventListener("input", (e) => {
-  e.target.setCustomValidity("");
+  e.target.setCustomValidity(" ");
 });
 
 document.addEventListener("click", (e) => {
