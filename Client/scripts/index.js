@@ -10,10 +10,16 @@ import drawChart from "./chart.js";
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");
 
+focusOnMenu();
+
 window.addEventListener("unhandledrejection", handleError);
 navigation.addEventListener("click", loadingDecorator(handleNavigationClick));
 document.addEventListener("click", loadingDecorator(handleDocumentClick));
 main.addEventListener("change", loadingDecorator(handleChange));
+
+function focusOnMenu() {
+  document.querySelector(".menu-wrapper").focus();
+}
 
 function handleError() {
   main.innerHTML = `
@@ -121,7 +127,7 @@ async function handleDocumentClick(e) {
     return;
   }
 
-  if (e.target.classList.contains("menu")) {
+  if (e.target.classList.contains("menu-wrapper")) {
     toggleMenu();
     return;
   }
@@ -250,10 +256,24 @@ async function handleChange(e) {
 }
 
 function toggleMenu() {
-  navigation.classList.toggle("hidden");
-  document.querySelector(".menu-wrapper").outerHTML = `${
-    navigation.classList.contains("hidden")
-      ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
-      : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
-  }`;
+  const toggle = () => {
+    navigation.classList.toggle("show");
+    document.querySelector(".menu-wrapper").outerHTML = `${
+      !navigation.classList.contains("show")
+        ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
+        : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
+    }`;
+    focusOnMenu();
+  };
+
+  if (navigation.classList.contains("show")) {
+    navigation.ontransitionend = () => {
+      navigation.hidden = true;
+      navigation.ontransitionend = null;
+    };
+    toggle();
+  } else {
+    navigation.hidden = false;
+    setTimeout(toggle);
+  }
 }

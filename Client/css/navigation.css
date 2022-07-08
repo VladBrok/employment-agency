@@ -8,13 +8,18 @@
   background: var(--primary-color);
   padding: 0.1rem;
   max-width: var(--nav-width);
-  min-height: 100vh;
+  min-height: max(100vh, 100%);
   transition: margin 0.4s;
   z-index: 12;
+  margin-left: calc(-1 * var(--nav-width));
 }
 
-.hidden {
-  margin-left: calc(-1 * var(--nav-width));
+.show {
+  margin-left: 0;
+}
+
+.menu {
+  pointer-events: none;
 }
 
 .menu-wrapper {
@@ -96,6 +101,5 @@
 @media (max-width: 700px) {
   .navigation {
     position: absolute;
-    height: 100%;
   }
 }
