@@ -71,6 +71,10 @@ async function handleNavigationClick(e) {
   displayTable = async () =>
     (main.innerHTML = await makeTable({ endpoint, chartType, title }));
   await displayTable();
+
+  if (document.documentElement.offsetWidth <= 700) {
+    toggleMenu();
+  }
 }
 
 let choosing = false;
@@ -120,12 +124,7 @@ async function handleDocumentClick(e) {
   }
 
   if (e.target.classList.contains("menu")) {
-    navigation.classList.toggle("hidden");
-    document.querySelector(".menu-wrapper").outerHTML = `${
-      navigation.classList.contains("hidden")
-        ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
-        : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
-    }`;
+    toggleMenu();
     return;
   }
 
@@ -250,4 +249,13 @@ async function handleChange(e) {
     }
     main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "#";
   }
+}
+
+function toggleMenu() {
+  navigation.classList.toggle("hidden");
+  document.querySelector(".menu-wrapper").outerHTML = `${
+    navigation.classList.contains("hidden")
+      ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
+      : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
+  }`;
 }
