@@ -151,7 +151,7 @@ const columnInfo = [
   ),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
-  new Column("time_modified", "время совершения"),
+  new Column("time_modified", "время совершения", undefined, formatDate),
   new Column("record_id", "id записи"),
   new Column("user_modified", "пользователь, совершивший операцию"),
   new Column("property", "тип собственности", async function (
@@ -225,7 +225,7 @@ const columnInfo = [
     )
   ),
   new Column("email", "почта", makeEmailInput),
-  new Column("employer_day", "дата размещения", () => null),
+  new Column("employer_day", "дата размещения", () => null, formatDate),
   new Column("salary_new", "предлагаемая зарплата", (id, value) =>
     makeNumberInput(id, value, 1000, 1000000)
   ),
@@ -285,7 +285,10 @@ const columnInfo = [
         `${new Date().getFullYear() - 16}-01-01`,
         true
       ),
-    (v) => v.substring(0, v.indexOf("00:") - 3)
+    (v) => {
+      const formatted = formatDate(v);
+      return formatted.substring(0, formatted.indexOf(","));
+    }
   ),
   new Column("registration_city", "город регистрации", (id, value) =>
     makeTextInput(id, value, 3, 20, true)
@@ -311,7 +314,7 @@ const columnInfo = [
   new Column("education", "образование", (id, value) =>
     makeTextInput(id, value, 3, 20)
   ),
-  new Column("seeker_day", "дата публикации", () => null),
+  new Column("seeker_day", "дата публикации", () => null, formatDate),
   new Column("information", "информация", makeTextInput),
   new Column(
     "photo",
@@ -338,6 +341,11 @@ const columnInfo = [
     (v) => (v === "" ? "Нет" : v)
   ),
 ];
+
+function formatDate(string) {
+  const date = new Date(string + " UTC");
+  return date.toLocaleString();
+}
 
 async function changeStreets(districtSelect) {
   if (!streetSelectId) {
