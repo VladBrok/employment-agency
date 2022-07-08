@@ -100,11 +100,11 @@ async function makeTable({
     </table>
     </div>
     <div class="pages">
-      <button class="previous-page change-page element button disabled">❮</button>
-      <button class="current-page element button disabled" tabindex="-1">1</button>
-      <button class="next-page change-page element button ${
+      <button class="previous-page change-page element button" disabled>❮</button>
+      <button class="current-page element button" disabled>1</button>
+      <button class="next-page change-page element button" ${
         data?.length > PAGE_SIZE ? "" : "disabled"
-      }">❯</button>
+      }>❯</button>
     </div>
   </div>`;
 }
@@ -193,8 +193,8 @@ async function fetchJsonFromTable({
 }
 
 function adjustButtonAvailability(selector, shouldDisable) {
-  const classList = document.querySelector(selector).classList;
-  shouldDisable ? classList.add("disabled") : classList.remove("disabled");
+  const element = document.querySelector(selector);
+  element.disabled = shouldDisable;
 }
 
 export { makeTable, fetchJsonFromTable };

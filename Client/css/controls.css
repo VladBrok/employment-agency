@@ -46,7 +46,7 @@
   user-select: none;
 }
 
-.button:hover {
+.button:not(:disabled):hover {
   cursor: pointer;
   color: var(--tertiary-color);
   background: var(--button-color);
@@ -57,10 +57,9 @@
   box-shadow: 0 0 0 0.15rem;
 }
 
-.disabled,
+.button:disabled,
 .disabled-button {
   opacity: 0.65;
-  pointer-events: none;
 }
 
 .search-button {
