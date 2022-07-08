@@ -3,8 +3,8 @@
     "highcharts": "^10.1.0"
   },
   "scripts": {
-    "dev": "parcel serve *.html",
-    "build": "rm -rf dist/ && parcel build *.html && cp -r images/ dist/images && cp CNAME dist/CNAME"
+    "dev": "parcel serve index.html",
+    "build": "rm -rf dist/ && parcel build index.html && cp -r images/ dist/images && cp CNAME dist/CNAME"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.5"

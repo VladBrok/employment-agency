@@ -1,13 +1,11 @@
 import { makeTable } from "./table.js";
 import { makeForm, sendFormAsPost, sendFormAsPut } from "./form.js";
-import { ensureAuthenticated, exit } from "./auth.js";
+import { exit } from "./auth.js";
 import fetchJson, { deleteEntity } from "./api.js";
 import { confirm, showInfo } from "./modal-windows.js";
 import downloadReport from "./report.js";
 import loadingDecorator from "./loading.js";
 import drawChart from "./chart.js";
-
-ensureAuthenticated();
 
 const navigation = document.querySelector(".navigation");
 const main = document.querySelector(".main");

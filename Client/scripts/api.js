@@ -62,7 +62,7 @@ function makeUrl(endpoint) {
 
 async function fetchImpl(url, options, anonymous = false) {
   if (!anonymous) {
-    ensureAuthenticated();
+    await ensureAuthenticated();
   }
 
   options = {

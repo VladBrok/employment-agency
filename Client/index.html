@@ -1,254 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Поиск работодателей и работников" />
-    <script defer src="scripts/index.js"></script>
+    <script defer src="scripts/ensure-authenticated.js"></script>
     <link rel="stylesheet" href="css/index.css" />
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <title>Агентство По Трудоустройству</title>
   </head>
 
   <body>
-    <button class="menu-wrapper">
-      <img
-        src="images/menu.png"
-        alt="Открыть меню"
-        class="menu"
-        title="Открыть меню"
-      />
-    </button>
-    <nav class="navigation hidden">
-      <h1 class="title">Агентство по трудоустройству</h1>
-      <ul class="list">
-        <li class="item selected-item parent">
-          <a href="#">Основные таблицы</a>
-          <ul class="child">
-            <li><a data-endpoint="/employers" href="#">Работодатели</a></li>
-            <li><a data-endpoint="/seekers" href="#">Соискатели</a></li>
-            <li><a data-endpoint="/vacancies" href="#">Вакансии</a></li>
-            <li>
-              <a data-endpoint="/applications" href="#">
-                Заявки на трудоустройство</a
-              >
-            </li>
-            <li><a data-endpoint="/addresses" href="#">Адреса</a></li>
-            <li>
-              <a data-endpoint="/change_log" href="#">Журнал изменений</a>
-            </li>
-          </ul>
-        </li>
-        <li class="item parent">
-          <a href="#">Справочники</a>
-          <ul class="child">
-            <li><a data-endpoint="/positions" href="#">Должности</a></li>
-            <li>
-              <a data-endpoint="/properties" href="#">Типы собственности</a>
-            </li>
-            <li><a data-endpoint="/streets" href="#">Улицы</a></li>
-            <li><a data-endpoint="/districts" href="#">Районы</a></li>
-            <li>
-              <a data-endpoint="/employment_types" href="#">Типы занятости</a>
-            </li>
-            <li>
-              <a data-endpoint="/statuses" href="#">Социальные статусы</a>
-            </li>
-          </ul>
-        </li>
-        <li class="item parent">
-          <a href="#">Специальные запросы</a>
-          <ul class="child">
-            <li class="parent">
-              <a href="#">Без параметров</a>
-              <ul class="child">
-                <li>
-                  <a
-                    data-endpoint="/special/average_seeker_ages_by_positions"
-                    href="#"
-                    >Средний возраст соискателей по должностям</a
-                  >
-                </li>
-                <li>
-                  <a data-endpoint="/special/vacancies_and_salaries" href="#"
-                    >Зарплаты для разных вакансий</a
-                  >
-                </li>
-                <li>
-                  <a data-endpoint="/special/employer_addresses" href="#"
-                    >Работодатели и их адреса</a
-                  >
-                </li>
-                <li>
-                  <a
-                    data-endpoint="/special/employment_types_and_salaries"
-                    data-chart="3d"
-                    href="#"
-                  >
-                    Средние зарплаты и средний опыт для каждого типа
-                    занятости</a
-                  >
-                </li>
-                <li>
-                  <a data-endpoint="/special/employers_and_vacancies" href="#"
-                    >Вакансии каждой компании</a
-                  >
-                </li>
-                <li>
-                  <a data-endpoint="/special/seekers_and_applications" href="#"
-                    >Заявки каждого соискателя</a
-                  >
-                </li>
-                <li>
-                  <a
-                    data-endpoint="/special/num_vacancies_from_each_employer"
-                    href="#"
-                    >Количество вакансий</a
-                  >
-                </li>
-              </ul>
-            </li>
-            <li class="parent">
-              <a href="#">С параметрами</a>
-              <ul class="child">
-                <li class="parent">
-                  <a href="#">Заявки</a>
-                  <ul class="child">
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/applications_without_experience"
-                      >
-                        Без опыта работы</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/applications_percent_after"
-                      >
-                        Процент после указанного года</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/applications_percent_by_positions_after"
-                        data-chart="1d"
-                        >Процент по должностям</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/application_count_by_positions"
-                      >
-                        Количество по должностям</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/num_applications_for_each_employment_type"
-                      >
-                        Количество по типам занятости</a
-                      >
-                    </li>
-                  </ul>
-                </li>
-                <li class="parent">
-                  <a href="#">Соискатели</a>
-                  <ul class="child">
-                    <li>
-                      <a href="#" data-endpoint="/special/seekers_in_district">
-                        Проживающие в указанном районе</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#" data-endpoint="/special/seekers_born_after">
-                        Родившиеся после указанной даты</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/seekers_whose_total_experience_exceeds"
-                      >
-                        У которых суммарный опыт превышает указанный</a
-                      >
-                    </li>
-                  </ul>
-                </li>
-                <li class="parent">
-                  <a href="#">Работодатели</a>
-                  <ul class="child">
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/employers_with_property"
-                      >
-                        С указанным типом собственности</a
-                      >
-                    </li>
-                  </ul>
-                </li>
-                <li class="parent">
-                  <a href="#">Вакансии</a>
-                  <ul class="child">
-                    <li>
-                      <a href="#" data-endpoint="/special/vacancies_posted_on">
-                        Опубликованные в указанный день</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/latest_vacancy_of_employers_whose_name_contains"
-                        >Даты размещения последних вакансий для указанных
-                        работодателей</a
-                      >
-                    </li>
-                  </ul>
-                </li>
-                <li class="parent">
-                  <a href="#">Должности</a>
-                  <ul class="child">
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/positions_from_open_vacancies_whose_average_salary_exceeds"
-                        data-chart="2d"
-                      >
-                        Из открытых вакансий, у которых средняя зарплата выше
-                        указанной</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        data-endpoint="/special/max_salaries_for_position"
-                      >
-                        Максимальные зарплаты</a
-                      >
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li class="item">
-          <a href="#" data-endpoint="/generate" class="generate-data">
-            Генерация данных</a
-          >
-        </li>
-      </ul>
-      <div>
-        <button class="exit-button search-button button">Выход</button>
+    <template id="login">
+      <div class="form-container login-form-container">
+        <h1 class="title">Авторизация</h1>
+        <form class="crud-form">
+          <div class="element">
+            <label for="login-input">Логин:</label>
+            <input type="text" id="login-input" class="input" required />
+          </div>
+          <div class="element">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" class="input" required />
+          </div>
+          <button type="submit" class="search-button button">Вход</button>
+        </form>
       </div>
-    </nav>
+    </template>
+
+    <template id="index">
+      <button class="menu-wrapper">
+        <img
+          src="images/menu.png"
+          alt="Открыть меню"
+          class="menu"
+          title="Открыть меню"
+        />
+      </button>
+      <nav class="navigation hidden">
+        <h1 class="title">Агентство по трудоустройству</h1>
+        <ul class="list">
+          <li class="item selected-item parent">
+            <a href="#">Основные таблицы</a>
+            <ul class="child">
+              <li><a data-endpoint="/employers" href="#">Работодатели</a></li>
+              <li><a data-endpoint="/seekers" href="#">Соискатели</a></li>
+              <li><a data-endpoint="/vacancies" href="#">Вакансии</a></li>
+              <li>
+                <a data-endpoint="/applications" href="#">
+                  Заявки на трудоустройство</a
+                >
+              </li>
+              <li><a data-endpoint="/addresses" href="#">Адреса</a></li>
+              <li>
+                <a data-endpoint="/change_log" href="#">Журнал изменений</a>
+              </li>
+            </ul>
+          </li>
+          <li class="item parent">
+            <a href="#">Справочники</a>
+            <ul class="child">
+              <li><a data-endpoint="/positions" href="#">Должности</a></li>
+              <li>
+                <a data-endpoint="/properties" href="#">Типы собственности</a>
+              </li>
+              <li><a data-endpoint="/streets" href="#">Улицы</a></li>
+              <li><a data-endpoint="/districts" href="#">Районы</a></li>
+              <li>
+                <a data-endpoint="/employment_types" href="#">Типы занятости</a>
+              </li>
+              <li>
+                <a data-endpoint="/statuses" href="#">Социальные статусы</a>
+              </li>
+            </ul>
+          </li>
+          <li class="item parent">
+            <a href="#">Специальные запросы</a>
+            <ul class="child">
+              <li class="parent">
+                <a href="#">Без параметров</a>
+                <ul class="child">
+                  <li>
+                    <a
+                      data-endpoint="/special/average_seeker_ages_by_positions"
+                      href="#"
+                      >Средний возраст соискателей по должностям</a
+                    >
+                  </li>
+                  <li>
+                    <a data-endpoint="/special/vacancies_and_salaries" href="#"
+                      >Зарплаты для разных вакансий</a
+                    >
+                  </li>
+                  <li>
+                    <a data-endpoint="/special/employer_addresses" href="#"
+                      >Работодатели и их адреса</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      data-endpoint="/special/employment_types_and_salaries"
+                      data-chart="3d"
+                      href="#"
+                    >
+                      Средние зарплаты и средний опыт для каждого типа
+                      занятости</a
+                    >
+                  </li>
+                  <li>
+                    <a data-endpoint="/special/employers_and_vacancies" href="#"
+                      >Вакансии каждой компании</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      data-endpoint="/special/seekers_and_applications"
+                      href="#"
+                      >Заявки каждого соискателя</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      data-endpoint="/special/num_vacancies_from_each_employer"
+                      href="#"
+                      >Количество вакансий</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li class="parent">
+                <a href="#">С параметрами</a>
+                <ul class="child">
+                  <li class="parent">
+                    <a href="#">Заявки</a>
+                    <ul class="child">
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/applications_without_experience"
+                        >
+                          Без опыта работы</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/applications_percent_after"
+                        >
+                          Процент после указанного года</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/applications_percent_by_positions_after"
+                          data-chart="1d"
+                          >Процент по должностям</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/application_count_by_positions"
+                        >
+                          Количество по должностям</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/num_applications_for_each_employment_type"
+                        >
+                          Количество по типам занятости</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="parent">
+                    <a href="#">Соискатели</a>
+                    <ul class="child">
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/seekers_in_district"
+                        >
+                          Проживающие в указанном районе</a
+                        >
+                      </li>
+                      <li>
+                        <a href="#" data-endpoint="/special/seekers_born_after">
+                          Родившиеся после указанной даты</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/seekers_whose_total_experience_exceeds"
+                        >
+                          У которых суммарный опыт превышает указанный</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="parent">
+                    <a href="#">Работодатели</a>
+                    <ul class="child">
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/employers_with_property"
+                        >
+                          С указанным типом собственности</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="parent">
+                    <a href="#">Вакансии</a>
+                    <ul class="child">
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/vacancies_posted_on"
+                        >
+                          Опубликованные в указанный день</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/latest_vacancy_of_employers_whose_name_contains"
+                          >Даты размещения последних вакансий для указанных
+                          работодателей</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="parent">
+                    <a href="#">Должности</a>
+                    <ul class="child">
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/positions_from_open_vacancies_whose_average_salary_exceeds"
+                          data-chart="2d"
+                        >
+                          Из открытых вакансий, у которых средняя зарплата выше
+                          указанной</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          data-endpoint="/special/max_salaries_for_position"
+                        >
+                          Максимальные зарплаты</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="item">
+            <a href="#" data-endpoint="/generate" class="generate-data">
+              Генерация данных</a
+            >
+          </li>
+        </ul>
+        <div>
+          <button class="exit-button search-button button">Выход</button>
+        </div>
+      </nav>
+      <main class="main"></main>
+    </template>
+
+    <div class="template-placeholder"></div>
     <div class="loading">Загрузка...</div>
-    <main class="main"></main>
   </body>
 </html>

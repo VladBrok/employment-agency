@@ -2,14 +2,24 @@ import { post } from "./api.js";
 import { authenticate, wasAuthenticated } from "./auth.js";
 import loadingDecorator from "./loading.js";
 
-adjustTitle();
+let form, login, password;
 
-const form = document.querySelector(".crud-form");
-const login = document.getElementById("login");
-const password = document.getElementById("password");
+function initialize() {
+  adjustTitle();
 
-document.addEventListener("input", handleInput);
-form.onsubmit = loadingDecorator(handleSubmit);
+  form = document.querySelector(".crud-form");
+  login = document.getElementById("login-input");
+  password = document.getElementById("password");
+
+  document.addEventListener("input", handleInput);
+  form.onsubmit = loadingDecorator(handleSubmit);
+  login.focus();
+}
+
+function dispose() {
+  form = login = password = null;
+  document.removeEventListener("input", handleInput);
+}
 
 function adjustTitle() {
   if (wasAuthenticated()) {
@@ -36,6 +46,8 @@ async function handleSubmit(e) {
 
   if (!response.error) {
     authenticate(response.access_token, response.expires);
+    dispose();
+    window.location.reload();
     return;
   }
 
@@ -47,3 +59,5 @@ function setInvalid(input, errorMessage) {
   input.setCustomValidity(errorMessage);
   input.reportValidity();
 }
+
+export { initialize };

@@ -1,6 +1,13 @@
-function ensureAuthenticated() {
+const loginPage = { element: document.getElementById("login"), name: "login" };
+const indexPage = { element: document.getElementById("index"), name: "index" };
+const pagePlaceholder = document.querySelector(".template-placeholder");
+let curPage = null;
+
+async function ensureAuthenticated() {
   if (!getToken() || tokenHasExpired()) {
-    goToLoginPage();
+    await goToLoginPage();
+  } else {
+    await goToIndexPage();
   }
 }
 
@@ -12,20 +19,37 @@ function tokenHasExpired() {
   return Date.now() - localStorage.getItem("expires") >= -600000;
 }
 
-function goToLoginPage({ clearAll = false } = {}) {
+async function goToLoginPage({ clearAll = false } = {}) {
   localStorage.removeItem("token");
   localStorage.removeItem("expires");
   if (clearAll) {
     sessionStorage.removeItem("was_authenticated");
   }
-  location.replace("./login.html");
+  changePageTo(loginPage);
+  const { initialize } = await import("./login.js");
+  initialize();
+}
+
+async function goToIndexPage() {
+  changePageTo(indexPage);
+  await import("./index.js");
 }
 
 function authenticate(token, expirationTime) {
   localStorage.setItem("token", token);
   localStorage.setItem("expires", expirationTime);
   sessionStorage.setItem("was_authenticated", "yes");
-  location.replace("./index.html");
+  changePageTo(indexPage);
+}
+
+function changePageTo(newPage) {
+  if (curPage === newPage.name) {
+    return;
+  }
+
+  pagePlaceholder.innerHTML = "";
+  pagePlaceholder.append(newPage.element.content.cloneNode(true));
+  curPage = newPage.name;
 }
 
 function exit() {
