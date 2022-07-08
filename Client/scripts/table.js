@@ -100,11 +100,11 @@ async function makeTable({
     </table>
     </div>
     <div class="pages">
-      <div class="previous-page change-page element button disabled">❮</div>
-      <div class="current-page element button disabled">1</div>
-      <div class="next-page change-page element button ${
+      <button class="previous-page change-page element button disabled">❮</button>
+      <button class="current-page element button disabled" tabindex="-1">1</button>
+      <button class="next-page change-page element button ${
         data?.length > PAGE_SIZE ? "" : "disabled"
-      }">❯</div>
+      }">❯</button>
     </div>
   </div>`;
 }
