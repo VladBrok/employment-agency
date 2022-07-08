@@ -72,7 +72,7 @@
   border-color: var(--danger-color);
 }
 
-.danger-button:hover {
+.danger-button:not(:disabled):hover {
   background: var(--danger-color);
 }
 
@@ -83,7 +83,7 @@
   margin: 1.5rem auto;
 }
 
-.exit-button:hover {
+.exit-button:not(:disabled):hover {
   background: var(--secondary-color);
   color: var(--primary-color);
 }
