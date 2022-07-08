@@ -28,11 +28,6 @@ async function fetchJson({
   return json;
 }
 
-async function fetchBlob(endpoint) {
-  const response = await fetchImpl(makeUrl(endpoint));
-  return await response.blob();
-}
-
 async function fetchAllJson(endpoint) {
   return await fetchJson({ endpoint, page: 0, pageSize: 1e6 });
 }
@@ -87,13 +82,5 @@ function makeImageUrl(imageName) {
   return `${apiUrl}/photos/${imageName}`;
 }
 
-export {
-  fetchBlob,
-  fetchAllJson,
-  put,
-  post,
-  deleteEntity,
-  PAGE_SIZE,
-  makeImageUrl,
-};
+export { fetchAllJson, put, post, deleteEntity, PAGE_SIZE, makeImageUrl };
 export default fetchJson;

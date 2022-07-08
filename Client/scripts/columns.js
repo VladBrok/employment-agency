@@ -1,4 +1,4 @@
-import { fetchBlob, fetchAllJson, makeImageUrl } from "./api.js";
+import { fetchAllJson, makeImageUrl } from "./api.js";
 import {
   makeFileInput,
   makeDateInput,
