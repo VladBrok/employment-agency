@@ -256,24 +256,13 @@ async function handleChange(e) {
 }
 
 function toggleMenu() {
-  const toggle = () => {
-    navigation.classList.toggle("show");
-    document.querySelector(".menu-wrapper").outerHTML = `${
-      !navigation.classList.contains("show")
-        ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
-        : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
-    }`;
-    focusOnMenu();
-  };
+  navigation.classList.toggle("show");
 
-  if (navigation.classList.contains("show")) {
-    navigation.ontransitionend = () => {
-      navigation.hidden = true;
-      navigation.ontransitionend = null;
-    };
-    toggle();
-  } else {
-    navigation.hidden = false;
-    setTimeout(toggle);
-  }
+  document.querySelector(".menu-wrapper").outerHTML = `${
+    !navigation.classList.contains("show")
+      ? `<button class="menu-wrapper"><img src="images/menu.png" alt="Открыть меню" class="menu" title="Открыть меню"></button>`
+      : `<button class="menu-wrapper"><img src="images/close-menu.png" alt="Закрыть меню" class="menu close-menu" title="Закрыть меню"></button>`
+  }`;
+
+  focusOnMenu();
 }

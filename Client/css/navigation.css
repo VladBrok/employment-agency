@@ -5,17 +5,21 @@
 }
 
 .navigation {
+  --transition-duration: 0.4s;
   background: var(--primary-color);
   padding: 0.1rem;
   max-width: var(--nav-width);
   min-height: max(100vh, 100%);
-  transition: margin 0.4s;
-  z-index: 12;
+  transition: margin var(--transition-duration),
+    visibility var(--transition-duration);
   margin-left: calc(-1 * var(--nav-width));
+  visibility: hidden;
+  z-index: 12;
 }
 
 .show {
   margin-left: 0;
+  visibility: visible;
 }
 
 .menu {
