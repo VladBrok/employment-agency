@@ -34,6 +34,7 @@ let displayTable;
 
 async function handleNavigationClick(e) {
   const subMenu = e.target.nextElementSibling;
+
   if (subMenu?.classList.contains("child")) {
     if (subMenu.style.display === "block") {
       for (const child of subMenu.querySelectorAll(".child")) {
@@ -42,7 +43,6 @@ async function handleNavigationClick(e) {
       subMenu.style.display = "none";
     } else {
       subMenu.style.display = "block";
-      setTimeout(() => subMenu.querySelector("a")?.scrollIntoView(false));
     }
     return;
   }

@@ -69,11 +69,11 @@
   max-width: max-content;
 }
 
-.navigation .child li a {
+.navigation .child li button {
   padding: 0.6rem 1rem;
 }
 
-.navigation .parent > a::after {
+.navigation .parent > button::after {
   content: "»";
   margin-left: 0.5rem;
 }
@@ -92,12 +92,13 @@
   box-shadow: 0.2rem 0 1.3rem var(--highlight-color);
 }
 
-.navigation .item a {
+.navigation .item button {
   display: block;
   padding: 1rem;
+  text-align: left;
 }
 
-.navigation .item a:hover {
+.navigation .item button:hover {
   text-decoration: underline;
   color: #fdfdff;
 }

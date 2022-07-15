@@ -19,7 +19,8 @@ body {
   background: var(--tertiary-color);
 }
 
-a {
+a,
+button {
   text-decoration: none;
   color: inherit;
 }
@@ -31,6 +32,11 @@ li {
 button {
   background: transparent;
   border: none;
+  font-size: inherit;
+}
+
+button:enabled:hover {
+  cursor: pointer;
 }
 
 .template-placeholder {

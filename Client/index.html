@@ -42,221 +42,205 @@
         <h1 class="title">Агентство по трудоустройству</h1>
         <ul class="list">
           <li class="item selected-item parent">
-            <a href="#">Основные таблицы</a>
+            <button>Основные таблицы</button>
             <ul class="child">
-              <li><a data-endpoint="/employers" href="#">Работодатели</a></li>
-              <li><a data-endpoint="/seekers" href="#">Соискатели</a></li>
-              <li><a data-endpoint="/vacancies" href="#">Вакансии</a></li>
+              <li><button data-endpoint="/employers">Работодатели</button></li>
+              <li><button data-endpoint="/seekers">Соискатели</button></li>
+              <li><button data-endpoint="/vacancies">Вакансии</button></li>
               <li>
-                <a data-endpoint="/applications" href="#">
-                  Заявки на трудоустройство</a
-                >
+                <button data-endpoint="/applications">
+                  Заявки на трудоустройство
+                </button>
               </li>
-              <li><a data-endpoint="/addresses" href="#">Адреса</a></li>
+              <li><button data-endpoint="/addresses">Адреса</button></li>
               <li>
-                <a data-endpoint="/change_log" href="#">Журнал изменений</a>
+                <button data-endpoint="/change_log">Журнал изменений</button>
               </li>
             </ul>
           </li>
           <li class="item parent">
-            <a href="#">Справочники</a>
+            <button>Справочники</button>
             <ul class="child">
-              <li><a data-endpoint="/positions" href="#">Должности</a></li>
+              <li><button data-endpoint="/positions">Должности</button></li>
               <li>
-                <a data-endpoint="/properties" href="#">Типы собственности</a>
+                <button data-endpoint="/properties">Типы собственности</button>
               </li>
-              <li><a data-endpoint="/streets" href="#">Улицы</a></li>
-              <li><a data-endpoint="/districts" href="#">Районы</a></li>
+              <li><button data-endpoint="/streets">Улицы</button></li>
+              <li><button data-endpoint="/districts">Районы</button></li>
               <li>
-                <a data-endpoint="/employment_types" href="#">Типы занятости</a>
+                <button data-endpoint="/employment_types">
+                  Типы занятости
+                </button>
               </li>
               <li>
-                <a data-endpoint="/statuses" href="#">Социальные статусы</a>
+                <button data-endpoint="/statuses">Социальные статусы</button>
               </li>
             </ul>
           </li>
           <li class="item parent">
-            <a href="#">Специальные запросы</a>
+            <button>Специальные запросы</button>
             <ul class="child">
               <li class="parent">
-                <a href="#">Без параметров</a>
+                <button>Без параметров</button>
                 <ul class="child">
                   <li>
-                    <a
+                    <button
                       data-endpoint="/special/average_seeker_ages_by_positions"
-                      href="#"
-                      >Средний возраст соискателей по должностям</a
                     >
+                      Средний возраст соискателей по должностям
+                    </button>
                   </li>
                   <li>
-                    <a data-endpoint="/special/vacancies_and_salaries" href="#"
-                      >Зарплаты для разных вакансий</a
-                    >
+                    <button data-endpoint="/special/vacancies_and_salaries">
+                      Зарплаты для разных вакансий
+                    </button>
                   </li>
                   <li>
-                    <a data-endpoint="/special/employer_addresses" href="#"
-                      >Работодатели и их адреса</a
-                    >
+                    <button data-endpoint="/special/employer_addresses">
+                      Работодатели и их адреса
+                    </button>
                   </li>
                   <li>
-                    <a
+                    <button
                       data-endpoint="/special/employment_types_and_salaries"
                       data-chart="3d"
-                      href="#"
                     >
-                      Средние зарплаты и средний опыт для каждого типа
-                      занятости</a
-                    >
+                      Средние зарплаты и средний опыт для каждого типа занятости
+                    </button>
                   </li>
                   <li>
-                    <a data-endpoint="/special/employers_and_vacancies" href="#"
-                      >Вакансии каждой компании</a
-                    >
+                    <button data-endpoint="/special/employers_and_vacancies">
+                      Вакансии каждой компании
+                    </button>
                   </li>
                   <li>
-                    <a
-                      data-endpoint="/special/seekers_and_applications"
-                      href="#"
-                      >Заявки каждого соискателя</a
-                    >
+                    <button data-endpoint="/special/seekers_and_applications">
+                      Заявки каждого соискателя
+                    </button>
                   </li>
                   <li>
-                    <a
+                    <button
                       data-endpoint="/special/num_vacancies_from_each_employer"
-                      href="#"
-                      >Количество вакансий</a
                     >
+                      Количество вакансий
+                    </button>
                   </li>
                 </ul>
               </li>
               <li class="parent">
-                <a href="#">С параметрами</a>
+                <button>С параметрами</button>
                 <ul class="child">
                   <li class="parent">
-                    <a href="#">Заявки</a>
+                    <button>Заявки</button>
                     <ul class="child">
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/applications_without_experience"
                         >
-                          Без опыта работы</a
-                        >
+                          Без опыта работы
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/applications_percent_after"
                         >
-                          Процент после указанного года</a
-                        >
+                          Процент после указанного года
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/applications_percent_by_positions_after"
                           data-chart="1d"
-                          >Процент по должностям</a
                         >
+                          Процент по должностям
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/application_count_by_positions"
                         >
-                          Количество по должностям</a
-                        >
+                          Количество по должностям
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/num_applications_for_each_employment_type"
                         >
-                          Количество по типам занятости</a
-                        >
+                          Количество по типам занятости
+                        </button>
                       </li>
                     </ul>
                   </li>
                   <li class="parent">
-                    <a href="#">Соискатели</a>
+                    <button>Соискатели</button>
                     <ul class="child">
                       <li>
-                        <a
-                          href="#"
-                          data-endpoint="/special/seekers_in_district"
-                        >
-                          Проживающие в указанном районе</a
-                        >
+                        <button data-endpoint="/special/seekers_in_district">
+                          Проживающие в указанном районе
+                        </button>
                       </li>
                       <li>
-                        <a href="#" data-endpoint="/special/seekers_born_after">
-                          Родившиеся после указанной даты</a
-                        >
+                        <button data-endpoint="/special/seekers_born_after">
+                          Родившиеся после указанной даты
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/seekers_whose_total_experience_exceeds"
                         >
-                          У которых суммарный опыт превышает указанный</a
-                        >
+                          У которых суммарный опыт превышает указанный
+                        </button>
                       </li>
                     </ul>
                   </li>
                   <li class="parent">
-                    <a href="#">Работодатели</a>
+                    <button>Работодатели</button>
                     <ul class="child">
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/employers_with_property"
                         >
-                          С указанным типом собственности</a
-                        >
+                          С указанным типом собственности
+                        </button>
                       </li>
                     </ul>
                   </li>
                   <li class="parent">
-                    <a href="#">Вакансии</a>
+                    <button>Вакансии</button>
                     <ul class="child">
                       <li>
-                        <a
-                          href="#"
-                          data-endpoint="/special/vacancies_posted_on"
-                        >
-                          Опубликованные в указанный день</a
-                        >
+                        <button data-endpoint="/special/vacancies_posted_on">
+                          Опубликованные в указанный день
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/latest_vacancy_of_employers_whose_name_contains"
-                          >Даты размещения последних вакансий для указанных
-                          работодателей</a
                         >
+                          Даты размещения последних вакансий для указанных
+                          работодателей
+                        </button>
                       </li>
                     </ul>
                   </li>
                   <li class="parent">
-                    <a href="#">Должности</a>
+                    <button>Должности</button>
                     <ul class="child">
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/positions_from_open_vacancies_whose_average_salary_exceeds"
                           data-chart="2d"
                         >
                           Из открытых вакансий, у которых средняя зарплата выше
-                          указанной</a
-                        >
+                          указанной
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <button
                           data-endpoint="/special/max_salaries_for_position"
                         >
-                          Максимальные зарплаты</a
-                        >
+                          Максимальные зарплаты
+                        </button>
                       </li>
                     </ul>
                   </li>
@@ -265,9 +249,9 @@
             </ul>
           </li>
           <li class="item">
-            <a href="#" data-endpoint="/generate" class="generate-data">
-              Генерация данных</a
-            >
+            <button data-endpoint="/generate" class="generate-data">
+              Генерация данных
+            </button>
           </li>
         </ul>
         <div>
