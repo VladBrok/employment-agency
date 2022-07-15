@@ -74,11 +74,11 @@ async function handleNavigationClick(e) {
   const title = e.target.textContent;
   displayTable = async () =>
     (main.innerHTML = await makeTable({ endpoint, chartType, title }));
-  await displayTable();
 
   if (document.documentElement.offsetWidth <= 700) {
     toggleMenu();
   }
+  await displayTable();
 }
 
 let choosing = false;
