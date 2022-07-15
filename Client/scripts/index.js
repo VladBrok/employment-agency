@@ -34,7 +34,7 @@ let displayTable;
 
 async function handleNavigationClick(e) {
   const subMenu = e.target.nextElementSibling;
-  if (subMenu) {
+  if (subMenu?.classList.contains("child")) {
     if (subMenu.style.display === "block") {
       for (const child of subMenu.querySelectorAll(".child")) {
         child.style.display = "none";
