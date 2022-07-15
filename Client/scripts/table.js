@@ -48,9 +48,9 @@ async function makeTable({
     <div class="before-table">
       <form onSubmit="return false;" class="table-form">
         <div class="search">
-          <span class='td'><label>Столбец для поиска:</label></span>
+          <span class='td'><label for="search-column">Столбец для поиска:</label></span>
           <span class='td'>
-            <select class="select input">
+            <select class="select input" id="search-column">
               ${extractColumnNames(dataForPage)
                 .filter((name) => columns[name].isFilterable)
                 .map((name) => `<option>${name}</option>`)

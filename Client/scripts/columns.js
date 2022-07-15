@@ -348,7 +348,7 @@ function formatDate(string) {
 }
 
 async function changeStreets(districtSelect) {
-  if (!streetSelectId) {
+  if (!streetSelectId || !document.getElementById(streetSelectId)) {
     return;
   }
 
@@ -368,7 +368,7 @@ document.body.addEventListener("change", async (e) => {
 });
 
 const observer = new MutationObserver(async () => {
-  if (firstStreetChangeCompleted || !document.getElementById(streetSelectId)) {
+  if (firstStreetChangeCompleted) {
     return;
   }
 

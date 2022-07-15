@@ -32,8 +32,9 @@ async function makeForm(
         ${(
           await Promise.all(
             names.map(async (name, i) => {
+              const id = `${name.replace(/\s+/g, "_")}${i}`;
               const input = await columns[name]?.convertToInput(
-                `name${i}`,
+                id,
                 values?.[i],
                 endpoint
               );
@@ -41,7 +42,7 @@ async function makeForm(
               return input === null
                 ? ""
                 : `<div class="element ${first ? "first" : ""}">
-                    <label for="name${i}">${name}:</label>
+                    <label for="${id}">${name}:</label>
                     ${input}
                   </div>`;
             })
