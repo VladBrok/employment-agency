@@ -139,7 +139,7 @@ async function handleDocumentClick(e) {
 
   if (e.target.classList.contains("link-to-table")) {
     const endpoint = e.target.dataset.endpoint;
-    main.querySelector(".compound-form").style.visibility = "hidden";
+    main.querySelector(".compound-form").style.display = "none";
     main.insertAdjacentHTML("afterbegin", await makeTable({ endpoint }));
     choosing = true;
     return;
@@ -205,7 +205,7 @@ async function handleDocumentClick(e) {
     const id = e.target.parentElement.querySelector("td").textContent;
     if (choosing) {
       main.querySelector(".table-container").remove();
-      main.querySelector(".compound-form").style.visibility = "visible";
+      main.querySelector(".compound-form").style.display = "block";
       choosing = false;
       const linkToTable = document.querySelector(".link-to-table");
       linkToTable.setAttribute("value", id);
