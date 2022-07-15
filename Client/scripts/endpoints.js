@@ -73,7 +73,7 @@ const endpointInfo = [
     ],
   }),
   new Endpoint({ main: "/properties", children: ["/employers/property_id"] }),
-  new Endpoint({ main: "/streets" }),
+  new Endpoint({ main: "/streets", children: ["/addresses/street_id"] }), // FIXME: add endpoint /addresses/street_id
   new Endpoint({ main: "/districts", children: ["/streets/district_id"] }),
   new Endpoint({
     main: "/employment_types",
