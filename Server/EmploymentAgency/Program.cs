@@ -99,7 +99,7 @@ PostgreSql MakePostgres()
 
 void MapAllEndpoints()
 {
-    CrudQueriesMapper.Map(app, postgres);
+    CrudQueriesMapper.Map(app, postgres, settings);
     SpecialQueriesMapper.Map(app, postgres);
     FileMapper.Map(app);
     LoginMapper.Map(app, GetSecurityKey, settings);

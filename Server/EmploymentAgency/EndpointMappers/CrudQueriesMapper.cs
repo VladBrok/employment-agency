@@ -1,16 +1,17 @@
 namespace EmploymentAgency.EndpointMappers;
 
 using EmploymentAgency.Utils;
+using EmploymentAgency.Models;
 
 public static class CrudQueriesMapper
 {
     private static PostgreSql? _postgres;
 
-    public static void Map(WebApplication app, PostgreSql postgres)
+    public static void Map(WebApplication app, PostgreSql postgres, Settings settings)
     {
         _postgres = postgres;
-        var update = new Update();
-        var create = new Create();
+        var update = new Update(settings.FileSignatures, settings.MaxFileSizeInBytes);
+        var create = new Create(settings.FileSignatures, settings.MaxFileSizeInBytes);
         var mainTables =
             new (string Name, string Select, Delegate Update, Delegate Create, string? Alias, string[]? ParentIds)[]
             {

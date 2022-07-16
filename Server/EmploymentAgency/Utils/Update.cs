@@ -2,6 +2,11 @@ namespace EmploymentAgency.Utils;
 
 public class Update : CrudAction
 {
+    public Update(
+        Dictionary<string, IEnumerable<IEnumerable<string>>> fileSignatures,
+        int maxFileSize
+    ) : base(fileSignatures, maxFileSize) { }
+
     public string Addresses(string table, HttpRequest request)
     {
         var entity = request.Form;
