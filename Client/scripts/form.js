@@ -130,9 +130,11 @@ async function sendForm(callback, e) {
 
   const formData = new FormData();
   values.map((value, i) => formData.append(names[i], value));
-  callback(form, formData);
+
+  let error = true;
   e.preventDefault();
-  return true;
+  await callback(form, formData).then(() => (error = false));
+  return !error;
 }
 
 export { makeForm, sendFormAsPut, sendFormAsPost };
