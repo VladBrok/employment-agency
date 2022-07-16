@@ -10,17 +10,20 @@ export default function loadingDecorator(func) {
     }
 
     isLoading = true;
-    e.target.classList.add("disabled-button");
+    e.target.classList.add("disabled-because-loading");
+    e.target.setAttribute("tabindex", -1);
     const id = setTimeout(
       () => (indicator.style.visibility = "visible"),
       DELAY_IN_MILLISECONDS
     );
+
     try {
       await func(e);
     } finally {
       clearTimeout(id);
       indicator.style.visibility = "hidden";
-      e.target.classList.remove("disabled-button");
+      e.target.classList.remove("disabled-because-loading");
+      e.target.removeAttribute("tabindex");
       isLoading = false;
     }
   };

@@ -46,20 +46,24 @@
   user-select: none;
 }
 
-.button:not(:disabled):hover {
+.button:not(:disabled):not(.disabled-because-loading):hover {
   cursor: pointer;
   color: var(--tertiary-color);
   background: var(--button-color);
 }
 
-.button:focus {
+.button:not(:disabled):not(.disabled-because-loading):focus {
   outline: none;
   box-shadow: 0 0 0 0.15rem;
 }
 
 button:disabled,
-.button:disabled {
+.button:disabled,
+button.disabled-because-loading,
+.button.disabled-because-loading {
   opacity: 0.65;
+  pointer-events: none;
+  cursor: normal;
 }
 
 .search-button {
@@ -72,7 +76,7 @@ button:disabled,
   border-color: var(--danger-color);
 }
 
-.danger-button:not(:disabled):hover {
+.danger-button:not(:disabled):not(.disabled-because-loading):hover {
   background: var(--danger-color);
 }
 
@@ -83,7 +87,7 @@ button:disabled,
   margin: 1.5rem auto;
 }
 
-.exit-button:not(:disabled):hover {
+.exit-button:not(:disabled):not(.disabled-because-loading):hover {
   background: var(--secondary-color);
   color: var(--primary-color);
 }

@@ -98,7 +98,7 @@
   text-align: left;
 }
 
-.navigation .item button:not(:disabled):hover {
+.navigation .item button:not(:disabled):not(.disabled-because-loading):hover {
   text-decoration: underline;
   color: #fdfdff;
 }
