@@ -10,19 +10,19 @@ public class Update : CrudAction
     public string Addresses(string table, HttpRequest request)
     {
         var entity = request.Form;
-        return $@"UPDATE streets SET district_id = {entity["district_id"]} WHERE id = {entity["street_id"]};
-        UPDATE {table} SET street_id = {entity["street_id"]}, building_number = {entity["building_number"]}";
+        return $@"UPDATE streets SET district_id = {Escape(entity["district_id"])} WHERE id = {Escape(entity["street_id"])};
+        UPDATE {table} SET street_id = {Escape(entity["street_id"])}, building_number = {Escape(entity["building_number"])}";
     }
 
     public string Employers(string table, HttpRequest request)
     {
         var entity = request.Form;
         return $@"INSERT INTO addresses(street_id, building_number) 
-            VALUES('{entity["street_id"]}', '{entity["building_number"]}');
-        UPDATE {table} SET employer = '{entity["employer"]}',
-            email = {DefaultIfEmpty(entity["email"])},
-            phone = {DefaultIfEmpty(entity["phone"])},
-            property_id = '{entity["property_id"]}',
+            VALUES('{Escape(entity["street_id"])}', '{Escape(entity["building_number"])}');
+        UPDATE {table} SET employer = '{Escape(entity["employer"])}',
+            email = {DefaultIfEmpty(Escape(entity["email"]))},
+            phone = {DefaultIfEmpty(Escape(entity["phone"]))},
+            property_id = '{Escape(entity["property_id"])}',
             address_id = (SELECT max(id) FROM addresses)";
     }
 
@@ -30,18 +30,18 @@ public class Update : CrudAction
     {
         var entity = request.Form;
         return $@"INSERT INTO addresses(street_id, building_number) 
-            VALUES('{entity["street_id"]}', '{entity["building_number"]}');
-        UPDATE {table} SET first_name = '{entity["first_name"]}',
-            last_name = '{entity["last_name"]}',
-            patronymic = {DefaultIfEmpty(entity["patronymic"])},
-            phone = {DefaultIfEmpty(entity["phone"])},
-            birthday = {DefaultIfEmpty(entity["birthday"])},
-            registration_city = {DefaultIfEmpty(entity["registration_city"])},
-            recommended = {DefaultIfEmpty(entity["recommended"])},
-            pol = {DefaultIfEmpty(entity["pol"])},
-            education = {DefaultIfEmpty(entity["education"])},
-            status_id = {entity["status_id"]},
-            speciality_id = {entity["speciality_id"]},
+            VALUES('{Escape(entity["street_id"])}', '{Escape(entity["building_number"])}');
+        UPDATE {table} SET first_name = '{Escape(entity["first_name"])}',
+            last_name = '{Escape(entity["last_name"])}',
+            patronymic = {DefaultIfEmpty(Escape(entity["patronymic"]))},
+            phone = {DefaultIfEmpty(Escape(entity["phone"]))},
+            birthday = {DefaultIfEmpty(Escape(entity["birthday"]))},
+            registration_city = {DefaultIfEmpty(Escape(entity["registration_city"]))},
+            recommended = {DefaultIfEmpty(Escape(entity["recommended"]))},
+            pol = {DefaultIfEmpty(Escape(entity["pol"]))},
+            education = {DefaultIfEmpty(Escape(entity["education"]))},
+            status_id = {Escape(entity["status_id"])},
+            speciality_id = {Escape(entity["speciality_id"])},
             address_id = (SELECT max(id) FROM addresses)";
     }
 
@@ -52,6 +52,6 @@ public class Update : CrudAction
     )
     {
         return $@"UPDATE {table} 
-        SET {string.Join(", ", keys.Zip(values).Select(e => $"{e.First} = {DefaultIfEmpty(e.Second)}"))}";
+        SET {string.Join(", ", keys.Zip(values).Select(e => $"{Escape(e.First)} = {DefaultIfEmpty(Escape(e.Second))}"))}";
     }
 }

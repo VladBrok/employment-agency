@@ -82,6 +82,11 @@ public abstract class CrudAction
         return value == "" ? "DEFAULT" : $"'{value}'";
     }
 
+    protected string Escape(string value)
+    {
+        return value.Replace(@"\", @"\\").Replace("'", @"\'");
+    }
+
     private bool HasInvalidSignature(
         Stream file,
         string expectedExtension,
