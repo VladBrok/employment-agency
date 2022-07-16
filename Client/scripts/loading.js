@@ -1,15 +1,14 @@
 const indicator = document.querySelector(".loading");
-let isLoading = false;
+let loadingCount = 0;
 const DELAY_IN_MILLISECONDS = 300;
 
 export default function loadingDecorator(func) {
   return async function (e) {
-    if (isLoading) {
-      await func(e);
+    if (e.target.classList.contains("disabled-because-loading")) {
       return;
     }
 
-    isLoading = true;
+    loadingCount++;
     e.target.classList.add("disabled-because-loading");
     e.target.setAttribute("tabindex", -1);
     const id = setTimeout(
@@ -21,10 +20,12 @@ export default function loadingDecorator(func) {
       await func(e);
     } finally {
       clearTimeout(id);
-      indicator.style.visibility = "hidden";
       e.target.classList.remove("disabled-because-loading");
       e.target.removeAttribute("tabindex");
-      isLoading = false;
+      loadingCount--;
+      if (loadingCount <= 0) {
+        indicator.style.visibility = "hidden";
+      }
     }
   };
 }
