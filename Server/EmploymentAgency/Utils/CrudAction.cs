@@ -84,7 +84,7 @@ public abstract class CrudAction
 
     protected string Escape(string value)
     {
-        return value.Replace(@"\", @"\\").Replace("'", @"\'");
+        return value.Replace(@"\", @"\\").Replace(@"'", @"''");
     }
 
     private bool HasInvalidSignature(
