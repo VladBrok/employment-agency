@@ -92,6 +92,6 @@ public abstract class CrudAction
         int longestSignatureLength = signatures.Max(sig => sig.Count());
         var headerBytes = reader.ReadBytes(longestSignatureLength);
 
-        return signatures.Any(sig => headerBytes.Take(sig.Count()).SequenceEqual(sig));
+        return !signatures.Any(sig => headerBytes.Take(sig.Count()).SequenceEqual(sig));
     }
 }
