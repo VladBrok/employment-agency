@@ -242,7 +242,7 @@ async function handleChange(e) {
     const file = e.target.files[0];
     const extension = file?.name.slice(file.name.indexOf("."));
 
-    if (extension && !allowedExtensions.has(extension)) {
+    if (extension && !allowedExtensions.has(extension.toLowerCase())) {
       e.target.setCustomValidity(
         `Файл должен иметь один из следующих форматов: ${[
           ...allowedExtensions.values(),
