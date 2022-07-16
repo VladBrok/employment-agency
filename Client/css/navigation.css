@@ -98,7 +98,7 @@
   text-align: left;
 }
 
-.navigation .item button:hover {
+.navigation .item button:not(:disabled):hover {
   text-decoration: underline;
   color: #fdfdff;
 }
