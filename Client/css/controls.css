@@ -57,8 +57,8 @@
   box-shadow: 0 0 0 0.15rem;
 }
 
-.button:disabled,
-.disabled-button {
+button:disabled,
+.button:disabled {
   opacity: 0.65;
 }
 
