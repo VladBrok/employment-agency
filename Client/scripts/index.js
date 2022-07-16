@@ -238,19 +238,30 @@ async function handleChange(e) {
   }
 
   if (e.target.files) {
-    const allowedExtensions = new Set([".jpg", ".png", ".jpeg"]);
+    const ALLOWED_EXTENSIONS = new Set([".jpg", ".png", ".jpeg"]);
+    const MAX_FILE_SIZE_IN_BYTES = 4e6;
+    const BYTES_IN_MEGABYTE = 1e6;
+
+    let errorMessage;
     const file = e.target.files[0];
     const extension = file?.name.slice(file.name.indexOf("."));
 
-    if (extension && !allowedExtensions.has(extension.toLowerCase())) {
-      e.target.setCustomValidity(
-        `Файл должен иметь один из следующих форматов: ${[
-          ...allowedExtensions.values(),
-        ].join(", ")}`
-      );
+    if (extension && !ALLOWED_EXTENSIONS.has(extension.toLowerCase())) {
+      errorMessage = `Файл должен иметь один из следующих форматов: ${[
+        ...ALLOWED_EXTENSIONS.values(),
+      ].join(", ")}`;
+    } else if (file.size > MAX_FILE_SIZE_IN_BYTES) {
+      errorMessage = `Размер фала не должен превышать ${
+        MAX_FILE_SIZE_IN_BYTES / BYTES_IN_MEGABYTE
+      }MB`;
+    }
+
+    if (errorMessage) {
+      e.target.setCustomValidity(errorMessage);
       e.target.reportValidity();
       return;
     }
+
     main.querySelector(".photo").src = file ? URL.createObjectURL(file) : "#";
   }
 }
