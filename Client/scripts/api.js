@@ -1,7 +1,9 @@
 import { ensureAuthenticated, getToken } from "./auth.js";
-import { apiUrl } from "./config.js";
+import { apiUrls } from "./config.js";
 
 const PAGE_SIZE = 15;
+const TIMEOUT_IN_MILLISECONDS = 30000;
+let urlIndex = 0;
 
 async function fetchJson({
   endpoint,
@@ -11,7 +13,7 @@ async function fetchJson({
   pageSize = PAGE_SIZE,
 }) {
   const response = await fetchImpl(
-    `${`${makeUrl(endpoint)}/${parameterValues.join(
+    `${`${endpoint}/${parameterValues.join(
       "/"
     )}`}?page=${+page}&pageSize=${pageSize}${filter ? `&filter=${filter}` : ""}`
   );
@@ -33,7 +35,7 @@ async function fetchAllJson(endpoint) {
 }
 
 async function put(endpoint, id, formData) {
-  await fetchImpl(`${makeUrl(endpoint)}/${id}`, {
+  await fetchImpl(`${endpoint}/${id}`, {
     method: "PUT",
     body: formData,
   });
@@ -49,15 +51,11 @@ async function post(endpoint, data, anonymous = false) {
       "Content-Type": "application/json",
     };
   }
-  return await fetchImpl(makeUrl(endpoint), options, anonymous);
+  return await fetchImpl(endpoint, options, anonymous);
 }
 
 async function deleteEntity(endpoint, id) {
-  return await fetchImpl(`${makeUrl(endpoint)}/${id}`, { method: "DELETE" });
-}
-
-function makeUrl(endpoint) {
-  return `${apiUrl}${endpoint}`;
+  return await fetchImpl(`${endpoint}/${id}`, { method: "DELETE" });
 }
 
 async function fetchImpl(url, options, anonymous = false) {
@@ -65,21 +63,43 @@ async function fetchImpl(url, options, anonymous = false) {
     await ensureAuthenticated();
   }
 
-  options = {
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const adjustedOptions = {
     ...options,
+    signal,
     headers: {
       ...options?.headers,
       Authorization: `Bearer ${getToken()}`,
     },
   };
 
-  const response = await fetch(url, options);
-  console.log(response.status);
-  return response;
+  setTimeout(() => controller.abort(), TIMEOUT_IN_MILLISECONDS);
+  let response;
+  try {
+    response = await fetch(makeUrl(url), adjustedOptions);
+    return response;
+  } catch (er) {
+    if (
+      (er instanceof DOMException || er instanceof TypeError) &&
+      urlIndex < apiUrls.length - 1
+    ) {
+      urlIndex++;
+      console.log("New url index:", urlIndex);
+      return await fetchImpl(url, options, anonymous);
+    }
+    throw er;
+  } finally {
+    console.log(response?.status);
+  }
+}
+
+function makeUrl(endpoint) {
+  return `${apiUrls[urlIndex]}${endpoint}`;
 }
 
 function makeImageUrl(imageName) {
-  return `${apiUrl}/photos/${imageName}`;
+  return makeUrl(`/photos/${imageName}`);
 }
 
 export { fetchAllJson, put, post, deleteEntity, PAGE_SIZE, makeImageUrl };
