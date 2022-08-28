@@ -354,6 +354,9 @@ const columnInfo = [
 ];
 
 function formatDate(string) {
+  if (!string) {
+    return string;
+  }
   const date = new Date(string + " UTC");
   return date.toLocaleString();
 }
