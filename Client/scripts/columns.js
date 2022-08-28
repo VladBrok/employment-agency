@@ -105,6 +105,12 @@ class Column {
   }
 }
 
+class DateColumn extends Column {
+  constructor(name) {
+    super(name, name, undefined, formatDate);
+  }
+}
+
 let districtSelectId = null;
 let streetSelectId = null;
 let firstStreetChangeCompleted = true;
@@ -149,6 +155,11 @@ const columnInfo = [
     () => null,
     () => ""
   ),
+  new DateColumn("Дата размещения вакансии"),
+  new DateColumn("Дата размещения заявки"),
+  new DateColumn("Дата подачи заявления"),
+  new DateColumn("Дата рождения"),
+  new DateColumn("Дата размещения последней ваканси"),
   new Column("table_name", "название таблицы"),
   new Column("operation", "операция"),
   new Column("time_modified", "время совершения", undefined, formatDate),
