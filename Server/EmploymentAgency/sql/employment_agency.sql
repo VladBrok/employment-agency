@@ -126,7 +126,6 @@ CREATE TABLE seekers
     phone phone_number,
     birthday DATE NOT NULL CHECK ((DATE_PART('year', now()::date) - DATE_PART('year', birthday::date)) > 15),
     registration_city VARCHAR(20) NOT NULL,
-    recommended BOOLEAN NOT NULL,
     pol BOOLEAN NOT NULL,
     education VARCHAR(50),
     FOREIGN KEY (status_id)
@@ -145,6 +144,7 @@ CREATE TABLE applications
     photo VARCHAR(100),
     salary NUMERIC(8, 2),
     experience NUMERIC(2,0) CHECK (experience < 70),
+    recommended BOOLEAN NOT NULL,
     FOREIGN KEY (seeker_id)
         REFERENCES seekers (id)
         ON DELETE CASCADE,
@@ -373,7 +373,6 @@ BEGIN
             random_phone(),
             random_date('1990-01-01 00:00:00', '2004-01-01 00:00:00')::DATE,
             cities[random_between(1, array_length(cities, 1))],
-            random_bool(),
             TRUE,
             educations[random_between(1, array_length(educations, 1))]
         );
@@ -403,7 +402,8 @@ BEGIN
             md5(random()::TEXT),
             'sample.png',
             random_between(1, 100) * 1000,
-            CASE WHEN random() > 0.6 THEN random_between(1, 10) ELSE NULL END
+            CASE WHEN random() > 0.6 THEN random_between(1, 10) ELSE NULL END,
+            random_bool()
         );
     END LOOP;
     RETURN NULL;
