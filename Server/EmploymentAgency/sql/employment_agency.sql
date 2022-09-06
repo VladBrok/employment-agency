@@ -35,7 +35,6 @@ DROP INDEX IF EXISTS employer_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS status_id CASCADE;
 DROP INDEX IF EXISTS address_id CASCADE;
-DROP INDEX IF EXISTS speciality_id CASCADE;
 DROP INDEX IF EXISTS seeker_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS employment_type_id CASCADE;
@@ -152,7 +151,6 @@ CREATE TABLE seekers
     id SERIAL PRIMARY KEY,
     status_id INT NOT NULL,
     address_id INT NOT NULL,
-    speciality_id INT NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
@@ -167,9 +165,6 @@ CREATE TABLE seekers
         ON DELETE CASCADE,
     FOREIGN KEY (address_id)
         REFERENCES addresses (id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (speciality_id)
-        REFERENCES positions (id)
         ON DELETE CASCADE
 );
 
@@ -209,7 +204,6 @@ CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
 CREATE INDEX seekers_status_id ON seekers(status_id);
 CREATE INDEX seekers_address_id ON seekers(address_id);
-CREATE INDEX seekers_speciality_id ON seekers(speciality_id);
 CREATE INDEX applications_seeker_id ON applications(seeker_id);
 CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
@@ -428,7 +422,6 @@ $$
 DECLARE
     num_statuses INT := (SELECT count(*) FROM statuses);
     num_addresses INT := (SELECT count(*) FROM addresses);
-    num_specialities INT := (SELECT count(*) FROM positions);
     first_names TEXT[] := '{Владимир, Николай, Никита, Федор, Альберто, Геннадий, 
                             Даниил, Тихон, Майкл, Георгий, Сергей, Ярослав, Алексей, Александр, Ростислав, Борис, Антонио,
                             Орландо, Хитоми, Ли}';
@@ -452,7 +445,6 @@ BEGIN
             DEFAULT,
             random_between(1, num_statuses),
             random_between(1, num_addresses),
-            random_between(1, num_specialities),
             last_names[random_between(1, array_length(last_names, 1))],
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
@@ -765,8 +757,7 @@ CREATE OR REPLACE FUNCTION get_seekers_born_after(a_date DATE)
         "Имя" VARCHAR(50), 
         "Отчество" VARCHAR(50),
         "Дата рождения" DATE,
-        "Образование" VARCHAR(50),
-        "Специальность" citext) AS
+        "Образование" VARCHAR(50)) AS
 $$
 BEGIN
     RETURN QUERY
@@ -775,11 +766,8 @@ BEGIN
             first_name, 
             patronymic,
             birthday, 
-            education, 
-            p.position
+            education
         FROM seekers s
-        JOIN positions p
-            ON s.speciality_id = p.id
         WHERE s.birthday > a_date
         ORDER BY 1, 2, 3, 4, 5, 6;
 END;
