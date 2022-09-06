@@ -22,6 +22,7 @@ DROP DOMAIN IF EXISTS standart_building_number CASCADE;
 
 
 DROP INDEX IF EXISTS seekers_city_id CASCADE;
+DROP INDEX IF EXISTS seekers_education_id CASCADE;
 DROP INDEX IF EXISTS applications_seeker_day CASCADE;
 DROP INDEX IF EXISTS applications_experience CASCADE;
 DROP INDEX IF EXISTS applications_salary CASCADE;
@@ -63,6 +64,12 @@ CREATE TABLE cities
 (
   id SERIAL PRIMARY KEY,
   city citext UNIQUE NOT NULL
+)
+
+CREATE TABLE educations
+(
+  id SERIAL PRIMARY KEY,
+  education citext UNIQUE NOT NULL
 )
 
 CREATE TABLE properties
@@ -139,6 +146,7 @@ CREATE TABLE seekers
     status_id INT NOT NULL,
     district_id INT NOT NULL,
     registration_city_id INT NOT NULL,
+    education_id INT NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
@@ -146,7 +154,6 @@ CREATE TABLE seekers
     birthday DATE NOT NULL CHECK ((DATE_PART('year', now()::date) - DATE_PART('year', birthday::date)) > 15),
     registration_city VARCHAR(20) NOT NULL,
     pol BOOLEAN NOT NULL,
-    education VARCHAR(50),
     FOREIGN KEY (status_id)
         REFERENCES statuses (id)
         ON DELETE CASCADE,
@@ -155,6 +162,9 @@ CREATE TABLE seekers
         ON DELETE CASCADE,
     FOREIGN KEY (registration_city_id)
         REFERENCES cities (id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (education_id)
+        REFERENCES educations (id)
         ON DELETE CASCADE
 );
 
@@ -193,6 +203,7 @@ CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
 CREATE INDEX seekers_status_id ON seekers(status_id);
 CREATE INDEX seekers_district_id ON seekers(district_id);
+CREATE INDEX seekers_education_id ON seekers(education_id);
 CREATE INDEX applications_seeker_id ON applications(seeker_id);
 CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
@@ -268,6 +279,18 @@ VALUES
     (4, 'Киевский'),
     (4, 'Калининский');
     
+INSERT INTO educations(education)
+VALUES
+    ('Донецкий национальный технический университет'),
+    ('Оксфордский университет'),
+    ('Калифорнийский технологический институт'),
+    ('Чикагский университет'),
+    ('Имперский колледж Лондона'),
+    ('Университет Торонто'),
+    ('Йоркский Университет'),
+    ('Датский технический университет'),
+    ('Университетский коллежд Лондона')
+
 
 CREATE OR REPLACE FUNCTION random_between(low INT, high INT) 
    RETURNS INT AS
@@ -385,6 +408,7 @@ DECLARE
     num_statuses INT := (SELECT count(*) FROM statuses);
     num_districts INT := (SELECT count(*) FROM districts);
     num_cities INT := (SELECT count(*) FROM cities);
+    num_educations INT := (SELECT count(*) FROM educations);
     first_names TEXT[] := '{Владимир, Николай, Никита, Федор, Альберто, Геннадий, 
                             Даниил, Тихон, Майкл, Георгий, Сергей, Ярослав, Алексей, Александр, Ростислав, Борис, Антонио,
                             Орландо, Хитоми, Ли}';
@@ -395,10 +419,6 @@ DECLARE
                             Альбертович, Тихонович, Георгиевич, Ростиславович,
                             Михайлович, Романович, Олегович, Неонович, Кадзамович, 
                             Ярославович, Юриевич, Юсупович}';
-    educations TEXT[] := '{Донецкий национальный технический университет, Оксфордский университет, 
-                           Калифорнийский технологический институт, Чикагский университет,
-                           Имперский колледж Лондона, Университет Торонто, Йоркский Университет, 
-                           Датский технический университет, Университетский коллежд Лондона}';
 BEGIN
     FOR i IN 1..count LOOP
         INSERT INTO seekers
@@ -408,13 +428,13 @@ BEGIN
             random_between(1, num_statuses),
             random_between(1, num_districts),
             random_between(1, num_cities),
+            random_between(1, num_educations),
             last_names[random_between(1, array_length(last_names, 1))],
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
             random_phone(),
             random_date('1990-01-01 00:00:00', '2004-01-01 00:00:00')::DATE,
-            TRUE,
-            educations[random_between(1, array_length(educations, 1))]
+            TRUE
         );
     END LOOP;
     RETURN NULL;
