@@ -62,7 +62,7 @@ CREATE TABLE change_log
 CREATE TABLE cities
 (
   id SERIAL PRIMARY KEY,
-  city citext NOT NULL
+  city citext UNIQUE NOT NULL
 )
 
 CREATE TABLE properties
