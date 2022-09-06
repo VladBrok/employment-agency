@@ -90,11 +90,15 @@ CREATE TABLE employers
 (
     id SERIAL PRIMARY KEY,
     property_id INT NOT NULL,
+    district_id INT NOT NULL,
     employer citext NOT NULL,
     phone phone_number NOT NULL,
     email email_address,
     FOREIGN KEY (property_id)
         REFERENCES properties (id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (district_id)
+        REFERENCES districts (id)
         ON DELETE CASCADE
 );
 
@@ -120,6 +124,7 @@ CREATE TABLE seekers
 (
     id SERIAL PRIMARY KEY,
     status_id INT NOT NULL,
+    district_id INT NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
@@ -130,6 +135,9 @@ CREATE TABLE seekers
     education VARCHAR(50),
     FOREIGN KEY (status_id)
         REFERENCES statuses (id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (district_id)
+        REFERENCES districts (id)
         ON DELETE CASCADE
 );
 
@@ -163,9 +171,11 @@ CREATE INDEX applications_salary ON applications(salary);
 CREATE INDEX vacancies_salary_new ON vacancies(salary_new);
 CREATE INDEX vacancies_employer_day ON vacancies(employer_day);
 CREATE INDEX employers_property_id ON employers(property_id);
+CREATE INDEX employers_district_id ON employers(district_id);
 CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
 CREATE INDEX seekers_status_id ON seekers(status_id);
+CREATE INDEX seekers_district_id ON seekers(district_id);
 CREATE INDEX applications_seeker_id ON applications(seeker_id);
 CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
@@ -289,6 +299,7 @@ CREATE OR REPLACE FUNCTION populate_employers(count INT)
 $$
 DECLARE
     num_properties INT := (SELECT count(*) FROM properties);
+    num_districts INT := (SELECT count(*) FROM districts);
     alphabet TEXT[] := '{A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z}';
     employers_list TEXT[] := ARRAY(
                                  SELECT a || b || c || d
@@ -299,10 +310,11 @@ DECLARE
     email_endings TEXT[] := '{.com, .ru, .su}';
 BEGIN
     FOR i IN 1..count LOOP
-        INSERT INTO employers(property_id, employer, phone, email)
+        INSERT INTO employers(property_id, district_id, employer, phone, email)
         VALUES 
         (
             random_between(1, num_properties),
+            random_between(1, num_districts),
             employers_list[i],
             random_phone(),
             random_string(10) || '@' || random_string(5) || email_endings[random_between(1, array_length(email_endings, 1))]
@@ -345,6 +357,7 @@ CREATE OR REPLACE FUNCTION populate_seekers(count INT)
 $$
 DECLARE
     num_statuses INT := (SELECT count(*) FROM statuses);
+    num_districts INT := (SELECT count(*) FROM districts);
     first_names TEXT[] := '{Владимир, Николай, Никита, Федор, Альберто, Геннадий, 
                             Даниил, Тихон, Майкл, Георгий, Сергей, Ярослав, Алексей, Александр, Ростислав, Борис, Антонио,
                             Орландо, Хитоми, Ли}';
@@ -367,6 +380,7 @@ BEGIN
         (
             DEFAULT,
             random_between(1, num_statuses),
+            random_between(1, num_districts),
             last_names[random_between(1, array_length(last_names, 1))],
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
