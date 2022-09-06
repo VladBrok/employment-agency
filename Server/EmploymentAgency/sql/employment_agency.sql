@@ -20,6 +20,8 @@ DROP DOMAIN IF EXISTS email_address CASCADE;
 DROP DOMAIN IF EXISTS phone_number CASCADE;
 DROP DOMAIN IF EXISTS standart_building_number CASCADE;
 
+
+DROP INDEX IF EXISTS seekers_city_id CASCADE;
 DROP INDEX IF EXISTS applications_seeker_day CASCADE;
 DROP INDEX IF EXISTS applications_experience CASCADE;
 DROP INDEX IF EXISTS applications_salary CASCADE;
@@ -33,6 +35,7 @@ DROP INDEX IF EXISTS status_id CASCADE;
 DROP INDEX IF EXISTS seeker_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS employment_type_id CASCADE;
+DROP INDEX IF EXISTS districts_city_id CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS citext;
 
@@ -55,6 +58,12 @@ CREATE TABLE change_log
     time_modified TIMESTAMP NOT NULL DEFAULT now(),
     user_modified NAME NOT NULL
 );
+
+CREATE TABLE cities
+(
+  id SERIAL PRIMARY KEY,
+  city citext NOT NULL
+)
 
 CREATE TABLE properties
 (
@@ -83,7 +92,11 @@ CREATE TABLE employment_types
 CREATE TABLE districts
 (
     id SERIAL PRIMARY KEY,
-    district citext UNIQUE NOT NULL
+    city_id INT NOT NULL,
+    district citext UNIQUE NOT NULL,
+    FOREIGN KEY (city_id)
+        REFERENCES cities (id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE employers
@@ -125,6 +138,7 @@ CREATE TABLE seekers
     id SERIAL PRIMARY KEY,
     status_id INT NOT NULL,
     district_id INT NOT NULL,
+    registration_city_id INT NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
@@ -138,6 +152,9 @@ CREATE TABLE seekers
         ON DELETE CASCADE,
     FOREIGN KEY (district_id)
         REFERENCES districts (id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (registration_city_id)
+        REFERENCES cities (id)
         ON DELETE CASCADE
 );
 
@@ -179,6 +196,8 @@ CREATE INDEX seekers_district_id ON seekers(district_id);
 CREATE INDEX applications_seeker_id ON applications(seeker_id);
 CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
+CREATE INDEX districts_city_id ON districts(city_id);
+CREATE INDEX seekers_city_id ON seekers(registration_city_id);
 
 
 INSERT INTO statuses(status)
@@ -230,17 +249,24 @@ VALUES
     ('Оператор техподдержки'),
     ('Диктор');
 
-INSERT INTO districts(district)
+INSERT INTO cities(city)
 VALUES
-    ('Ворошиловский'),
-    ('Ленинский'),
-    ('Кировский'),
-    ('Буденновский'),
-    ('Петровский'),
-    ('Пролетарский'),
-    ('Куйбышевский'),
-    ('Киевский'),
-    ('Калининский');
+    ('Донецк'),
+    ('Москва'),
+    ('Борисполь'),
+    ('Амстердам')
+
+INSERT INTO districts(city_id, district)
+VALUES
+    (1, 'Ворошиловский'),
+    (1, 'Ленинский'),
+    (2, 'Кировский'),
+    (2, 'Буденновский'),
+    (3, 'Петровский'),
+    (4, 'Пролетарский'),
+    (4, 'Куйбышевский'),
+    (4, 'Киевский'),
+    (4, 'Калининский');
     
 
 CREATE OR REPLACE FUNCTION random_between(low INT, high INT) 
@@ -358,6 +384,7 @@ $$
 DECLARE
     num_statuses INT := (SELECT count(*) FROM statuses);
     num_districts INT := (SELECT count(*) FROM districts);
+    num_cities INT := (SELECT count(*) FROM cities);
     first_names TEXT[] := '{Владимир, Николай, Никита, Федор, Альберто, Геннадий, 
                             Даниил, Тихон, Майкл, Георгий, Сергей, Ярослав, Алексей, Александр, Ростислав, Борис, Антонио,
                             Орландо, Хитоми, Ли}';
@@ -368,7 +395,6 @@ DECLARE
                             Альбертович, Тихонович, Георгиевич, Ростиславович,
                             Михайлович, Романович, Олегович, Неонович, Кадзамович, 
                             Ярославович, Юриевич, Юсупович}';
-    cities TEXT[] := '{Донецк, Москва, Борисполь, Нью-Йорк, Амстердам, Вена, Люксембург, Ереван}';
     educations TEXT[] := '{Донецкий национальный технический университет, Оксфордский университет, 
                            Калифорнийский технологический институт, Чикагский университет,
                            Имперский колледж Лондона, Университет Торонто, Йоркский Университет, 
@@ -381,12 +407,12 @@ BEGIN
             DEFAULT,
             random_between(1, num_statuses),
             random_between(1, num_districts),
+            random_between(1, num_cities),
             last_names[random_between(1, array_length(last_names, 1))],
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
             random_phone(),
             random_date('1990-01-01 00:00:00', '2004-01-01 00:00:00')::DATE,
-            cities[random_between(1, array_length(cities, 1))],
             TRUE,
             educations[random_between(1, array_length(educations, 1))]
         );
