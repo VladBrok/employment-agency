@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS seekers CASCADE;
 DROP TABLE IF EXISTS employers CASCADE;
 DROP TABLE IF EXISTS vacancies CASCADE;
 DROP TABLE IF EXISTS applications CASCADE;
-DROP TABLE IF EXISTS streets CASCADE;
 DROP TABLE IF EXISTS districts CASCADE;
 DROP TABLE IF EXISTS employment_types CASCADE;
 DROP TABLE IF EXISTS statuses CASCADE;
@@ -27,7 +26,6 @@ DROP INDEX IF EXISTS applications_salary CASCADE;
 DROP INDEX IF EXISTS vacancies_salary_new CASCADE;
 DROP INDEX IF EXISTS vacancies_employer_day CASCADE;
 DROP INDEX IF EXISTS district_id CASCADE;
-DROP INDEX IF EXISTS street_id CASCADE;
 DROP INDEX IF EXISTS property_id CASCADE;
 DROP INDEX IF EXISTS employer_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
@@ -86,17 +84,6 @@ CREATE TABLE districts
 (
     id SERIAL PRIMARY KEY,
     district citext UNIQUE NOT NULL
-);
-
-CREATE TABLE streets
-(
-    id SERIAL PRIMARY KEY,
-    district_id INT NOT NULL,
-    street citext UNIQUE NOT NULL,
-    postal_code INT CHECK (postal_code > 0),
-    FOREIGN KEY (district_id)
-        REFERENCES districts (id)
-        ON DELETE CASCADE
 );
 
 CREATE TABLE employers
@@ -175,7 +162,6 @@ CREATE INDEX applications_experience ON applications(experience);
 CREATE INDEX applications_salary ON applications(salary);
 CREATE INDEX vacancies_salary_new ON vacancies(salary_new);
 CREATE INDEX vacancies_employer_day ON vacancies(employer_day);
-CREATE INDEX streets_district_id ON streets(district_id);
 CREATE INDEX employers_property_id ON employers(property_id);
 CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
@@ -246,27 +232,6 @@ VALUES
     ('Киевский'),
     ('Калининский');
     
-INSERT INTO streets(district_id, street, postal_code)
-VALUES
-    (1, 'Артема', 12000),
-    (1, 'Университетская', 12000),
-    (2, 'Олимпиева', 7032),
-    (2, 'Рослого', 7064),
-    (3, 'Терешковой', 8039),
-    (3, 'Коммунаров', 5006),
-    (4, 'Бальзака', 6032),
-    (4, 'Майская', 7064),
-    (5, 'Малышева', 7032),
-    (5, 'Клубная', 12000),
-    (6, 'Женевская', 3200),
-    (6, 'Ермакова', 7064),
-    (7, 'Чернова', 3200),
-    (7, 'Овражная', 5006),
-    (8, 'Озерная', 7031),
-    (8, 'Литературная', 3200),
-    (9, 'Щегловская', 12000),
-    (9, 'Юбилейная', 5006);
-
 
 CREATE OR REPLACE FUNCTION random_between(low INT, high INT) 
    RETURNS INT AS
