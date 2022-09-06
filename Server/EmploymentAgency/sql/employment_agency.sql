@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS seekers CASCADE;
 DROP TABLE IF EXISTS employers CASCADE;
 DROP TABLE IF EXISTS vacancies CASCADE;
 DROP TABLE IF EXISTS applications CASCADE;
-DROP TABLE IF EXISTS addresses CASCADE;
 DROP TABLE IF EXISTS streets CASCADE;
 DROP TABLE IF EXISTS districts CASCADE;
 DROP TABLE IF EXISTS employment_types CASCADE;
@@ -30,11 +29,9 @@ DROP INDEX IF EXISTS vacancies_employer_day CASCADE;
 DROP INDEX IF EXISTS district_id CASCADE;
 DROP INDEX IF EXISTS street_id CASCADE;
 DROP INDEX IF EXISTS property_id CASCADE;
-DROP INDEX IF EXISTS address_id CASCADE;
 DROP INDEX IF EXISTS employer_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS status_id CASCADE;
-DROP INDEX IF EXISTS address_id CASCADE;
 DROP INDEX IF EXISTS seeker_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS employment_type_id CASCADE;
@@ -102,29 +99,15 @@ CREATE TABLE streets
         ON DELETE CASCADE
 );
 
-CREATE TABLE addresses
-(
-    id SERIAL PRIMARY KEY,
-    street_id INT NOT NULL,
-    building_number standart_building_number NOT NULL,
-    FOREIGN KEY (street_id)
-        REFERENCES streets (id)
-        ON DELETE CASCADE
-);
-
 CREATE TABLE employers
 (
     id SERIAL PRIMARY KEY,
     property_id INT NOT NULL,
-    address_id INT NOT NULL,
     employer citext NOT NULL,
     phone phone_number NOT NULL,
     email email_address,
     FOREIGN KEY (property_id)
         REFERENCES properties (id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (address_id)
-        REFERENCES addresses (id)
         ON DELETE CASCADE
 );
 
@@ -150,7 +133,6 @@ CREATE TABLE seekers
 (
     id SERIAL PRIMARY KEY,
     status_id INT NOT NULL,
-    address_id INT NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
@@ -162,9 +144,6 @@ CREATE TABLE seekers
     education VARCHAR(50),
     FOREIGN KEY (status_id)
         REFERENCES statuses (id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (address_id)
-        REFERENCES addresses (id)
         ON DELETE CASCADE
 );
 
@@ -197,13 +176,10 @@ CREATE INDEX applications_salary ON applications(salary);
 CREATE INDEX vacancies_salary_new ON vacancies(salary_new);
 CREATE INDEX vacancies_employer_day ON vacancies(employer_day);
 CREATE INDEX streets_district_id ON streets(district_id);
-CREATE INDEX addresses_street_id ON addresses(street_id);
 CREATE INDEX employers_property_id ON employers(property_id);
-CREATE INDEX employers_address_id ON employers(address_id);
 CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
 CREATE INDEX seekers_status_id ON seekers(status_id);
-CREATE INDEX seekers_address_id ON seekers(address_id);
 CREATE INDEX applications_seeker_id ON applications(seeker_id);
 CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
@@ -343,27 +319,11 @@ END;
 $$ LANGUAGE 'plpgsql' STRICT;
 
 
-CREATE OR REPLACE FUNCTION populate_addresses(count INT)
-    RETURNS INT AS
-$$
-DECLARE
-    num_streets INT := (SELECT count(*) FROM streets);
-BEGIN
-    FOR i IN 1..count LOOP
-        INSERT INTO addresses(street_id, building_number)
-           VALUES(random_between(1, num_streets), i);
-    END LOOP;
-    RETURN NULL;
-END;
-$$ LANGUAGE 'plpgsql' STRICT;
-
-
 CREATE OR REPLACE FUNCTION populate_employers(count INT)
     RETURNS INT AS
 $$
 DECLARE
     num_properties INT := (SELECT count(*) FROM properties);
-    num_addresses INT := (SELECT count(*) FROM addresses);
     alphabet TEXT[] := '{A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z}';
     employers_list TEXT[] := ARRAY(
                                  SELECT a || b || c || d
@@ -374,11 +334,10 @@ DECLARE
     email_endings TEXT[] := '{.com, .ru, .su}';
 BEGIN
     FOR i IN 1..count LOOP
-        INSERT INTO employers(property_id, address_id, employer, phone, email)
+        INSERT INTO employers(property_id, employer, phone, email)
         VALUES 
         (
             random_between(1, num_properties),
-            random_between(1, num_addresses),
             employers_list[i],
             random_phone(),
             random_string(10) || '@' || random_string(5) || email_endings[random_between(1, array_length(email_endings, 1))]
@@ -421,7 +380,6 @@ CREATE OR REPLACE FUNCTION populate_seekers(count INT)
 $$
 DECLARE
     num_statuses INT := (SELECT count(*) FROM statuses);
-    num_addresses INT := (SELECT count(*) FROM addresses);
     first_names TEXT[] := '{Владимир, Николай, Никита, Федор, Альберто, Геннадий, 
                             Даниил, Тихон, Майкл, Георгий, Сергей, Ярослав, Алексей, Александр, Ростислав, Борис, Антонио,
                             Орландо, Хитоми, Ли}';
@@ -444,7 +402,6 @@ BEGIN
         (
             DEFAULT,
             random_between(1, num_statuses),
-            random_between(1, num_addresses),
             last_names[random_between(1, array_length(last_names, 1))],
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
@@ -495,7 +452,6 @@ $$
 DECLARE
     count INT := 10000;
 BEGIN
-    PERFORM populate_addresses(count);
     PERFORM populate_employers(count);
     PERFORM populate_vacancies(count);
     PERFORM populate_seekers(count);
