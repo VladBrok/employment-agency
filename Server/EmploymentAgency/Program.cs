@@ -63,9 +63,11 @@ WebApplication BuildApp()
 void UseRequiredMiddlewares()
 {
     app.UseHttpsRedirection();
+
     string logFolder = "logs";
     string logPath = Path.Combine(builder.Environment.ContentRootPath, logFolder);
     Directory.CreateDirectory(logPath);
+
     app.UseStaticFiles(
         new StaticFileOptions
         {
