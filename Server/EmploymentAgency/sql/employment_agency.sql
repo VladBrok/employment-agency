@@ -15,6 +15,8 @@ DROP TABLE IF EXISTS employment_types CASCADE;
 DROP TABLE IF EXISTS statuses CASCADE;
 DROP TABLE IF EXISTS positions CASCADE;
 DROP TABLE IF EXISTS properties CASCADE;
+DROP TABLE IF EXISTS cities CASCADE;
+DROP TABLE IF EXISTS educations CASCADE;
 
 DROP DOMAIN IF EXISTS email_address CASCADE;
 DROP DOMAIN IF EXISTS phone_number CASCADE;
@@ -60,16 +62,16 @@ CREATE TABLE change_log
     user_modified NAME NOT NULL
 );
 
-CREATE TABLE cities
-(
-  id SERIAL PRIMARY KEY,
-  city citext UNIQUE NOT NULL
-);
-
 CREATE TABLE educations
 (
   id SERIAL PRIMARY KEY,
   education citext UNIQUE NOT NULL
+);
+
+CREATE TABLE cities
+(
+  id SERIAL PRIMARY KEY,
+  city citext UNIQUE NOT NULL
 );
 
 CREATE TABLE properties
@@ -152,7 +154,6 @@ CREATE TABLE seekers
     patronymic VARCHAR(20),
     phone phone_number,
     birthday DATE NOT NULL CHECK ((DATE_PART('year', now()::date) - DATE_PART('year', birthday::date)) > 15),
-    registration_city VARCHAR(20) NOT NULL,
     pol BOOLEAN NOT NULL,
     FOREIGN KEY (status_id)
         REFERENCES statuses (id)
@@ -489,6 +490,8 @@ $$ LANGUAGE 'plpgsql' STRICT;
 SELECT * FROM populate_all(); 
 
 
+
+
 CREATE OR REPLACE FUNCTION set_seeker_day()
     RETURNS TRIGGER AS
 $$
@@ -685,12 +688,8 @@ BEGIN
     RETURN QUERY
         SELECT last_name, first_name, patronymic, phone
         FROM seekers s
-        JOIN addresses a
-            ON a.id = s.address_id
-        JOIN streets st
-            ON st.id = a.street_id
         JOIN districts d
-            ON d.id = st.district_id
+            ON d.id = s.district_id
         WHERE lower(d.district) = lower(a_district)
         ORDER BY last_name, first_name, patronymic, phone;
 END;
@@ -738,7 +737,7 @@ CREATE OR REPLACE FUNCTION get_seekers_born_after(a_date DATE)
         "Имя" VARCHAR(50), 
         "Отчество" VARCHAR(50),
         "Дата рождения" DATE,
-        "Образование" VARCHAR(50)) AS
+        "Образование" citext) AS
 $$
 BEGIN
     RETURN QUERY
@@ -747,10 +746,12 @@ BEGIN
             first_name, 
             patronymic,
             birthday, 
-            education
+            e.education
         FROM seekers s
+		JOIN educations e
+		  ON s.education_id = e.id
         WHERE s.birthday > a_date
-        ORDER BY 1, 2, 3, 4, 5, 6;
+        ORDER BY 1, 2, 3, 4, 5;
 END;
 $$ LANGUAGE 'plpgsql' STRICT;
 
@@ -762,16 +763,14 @@ CREATE OR REPLACE VIEW employer_addresses AS
     SELECT 
         e.employer "Компания", 
         d.district "Район", 
-        s.street "Улица", 
-        a.building_number "Номер дома"
+		c.city "Город"
     FROM employers e
-    JOIN addresses a
-        ON e.address_id = a.id
-    JOIN streets s
-        ON a.street_id = s.id
     JOIN districts d
-        ON s.district_id = d.id
-    ORDER BY 1, 2, 3, 4;
+        ON e.district_id = d.id
+	JOIN cities c
+	    ON d.city_id = c.id
+    ORDER BY 1, 2, 3;
+
 
 
 CREATE OR REPLACE VIEW employment_types_and_salaries AS
@@ -783,7 +782,7 @@ CREATE OR REPLACE VIEW employment_types_and_salaries AS
     JOIN employment_types e
         ON a.employment_type_id = e.id
     GROUP BY e.type
-    ORDER BY 1, 2;
+    ORDER BY 1, 2, 3;
 
 
 CREATE OR REPLACE VIEW vacancies_and_salaries AS
@@ -822,13 +821,16 @@ CREATE OR REPLACE VIEW seekers_and_applications AS
         last_name "Фамилия",
         first_name "Имя",
         patronymic "Отчество",
-        registration_city "Город регистрации",
+        c.city "Город регистрации",
         seeker_day "Дата размещения заявки",
         salary "Ожидаемая зарплата"
     FROM applications a
     RIGHT JOIN seekers s
         ON s.id = a.seeker_id
+    JOIN cities c
+	    ON c.id = s.registration_city_id
     ORDER BY 1, 2, 3, 4, 5, 6;
+
 
 
 /* ===== 5 ===== */
