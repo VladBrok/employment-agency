@@ -207,12 +207,6 @@ const columnInfo = [
     firstStreetChangeCompleted = false;
     return await this.makeSelect(id, "/streets", value, calledEndpoint);
   }),
-  new Column("postal_code", "почтовый индекс", (id, value, calledEndpoint) =>
-    calledEndpoint === "/streets" ? makeNumberInput(id, value, 1, 100000) : null
-  ),
-  new Column("building_number", "номер дома", (id, value) =>
-    makeNumberInput(id, value, 1, 1000000, true)
-  ),
   new Column("employer", "работодатель", (id, value) =>
     makeTextInput(
       id,
@@ -302,6 +296,9 @@ const columnInfo = [
     }
   ),
   new Column("registration_city", "город регистрации", (id, value) =>
+    makeTextInput(id, value, 3, 20, true)
+  ),
+  new Column("city", "город", (id, value) =>
     makeTextInput(id, value, 3, 20, true)
   ),
   new Column(

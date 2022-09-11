@@ -118,9 +118,6 @@ async function sendForm(callback, e) {
     ) {
       name += "_id";
     }
-    if (name === "position_id" && form.dataset.endpoint === "/seekers") {
-      name = "speciality_id";
-    }
     if (name === "type_id" && form.dataset.endpoint === "/applications") {
       name = "employment_type_id";
     }
