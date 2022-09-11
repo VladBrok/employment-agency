@@ -64,13 +64,13 @@ CREATE TABLE cities
 (
   id SERIAL PRIMARY KEY,
   city citext UNIQUE NOT NULL
-)
+);
 
 CREATE TABLE educations
 (
   id SERIAL PRIMARY KEY,
   education citext UNIQUE NOT NULL
-)
+);
 
 CREATE TABLE properties
 (
@@ -265,7 +265,7 @@ VALUES
     ('Донецк'),
     ('Москва'),
     ('Борисполь'),
-    ('Амстердам')
+    ('Амстердам');
 
 INSERT INTO districts(city_id, district)
 VALUES
@@ -289,7 +289,7 @@ VALUES
     ('Университет Торонто'),
     ('Йоркский Университет'),
     ('Датский технический университет'),
-    ('Университетский коллежд Лондона')
+    ('Университетский коллежд Лондона');
 
 
 CREATE OR REPLACE FUNCTION random_between(low INT, high INT) 
