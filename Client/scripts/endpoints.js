@@ -43,7 +43,7 @@ const endpointInfo = [
   new Endpoint({ main: "/seekers/education_id", title: "Образование" }),
   new Endpoint({
     main: "/seekers/registration_city_id",
-    title: "Город регистрации",
+    title: "Соискатели",
   }),
   new Endpoint({ main: "/vacancies/position_id", title: "Вакансии" }),
   new Endpoint({ main: "/employers/property_id", title: "Работодатели" }),
