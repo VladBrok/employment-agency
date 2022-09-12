@@ -43,7 +43,7 @@ DROP INDEX IF EXISTS districts_city_id CASCADE;
 CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE DOMAIN email_address AS VARCHAR(50)
-CHECK (VALUE ~* '^[a-z0-9.+-_]+@[a-z0-9]+[.][a-z]+$');
+CHECK (VALUE ~* '^.+?@.+$');
 
 CREATE DOMAIN phone_number AS VARCHAR(10)
 CHECK (VALUE ~ '^071\d{7}');
