@@ -26,16 +26,16 @@ public static class CrudQueriesMapper
                 (
                     "employers",
                     Select.FromEmployers(),
-                    update.Table,
-                    create.Table,
+                    update.SeekersOrEmployers,
+                    create.SeekersOrEmployers,
                     "e",
                     new[] { "property_id", "district_id" }
                 ),
                 (
                     "seekers",
                     Select.FromSeekers(),
-                    update.Table,
-                    create.Table,
+                    update.SeekersOrEmployers,
+                    create.SeekersOrEmployers,
                     "s",
                     new[] { "status_id", "district_id", "education_id", "registration_city_id" }
                 ),
