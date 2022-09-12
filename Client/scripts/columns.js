@@ -7,6 +7,7 @@ import {
   makeEmailInput,
   PATTERNS,
 } from "./input.js";
+import { isDev } from "./config.js";
 
 class Column {
   constructor(
@@ -351,7 +352,7 @@ const columnInfo = [
 ];
 
 function formatDate(string) {
-  if (!string) {
+  if (!string || isDev) {
     return string;
   }
   const date = new Date(string + " UTC");
