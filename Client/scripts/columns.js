@@ -166,6 +166,13 @@ const columnInfo = [
   new Column("time_modified", "время совершения", undefined, formatDate),
   new Column("record_id", "id записи"),
   new Column("user_modified", "пользователь, совершивший операцию"),
+  new Column("education", "образование", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/educations", value, calledEndpoint);
+  }),
   new Column("property", "тип собственности", async function (
     id,
     value,
@@ -198,6 +205,16 @@ const columnInfo = [
       value,
       calledEndpoint
     );
+  }),
+  new Column("registration_city", "город регистрации", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/cities", value, calledEndpoint);
+  }),
+  new Column("city", "город", async function (id, value, calledEndpoint) {
+    return await this.makeSelect(id, "/cities", value, calledEndpoint);
   }),
   new Column("district", "район", async function (id, value, calledEndpoint) {
     districtSelectId = id;
@@ -296,12 +313,6 @@ const columnInfo = [
       return formatted.substring(0, formatted.indexOf(","));
     }
   ),
-  new Column("registration_city", "город регистрации", (id, value) =>
-    makeTextInput(id, value, 3, 20, true)
-  ),
-  new Column("city", "город", (id, value) =>
-    makeTextInput(id, value, 3, 20, true)
-  ),
   new Column(
     "recommended",
     "рекомендован",
@@ -319,9 +330,6 @@ const columnInfo = [
     },
     (v) => (v === "True" ? "мужской" : "женский"),
     (v) => (v === "Мужской" ? "True" : "False")
-  ),
-  new Column("education", "образование", (id, value) =>
-    makeTextInput(id, value, 3, 20)
   ),
   new Column("seeker_day", "дата публикации", () => null, formatDate),
   new Column("information", "информация", makeTextInput),
