@@ -26,7 +26,10 @@ public class HtmlReport : IReport
                   padding: 6px;
                   text-align: center;
               }
-              th:empty, td:empty {
+              td:nth-child(2):empty,
+              td:nth-child(3):empty,
+              th:nth-child(2):empty,
+              th:nth-child(3):empty {
                   display: none;
               }
               table {

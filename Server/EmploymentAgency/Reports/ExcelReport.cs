@@ -36,16 +36,16 @@ public class ExcelReport : IReport
     {
         ExcelWorksheet sheet = package.Workbook.Worksheets.Add("Отчёт");
         sheet.Columns.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+        sheet.Rows.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
         sheet.DefaultRowHeight = 40;
         sheet.Row(1).Style.Font.Bold = true;
-        sheet.Row(1).Style.Font.Size = 20;
         sheet.Row(2).Style.Font.Bold = true;
         return sheet;
     }
 
     private void WriteContent(IEnumerable<Entity> entities, string title, ExcelWorksheet sheet)
     {
-        string[] columnNames = entities.First().Keys.Where(k => !string.IsNullOrEmpty(k)).ToArray();
+        string[] columnNames = entities.First().Keys.Where(Valid).ToArray();
         sheet.Cells["A1"].Value = title;
         sheet.Cells[$"A1:{(char)(64 + columnNames.Length)}1"].Merge = true;
         ExcelRangeBase range = sheet.Cells["A2"].LoadFromArrays(
@@ -59,7 +59,7 @@ public class ExcelReport : IReport
     private IEnumerable<string> ExtractValues(Entity entity, int row, ExcelWorksheet sheet)
     {
         return entity.Values
-            .Where(v => !string.IsNullOrEmpty(v))
+            .Where(Valid)
             .Select(
                 (value, column) =>
                 {
@@ -69,6 +69,11 @@ public class ExcelReport : IReport
                       : MakeLink(sheet.Cells[row, column + 1], link);
                 }
             );
+    }
+
+    private bool Valid(string value, int index)
+    {
+        return (index != 1 && index != 2) ? true : !string.IsNullOrEmpty(value);
     }
 
     private string MakeLink(ExcelRange cell, string link)
