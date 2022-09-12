@@ -112,9 +112,9 @@ class DateColumn extends Column {
   }
 }
 
+let citySelectId = null;
 let districtSelectId = null;
-let streetSelectId = null;
-let firstStreetChangeCompleted = true;
+let firstDistrictChangeCompleted = true;
 
 const columnInfo = [
   new Column("id", "№"),
@@ -214,15 +214,15 @@ const columnInfo = [
     return await this.makeSelect(id, "/cities", value, calledEndpoint);
   }),
   new Column("city", "город", async function (id, value, calledEndpoint) {
+    citySelectId = id;
     return await this.makeSelect(id, "/cities", value, calledEndpoint);
   }),
   new Column("district", "район", async function (id, value, calledEndpoint) {
-    districtSelectId = id;
+    districtSelectId = "/districts" === calledEndpoint ? null : id;
+    firstDistrictChangeCompleted = false;
     return await this.makeSelect(id, "/districts", value, calledEndpoint);
   }),
   new Column("street", "улица", async function (id, value, calledEndpoint) {
-    streetSelectId = "/streets" === calledEndpoint ? null : id;
-    firstStreetChangeCompleted = false;
     return await this.makeSelect(id, "/streets", value, calledEndpoint);
   }),
   new Column("employer", "работодатель", (id, value) =>
@@ -367,33 +367,32 @@ function formatDate(string) {
   return date.toLocaleString();
 }
 
-async function changeStreets(districtSelect) {
-  if (!streetSelectId || !document.getElementById(streetSelectId)) {
+async function changeDistricts(citySelect) {
+  if (!districtSelectId || !document.getElementById(districtSelectId)) {
     return;
   }
 
-  const districtId =
-    districtSelect.options[districtSelect.selectedIndex].dataset.id;
-  document.getElementById(streetSelectId).outerHTML = await columns[
-    "street"
-  ].makeSelect(streetSelectId, `/streets/district_id/${districtId}`);
+  const cityId = citySelect.options[citySelect.selectedIndex].dataset.id;
+  document.getElementById(districtSelectId).outerHTML = await columns[
+    "district"
+  ].makeSelect(districtSelectId, `/districts/city_id/${cityId}`);
 }
 
 document.body.addEventListener("change", async (e) => {
-  if (e.target.id !== districtSelectId) {
+  if (e.target.id !== citySelectId) {
     return;
   }
 
-  await changeStreets(e.target);
+  await changeDistricts(e.target);
 });
 
 const observer = new MutationObserver(async () => {
-  if (firstStreetChangeCompleted) {
+  if (firstDistrictChangeCompleted) {
     return;
   }
 
-  firstStreetChangeCompleted = true;
-  await changeStreets(document.getElementById(districtSelectId));
+  firstDistrictChangeCompleted = true;
+  await changeDistricts(document.getElementById(citySelectId));
 });
 observer.observe(document.body, { childList: true, subtree: true });
 
