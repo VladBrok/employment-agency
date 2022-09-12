@@ -16,14 +16,6 @@ public static class CrudQueriesMapper
             new (string Name, string Select, Delegate Update, Delegate Create, string? Alias, string[]? ParentIds)[]
             {
                 (
-                    "addresses",
-                    Select.FromAddresses(),
-                    update.Addresses,
-                    create.Addresses,
-                    "a",
-                    new[] { "street_id" }
-                ),
-                (
                     "applications",
                     Select.FromApplications(),
                     update.Applications,
@@ -34,26 +26,18 @@ public static class CrudQueriesMapper
                 (
                     "employers",
                     Select.FromEmployers(),
-                    update.Employers,
-                    create.Employers,
+                    update.SeekersOrEmployers,
+                    create.SeekersOrEmployers,
                     "e",
-                    new[] { "property_id", "address_id" }
+                    new[] { "property_id", "district_id" }
                 ),
                 (
                     "seekers",
                     Select.FromSeekers(),
-                    update.Seekers,
-                    create.Seekers,
+                    update.SeekersOrEmployers,
+                    create.SeekersOrEmployers,
                     "s",
-                    new[] { "status_id", "address_id", "speciality_id" }
-                ),
-                (
-                    "streets",
-                    Select.FromStreets(),
-                    update.Table,
-                    create.Table,
-                    "s",
-                    new[] { "district_id" }
+                    new[] { "status_id", "district_id", "education_id", "registration_city_id" }
                 ),
                 (
                     "vacancies",
@@ -63,11 +47,20 @@ public static class CrudQueriesMapper
                     "v",
                     new[] { "employer_id", "position_id" }
                 ),
+                (
+                    "districts",
+                    Select.FromDistricts(),
+                    update.Table,
+                    create.Table,
+                    "d",
+                    new[] { "city_id" }
+                ),
             };
         var referenceTableNames = new[]
         {
             "change_log",
-            "districts",
+            "cities",
+            "educations",
             "employment_types",
             "positions",
             "properties",

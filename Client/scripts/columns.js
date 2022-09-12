@@ -7,6 +7,7 @@ import {
   makeEmailInput,
   PATTERNS,
 } from "./input.js";
+import { isDev } from "./config.js";
 
 class Column {
   constructor(
@@ -56,17 +57,19 @@ class Column {
       );
     }
 
+    const realName =
+      this.realName === "registration_city" ? "city" : this.realName;
     if (!value) {
-      value = options[0][this.realName];
+      value = options[0][realName];
     }
     return `<select class="select input" id=${id}>${options
       .map(
         (option) =>
           `<option data-id="${option.id}" value="${option.id}" ${
-            option[this.realName].toLowerCase() === value.trim().toLowerCase()
+            option[realName].toLowerCase() === value.trim().toLowerCase()
               ? "selected"
               : ""
-          }>${option[this.realName]}</option>`
+          }>${option[realName]}</option>`
       )
       .join("")}</select>`;
   }
@@ -111,9 +114,9 @@ class DateColumn extends Column {
   }
 }
 
+let citySelectId = null;
 let districtSelectId = null;
-let streetSelectId = null;
-let firstStreetChangeCompleted = true;
+let firstDistrictChangeCompleted = true;
 
 const columnInfo = [
   new Column("id", "№"),
@@ -165,6 +168,13 @@ const columnInfo = [
   new Column("time_modified", "время совершения", undefined, formatDate),
   new Column("record_id", "id записи"),
   new Column("user_modified", "пользователь, совершивший операцию"),
+  new Column("education", "образование", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/educations", value, calledEndpoint);
+  }),
   new Column("property", "тип собственности", async function (
     id,
     value,
@@ -198,21 +208,22 @@ const columnInfo = [
       calledEndpoint
     );
   }),
+  new Column("registration_city", "город регистрации", async function (
+    id,
+    value,
+    calledEndpoint
+  ) {
+    return await this.makeSelect(id, "/cities", value, calledEndpoint);
+  }),
+  new Column("city", "город", async function (id, value, calledEndpoint) {
+    citySelectId = id;
+    return await this.makeSelect(id, "/cities", value, calledEndpoint);
+  }),
   new Column("district", "район", async function (id, value, calledEndpoint) {
-    districtSelectId = id;
+    districtSelectId = "/districts" === calledEndpoint ? null : id;
+    firstDistrictChangeCompleted = false;
     return await this.makeSelect(id, "/districts", value, calledEndpoint);
   }),
-  new Column("street", "улица", async function (id, value, calledEndpoint) {
-    streetSelectId = "/streets" === calledEndpoint ? null : id;
-    firstStreetChangeCompleted = false;
-    return await this.makeSelect(id, "/streets", value, calledEndpoint);
-  }),
-  new Column("postal_code", "почтовый индекс", (id, value, calledEndpoint) =>
-    calledEndpoint === "/streets" ? makeNumberInput(id, value, 1, 100000) : null
-  ),
-  new Column("building_number", "номер дома", (id, value) =>
-    makeNumberInput(id, value, 1, 1000000, true)
-  ),
   new Column("employer", "работодатель", (id, value) =>
     makeTextInput(
       id,
@@ -298,11 +309,12 @@ const columnInfo = [
       ),
     (v) => {
       const formatted = formatDate(v);
-      return formatted.substring(0, formatted.indexOf(","));
+      const coma = formatted.indexOf(",");
+      return formatted.substring(
+        0,
+        coma === -1 ? formatted.indexOf(" ") : coma
+      );
     }
-  ),
-  new Column("registration_city", "город регистрации", (id, value) =>
-    makeTextInput(id, value, 3, 20, true)
   ),
   new Column(
     "recommended",
@@ -321,9 +333,6 @@ const columnInfo = [
     },
     (v) => (v === "True" ? "мужской" : "женский"),
     (v) => (v === "Мужской" ? "True" : "False")
-  ),
-  new Column("education", "образование", (id, value) =>
-    makeTextInput(id, value, 3, 20)
   ),
   new Column("seeker_day", "дата публикации", () => null, formatDate),
   new Column("information", "информация", makeTextInput),
@@ -354,40 +363,39 @@ const columnInfo = [
 ];
 
 function formatDate(string) {
-  if (!string) {
+  if (!string || isDev) {
     return string;
   }
   const date = new Date(string + " UTC");
   return date.toLocaleString();
 }
 
-async function changeStreets(districtSelect) {
-  if (!streetSelectId || !document.getElementById(streetSelectId)) {
+async function changeDistricts(citySelect) {
+  if (!districtSelectId || !document.getElementById(districtSelectId)) {
     return;
   }
 
-  const districtId =
-    districtSelect.options[districtSelect.selectedIndex].dataset.id;
-  document.getElementById(streetSelectId).outerHTML = await columns[
-    "street"
-  ].makeSelect(streetSelectId, `/streets/district_id/${districtId}`);
+  const cityId = citySelect.options[citySelect.selectedIndex].dataset.id;
+  document.getElementById(districtSelectId).outerHTML = await columns[
+    "district"
+  ].makeSelect(districtSelectId, `/districts/city_id/${cityId}`);
 }
 
 document.body.addEventListener("change", async (e) => {
-  if (e.target.id !== districtSelectId) {
+  if (e.target.id !== citySelectId) {
     return;
   }
 
-  await changeStreets(e.target);
+  await changeDistricts(e.target);
 });
 
 const observer = new MutationObserver(async () => {
-  if (firstStreetChangeCompleted) {
+  if (firstDistrictChangeCompleted) {
     return;
   }
 
-  firstStreetChangeCompleted = true;
-  await changeStreets(document.getElementById(districtSelectId));
+  firstDistrictChangeCompleted = true;
+  await changeDistricts(document.getElementById(citySelectId));
 });
 observer.observe(document.body, { childList: true, subtree: true });
 

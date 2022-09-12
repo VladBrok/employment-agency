@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.Extensions.Primitives;
 
 namespace EmploymentAgency.Utils;
 
@@ -24,11 +25,7 @@ public abstract class CrudAction
 
     public string Table(string table, HttpRequest request)
     {
-        return PerformOnTable(
-            table,
-            request.Form.Select(x => x.Key),
-            request.Form.Select(x => x.Value.ToString())
-        );
+        return Perform(table, request);
     }
 
     protected abstract string PerformOnTable(
@@ -36,6 +33,22 @@ public abstract class CrudAction
         IEnumerable<string> keys,
         IEnumerable<string> values
     );
+
+    public string SeekersOrEmployers(string table, HttpRequest request)
+    {
+        return Perform(table, request, "city_id");
+    }
+
+    private string Perform(string table, HttpRequest request, params string[] keysToExclude)
+    {
+        var shouldInclude = (KeyValuePair<string, StringValues> x) =>
+            !keysToExclude.Contains(x.Key);
+        return PerformOnTable(
+            table,
+            request.Form.Where(shouldInclude).Select(x => x.Key),
+            request.Form.Where(shouldInclude).Select(x => x.Value.ToString())
+        );
+    }
 
     public virtual string Applications(string table, HttpRequest request)
     {

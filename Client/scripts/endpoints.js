@@ -33,16 +33,20 @@ const endpointInfo = [
     main: "/applications/seeker_id",
     title: "Заявки на трудоустройство",
   }),
-  new Endpoint({ main: "/employers/address_id", title: "Работодатели" }),
-  new Endpoint({ main: "/seekers/address_id", title: "Соискатели" }),
+  new Endpoint({ main: "/employers/district_id", title: "Работодатели" }),
+  new Endpoint({ main: "/seekers/district_id", title: "Соискатели" }),
   new Endpoint({
     main: "/applications/position_id",
     title: "Заявки на трудоустройство",
   }),
-  new Endpoint({ main: "/seekers/position_id", title: "Соискатели" }),
+  new Endpoint({ main: "/seekers/education_id", title: "Образование" }),
+  new Endpoint({
+    main: "/seekers/registration_city_id",
+    title: "Соискатели",
+  }),
   new Endpoint({ main: "/vacancies/position_id", title: "Вакансии" }),
   new Endpoint({ main: "/employers/property_id", title: "Работодатели" }),
-  new Endpoint({ main: "/streets/district_id", title: "Улицы" }),
+  new Endpoint({ main: "/districts/city_id", title: "Районы" }),
   new Endpoint({
     main: "/applications/employment_type_id",
     title: "Заявки на трудоустройство",
@@ -61,21 +65,22 @@ const endpointInfo = [
   new Endpoint({ main: "/vacancies" }),
   new Endpoint({ main: "/applications" }),
   new Endpoint({
-    main: "/addresses",
-    children: ["/employers/address_id", "/seekers/address_id"],
-  }),
-  new Endpoint({
     main: "/positions",
-    children: [
-      "/applications/position_id",
-      "/seekers/position_id",
-      "/vacancies/position_id",
-    ],
+    children: ["/applications/position_id", "/vacancies/position_id"],
   }),
   new Endpoint({ main: "/properties", children: ["/employers/property_id"] }),
-  new Endpoint({ main: "/streets", children: ["/addresses/street_id"] }),
-  new Endpoint({ main: "/addresses/street_id", title: "Адреса" }),
-  new Endpoint({ main: "/districts", children: ["/streets/district_id"] }),
+  new Endpoint({
+    main: "/districts",
+    children: ["/employers/district_id", "/seekers/district_id"],
+  }),
+  new Endpoint({
+    main: "/cities",
+    children: ["/districts/city_id", "/seekers/registration_city_id"],
+  }),
+  new Endpoint({
+    main: "/educations",
+    children: ["/seekers/education_id"],
+  }),
   new Endpoint({
     main: "/employment_types",
     children: ["/applications/employment_type_id"],

@@ -18,11 +18,23 @@
         <form class="crud-form">
           <div class="element">
             <label for="login-input">Логин:</label>
-            <input type="text" id="login-input" class="input" value="admin" required />
+            <input
+              type="text"
+              id="login-input"
+              class="input"
+              value="admin"
+              required
+            />
           </div>
           <div class="element">
             <label for="password">Пароль:</label>
-            <input type="password" id="password" class="input" value="12345" required />
+            <input
+              type="password"
+              id="password"
+              class="input"
+              value="12345"
+              required
+            />
           </div>
           <button type="submit" class="search-button button">Вход</button>
         </form>
@@ -52,7 +64,6 @@
                   Заявки на трудоустройство
                 </button>
               </li>
-              <li><button data-endpoint="/addresses">Адреса</button></li>
               <li>
                 <button data-endpoint="/change_log">Журнал изменений</button>
               </li>
@@ -65,8 +76,9 @@
               <li>
                 <button data-endpoint="/properties">Типы собственности</button>
               </li>
-              <li><button data-endpoint="/streets">Улицы</button></li>
               <li><button data-endpoint="/districts">Районы</button></li>
+              <li><button data-endpoint="/cities">Города</button></li>
+              <li><button data-endpoint="/educations">Образование</button></li>
               <li>
                 <button data-endpoint="/employment_types">
                   Типы занятости
@@ -78,7 +90,7 @@
             </ul>
           </li>
           <li class="item parent">
-            <button>Специальные запросы</button>
+            <button>Запросы</button>
             <ul class="child">
               <li class="parent">
                 <button>Без параметров</button>

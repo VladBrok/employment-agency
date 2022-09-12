@@ -10,40 +10,40 @@ DROP TABLE IF EXISTS seekers CASCADE;
 DROP TABLE IF EXISTS employers CASCADE;
 DROP TABLE IF EXISTS vacancies CASCADE;
 DROP TABLE IF EXISTS applications CASCADE;
-DROP TABLE IF EXISTS addresses CASCADE;
-DROP TABLE IF EXISTS streets CASCADE;
 DROP TABLE IF EXISTS districts CASCADE;
 DROP TABLE IF EXISTS employment_types CASCADE;
 DROP TABLE IF EXISTS statuses CASCADE;
 DROP TABLE IF EXISTS positions CASCADE;
 DROP TABLE IF EXISTS properties CASCADE;
+DROP TABLE IF EXISTS cities CASCADE;
+DROP TABLE IF EXISTS educations CASCADE;
 
 DROP DOMAIN IF EXISTS email_address CASCADE;
 DROP DOMAIN IF EXISTS phone_number CASCADE;
 DROP DOMAIN IF EXISTS standart_building_number CASCADE;
 
+
+DROP INDEX IF EXISTS seekers_city_id CASCADE;
+DROP INDEX IF EXISTS seekers_education_id CASCADE;
 DROP INDEX IF EXISTS applications_seeker_day CASCADE;
 DROP INDEX IF EXISTS applications_experience CASCADE;
 DROP INDEX IF EXISTS applications_salary CASCADE;
 DROP INDEX IF EXISTS vacancies_salary_new CASCADE;
 DROP INDEX IF EXISTS vacancies_employer_day CASCADE;
 DROP INDEX IF EXISTS district_id CASCADE;
-DROP INDEX IF EXISTS street_id CASCADE;
 DROP INDEX IF EXISTS property_id CASCADE;
-DROP INDEX IF EXISTS address_id CASCADE;
 DROP INDEX IF EXISTS employer_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS status_id CASCADE;
-DROP INDEX IF EXISTS address_id CASCADE;
-DROP INDEX IF EXISTS speciality_id CASCADE;
 DROP INDEX IF EXISTS seeker_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS employment_type_id CASCADE;
+DROP INDEX IF EXISTS districts_city_id CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE DOMAIN email_address AS VARCHAR(50)
-CHECK (VALUE ~* '^[a-z0-9.+-_]+@[a-z0-9]+[.][a-z]+$');
+CHECK (VALUE ~* '^.+?@.+$');
 
 CREATE DOMAIN phone_number AS VARCHAR(10)
 CHECK (VALUE ~ '^071\d{7}');
@@ -60,6 +60,18 @@ CREATE TABLE change_log
     record_id INT NOT NULL,
     time_modified TIMESTAMP NOT NULL DEFAULT now(),
     user_modified NAME NOT NULL
+);
+
+CREATE TABLE educations
+(
+  id SERIAL PRIMARY KEY,
+  education citext UNIQUE NOT NULL
+);
+
+CREATE TABLE cities
+(
+  id SERIAL PRIMARY KEY,
+  city citext UNIQUE NOT NULL
 );
 
 CREATE TABLE properties
@@ -89,27 +101,10 @@ CREATE TABLE employment_types
 CREATE TABLE districts
 (
     id SERIAL PRIMARY KEY,
-    district citext UNIQUE NOT NULL
-);
-
-CREATE TABLE streets
-(
-    id SERIAL PRIMARY KEY,
-    district_id INT NOT NULL,
-    street citext UNIQUE NOT NULL,
-    postal_code INT CHECK (postal_code > 0),
-    FOREIGN KEY (district_id)
-        REFERENCES districts (id)
-        ON DELETE CASCADE
-);
-
-CREATE TABLE addresses
-(
-    id SERIAL PRIMARY KEY,
-    street_id INT NOT NULL,
-    building_number standart_building_number NOT NULL,
-    FOREIGN KEY (street_id)
-        REFERENCES streets (id)
+    city_id INT NOT NULL,
+    district citext UNIQUE NOT NULL,
+    FOREIGN KEY (city_id)
+        REFERENCES cities (id)
         ON DELETE CASCADE
 );
 
@@ -117,15 +112,15 @@ CREATE TABLE employers
 (
     id SERIAL PRIMARY KEY,
     property_id INT NOT NULL,
-    address_id INT NOT NULL,
+    district_id INT NOT NULL,
     employer citext NOT NULL,
     phone phone_number NOT NULL,
     email email_address,
     FOREIGN KEY (property_id)
         REFERENCES properties (id)
         ON DELETE CASCADE,
-    FOREIGN KEY (address_id)
-        REFERENCES addresses (id)
+    FOREIGN KEY (district_id)
+        REFERENCES districts (id)
         ON DELETE CASCADE
 );
 
@@ -151,25 +146,26 @@ CREATE TABLE seekers
 (
     id SERIAL PRIMARY KEY,
     status_id INT NOT NULL,
-    address_id INT NOT NULL,
-    speciality_id INT NOT NULL,
+    district_id INT NOT NULL,
+    registration_city_id INT NOT NULL,
+    education_id INT NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
     phone phone_number,
     birthday DATE NOT NULL CHECK ((DATE_PART('year', now()::date) - DATE_PART('year', birthday::date)) > 15),
-    registration_city VARCHAR(20) NOT NULL,
-    recommended BOOLEAN NOT NULL,
     pol BOOLEAN NOT NULL,
-    education VARCHAR(50),
     FOREIGN KEY (status_id)
         REFERENCES statuses (id)
         ON DELETE CASCADE,
-    FOREIGN KEY (address_id)
-        REFERENCES addresses (id)
+    FOREIGN KEY (district_id)
+        REFERENCES districts (id)
         ON DELETE CASCADE,
-    FOREIGN KEY (speciality_id)
-        REFERENCES positions (id)
+    FOREIGN KEY (registration_city_id)
+        REFERENCES cities (id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (education_id)
+        REFERENCES educations (id)
         ON DELETE CASCADE
 );
 
@@ -184,6 +180,7 @@ CREATE TABLE applications
     photo VARCHAR(100),
     salary NUMERIC(8, 2),
     experience NUMERIC(2,0) CHECK (experience < 70),
+    recommended BOOLEAN NOT NULL,
     FOREIGN KEY (seeker_id)
         REFERENCES seekers (id)
         ON DELETE CASCADE,
@@ -201,18 +198,18 @@ CREATE INDEX applications_experience ON applications(experience);
 CREATE INDEX applications_salary ON applications(salary);
 CREATE INDEX vacancies_salary_new ON vacancies(salary_new);
 CREATE INDEX vacancies_employer_day ON vacancies(employer_day);
-CREATE INDEX streets_district_id ON streets(district_id);
-CREATE INDEX addresses_street_id ON addresses(street_id);
 CREATE INDEX employers_property_id ON employers(property_id);
-CREATE INDEX employers_address_id ON employers(address_id);
+CREATE INDEX employers_district_id ON employers(district_id);
 CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
 CREATE INDEX seekers_status_id ON seekers(status_id);
-CREATE INDEX seekers_address_id ON seekers(address_id);
-CREATE INDEX seekers_speciality_id ON seekers(speciality_id);
+CREATE INDEX seekers_district_id ON seekers(district_id);
+CREATE INDEX seekers_education_id ON seekers(education_id);
 CREATE INDEX applications_seeker_id ON applications(seeker_id);
 CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
+CREATE INDEX districts_city_id ON districts(city_id);
+CREATE INDEX seekers_city_id ON seekers(registration_city_id);
 
 
 INSERT INTO statuses(status)
@@ -264,38 +261,36 @@ VALUES
     ('Оператор техподдержки'),
     ('Диктор');
 
-INSERT INTO districts(district)
+INSERT INTO cities(city)
 VALUES
-    ('Ворошиловский'),
-    ('Ленинский'),
-    ('Кировский'),
-    ('Буденновский'),
-    ('Петровский'),
-    ('Пролетарский'),
-    ('Куйбышевский'),
-    ('Киевский'),
-    ('Калининский');
+    ('Донецк'),
+    ('Москва'),
+    ('Борисполь'),
+    ('Амстердам');
+
+INSERT INTO districts(city_id, district)
+VALUES
+    (1, 'Ворошиловский'),
+    (1, 'Ленинский'),
+    (2, 'Кировский'),
+    (2, 'Буденновский'),
+    (3, 'Петровский'),
+    (4, 'Пролетарский'),
+    (4, 'Куйбышевский'),
+    (4, 'Киевский'),
+    (4, 'Калининский');
     
-INSERT INTO streets(district_id, street, postal_code)
+INSERT INTO educations(education)
 VALUES
-    (1, 'Артема', 12000),
-    (1, 'Университетская', 12000),
-    (2, 'Олимпиева', 7032),
-    (2, 'Рослого', 7064),
-    (3, 'Терешковой', 8039),
-    (3, 'Коммунаров', 5006),
-    (4, 'Бальзака', 6032),
-    (4, 'Майская', 7064),
-    (5, 'Малышева', 7032),
-    (5, 'Клубная', 12000),
-    (6, 'Женевская', 3200),
-    (6, 'Ермакова', 7064),
-    (7, 'Чернова', 3200),
-    (7, 'Овражная', 5006),
-    (8, 'Озерная', 7031),
-    (8, 'Литературная', 3200),
-    (9, 'Щегловская', 12000),
-    (9, 'Юбилейная', 5006);
+    ('Донецкий национальный технический университет'),
+    ('Оксфордский университет'),
+    ('Калифорнийский технологический институт'),
+    ('Чикагский университет'),
+    ('Имперский колледж Лондона'),
+    ('Университет Торонто'),
+    ('Йоркский Университет'),
+    ('Датский технический университет'),
+    ('Университетский коллежд Лондона');
 
 
 CREATE OR REPLACE FUNCTION random_between(low INT, high INT) 
@@ -349,27 +344,12 @@ END;
 $$ LANGUAGE 'plpgsql' STRICT;
 
 
-CREATE OR REPLACE FUNCTION populate_addresses(count INT)
-    RETURNS INT AS
-$$
-DECLARE
-    num_streets INT := (SELECT count(*) FROM streets);
-BEGIN
-    FOR i IN 1..count LOOP
-        INSERT INTO addresses(street_id, building_number)
-           VALUES(random_between(1, num_streets), i);
-    END LOOP;
-    RETURN NULL;
-END;
-$$ LANGUAGE 'plpgsql' STRICT;
-
-
 CREATE OR REPLACE FUNCTION populate_employers(count INT)
     RETURNS INT AS
 $$
 DECLARE
     num_properties INT := (SELECT count(*) FROM properties);
-    num_addresses INT := (SELECT count(*) FROM addresses);
+    num_districts INT := (SELECT count(*) FROM districts);
     alphabet TEXT[] := '{A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z}';
     employers_list TEXT[] := ARRAY(
                                  SELECT a || b || c || d
@@ -380,11 +360,11 @@ DECLARE
     email_endings TEXT[] := '{.com, .ru, .su}';
 BEGIN
     FOR i IN 1..count LOOP
-        INSERT INTO employers(property_id, address_id, employer, phone, email)
+        INSERT INTO employers(property_id, district_id, employer, phone, email)
         VALUES 
         (
             random_between(1, num_properties),
-            random_between(1, num_addresses),
+            random_between(1, num_districts),
             employers_list[i],
             random_phone(),
             random_string(10) || '@' || random_string(5) || email_endings[random_between(1, array_length(email_endings, 1))]
@@ -427,8 +407,9 @@ CREATE OR REPLACE FUNCTION populate_seekers(count INT)
 $$
 DECLARE
     num_statuses INT := (SELECT count(*) FROM statuses);
-    num_addresses INT := (SELECT count(*) FROM addresses);
-    num_specialities INT := (SELECT count(*) FROM positions);
+    num_districts INT := (SELECT count(*) FROM districts);
+    num_cities INT := (SELECT count(*) FROM cities);
+    num_educations INT := (SELECT count(*) FROM educations);
     first_names TEXT[] := '{Владимир, Николай, Никита, Федор, Альберто, Геннадий, 
                             Даниил, Тихон, Майкл, Георгий, Сергей, Ярослав, Алексей, Александр, Ростислав, Борис, Антонио,
                             Орландо, Хитоми, Ли}';
@@ -439,11 +420,6 @@ DECLARE
                             Альбертович, Тихонович, Георгиевич, Ростиславович,
                             Михайлович, Романович, Олегович, Неонович, Кадзамович, 
                             Ярославович, Юриевич, Юсупович}';
-    cities TEXT[] := '{Донецк, Москва, Борисполь, Нью-Йорк, Амстердам, Вена, Люксембург, Ереван}';
-    educations TEXT[] := '{Донецкий национальный технический университет, Оксфордский университет, 
-                           Калифорнийский технологический институт, Чикагский университет,
-                           Имперский колледж Лондона, Университет Торонто, Йоркский Университет, 
-                           Датский технический университет, Университетский коллежд Лондона}';
 BEGIN
     FOR i IN 1..count LOOP
         INSERT INTO seekers
@@ -451,17 +427,15 @@ BEGIN
         (
             DEFAULT,
             random_between(1, num_statuses),
-            random_between(1, num_addresses),
-            random_between(1, num_specialities),
+            random_between(1, num_districts),
+            random_between(1, num_cities),
+            random_between(1, num_educations),
             last_names[random_between(1, array_length(last_names, 1))],
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
             random_phone(),
             random_date('1990-01-01 00:00:00', '2004-01-01 00:00:00')::DATE,
-            cities[random_between(1, array_length(cities, 1))],
-            random_bool(),
-            TRUE,
-            educations[random_between(1, array_length(educations, 1))]
+            TRUE
         );
     END LOOP;
     RETURN NULL;
@@ -489,7 +463,8 @@ BEGIN
             md5(random()::TEXT),
             'sample.png',
             random_between(1, 100) * 1000,
-            CASE WHEN random() > 0.6 THEN random_between(1, 10) ELSE NULL END
+            CASE WHEN random() > 0.6 THEN random_between(1, 10) ELSE NULL END,
+            random_bool()
         );
     END LOOP;
     RETURN NULL;
@@ -503,7 +478,6 @@ $$
 DECLARE
     count INT := 10000;
 BEGIN
-    PERFORM populate_addresses(count);
     PERFORM populate_employers(count);
     PERFORM populate_vacancies(count);
     PERFORM populate_seekers(count);
@@ -514,6 +488,8 @@ $$ LANGUAGE 'plpgsql' STRICT;
 
 
 SELECT * FROM populate_all(); 
+
+
 
 
 CREATE OR REPLACE FUNCTION set_seeker_day()
@@ -712,12 +688,8 @@ BEGIN
     RETURN QUERY
         SELECT last_name, first_name, patronymic, phone
         FROM seekers s
-        JOIN addresses a
-            ON a.id = s.address_id
-        JOIN streets st
-            ON st.id = a.street_id
         JOIN districts d
-            ON d.id = st.district_id
+            ON d.id = s.district_id
         WHERE lower(d.district) = lower(a_district)
         ORDER BY last_name, first_name, patronymic, phone;
 END;
@@ -765,8 +737,7 @@ CREATE OR REPLACE FUNCTION get_seekers_born_after(a_date DATE)
         "Имя" VARCHAR(50), 
         "Отчество" VARCHAR(50),
         "Дата рождения" DATE,
-        "Образование" VARCHAR(50),
-        "Специальность" citext) AS
+        "Образование" citext) AS
 $$
 BEGIN
     RETURN QUERY
@@ -775,13 +746,12 @@ BEGIN
             first_name, 
             patronymic,
             birthday, 
-            education, 
-            p.position
+            e.education
         FROM seekers s
-        JOIN positions p
-            ON s.speciality_id = p.id
+		JOIN educations e
+		  ON s.education_id = e.id
         WHERE s.birthday > a_date
-        ORDER BY 1, 2, 3, 4, 5, 6;
+        ORDER BY 1, 2, 3, 4, 5;
 END;
 $$ LANGUAGE 'plpgsql' STRICT;
 
@@ -793,16 +763,14 @@ CREATE OR REPLACE VIEW employer_addresses AS
     SELECT 
         e.employer "Компания", 
         d.district "Район", 
-        s.street "Улица", 
-        a.building_number "Номер дома"
+		c.city "Город"
     FROM employers e
-    JOIN addresses a
-        ON e.address_id = a.id
-    JOIN streets s
-        ON a.street_id = s.id
     JOIN districts d
-        ON s.district_id = d.id
-    ORDER BY 1, 2, 3, 4;
+        ON e.district_id = d.id
+	JOIN cities c
+	    ON d.city_id = c.id
+    ORDER BY 1, 2, 3;
+
 
 
 CREATE OR REPLACE VIEW employment_types_and_salaries AS
@@ -814,7 +782,7 @@ CREATE OR REPLACE VIEW employment_types_and_salaries AS
     JOIN employment_types e
         ON a.employment_type_id = e.id
     GROUP BY e.type
-    ORDER BY 1, 2;
+    ORDER BY 1, 2, 3;
 
 
 CREATE OR REPLACE VIEW vacancies_and_salaries AS
@@ -853,13 +821,16 @@ CREATE OR REPLACE VIEW seekers_and_applications AS
         last_name "Фамилия",
         first_name "Имя",
         patronymic "Отчество",
-        registration_city "Город регистрации",
+        c.city "Город регистрации",
         seeker_day "Дата размещения заявки",
         salary "Ожидаемая зарплата"
     FROM applications a
     RIGHT JOIN seekers s
         ON s.id = a.seeker_id
+    JOIN cities c
+	    ON c.id = s.registration_city_id
     ORDER BY 1, 2, 3, 4, 5, 6;
+
 
 
 /* ===== 5 ===== */
