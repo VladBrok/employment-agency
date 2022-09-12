@@ -57,17 +57,19 @@ class Column {
       );
     }
 
+    const realName =
+      this.realName === "registration_city" ? "city" : this.realName;
     if (!value) {
-      value = options[0][this.realName];
+      value = options[0][realName];
     }
     return `<select class="select input" id=${id}>${options
       .map(
         (option) =>
           `<option data-id="${option.id}" value="${option.id}" ${
-            option[this.realName].toLowerCase() === value.trim().toLowerCase()
+            option[realName].toLowerCase() === value.trim().toLowerCase()
               ? "selected"
               : ""
-          }>${option[this.realName]}</option>`
+          }>${option[realName]}</option>`
       )
       .join("")}</select>`;
   }
@@ -221,9 +223,6 @@ const columnInfo = [
     districtSelectId = "/districts" === calledEndpoint ? null : id;
     firstDistrictChangeCompleted = false;
     return await this.makeSelect(id, "/districts", value, calledEndpoint);
-  }),
-  new Column("street", "улица", async function (id, value, calledEndpoint) {
-    return await this.makeSelect(id, "/streets", value, calledEndpoint);
   }),
   new Column("employer", "работодатель", (id, value) =>
     makeTextInput(
