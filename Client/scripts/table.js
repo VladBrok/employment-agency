@@ -12,7 +12,9 @@ async function handleClick(e) {
   }
 
   if (e.target.classList.contains("change-page")) {
-    const page = document.querySelector(".current-page");
+    const page = e.target
+      .closest("[data-endpoint]")
+      .querySelector(".current-page");
     e.target.classList.contains("previous-page")
       ? page.textContent--
       : page.textContent++;
@@ -138,8 +140,10 @@ async function extractCells(row) {
 }
 
 async function updateTable(tableChild, page = 0) {
-  document.querySelector(".current-page").textContent = page + 1;
-  adjustButtonAvailability(".previous-page", page === 0);
+  const table = tableChild.closest("[data-endpoint]");
+
+  table.querySelector(".current-page").textContent = page + 1;
+  table.querySelector(".previous-page").disabled = page === 0;
 
   const data = await fetchJsonFromTable({
     tableChild,
@@ -148,9 +152,8 @@ async function updateTable(tableChild, page = 0) {
   });
   const dataForPage = data?.length > PAGE_SIZE ? data.slice(0, -1) : data;
 
-  adjustButtonAvailability(".next-page", data?.length <= PAGE_SIZE);
-  tableChild.closest("[data-endpoint]").querySelector(".body").innerHTML =
-    await extractRows(dataForPage);
+  table.querySelector(".next-page").disabled = data?.length <= PAGE_SIZE;
+  table.querySelector(".body").innerHTML = await extractRows(dataForPage);
 }
 
 async function fetchJsonFromTable({
@@ -190,11 +193,6 @@ async function fetchJsonFromTable({
       .includes(filter);
   });
   return filteredData.slice(page * PAGE_SIZE, page * PAGE_SIZE + pageSize);
-}
-
-function adjustButtonAvailability(selector, shouldDisable) {
-  const element = document.querySelector(selector);
-  element.disabled = shouldDisable;
 }
 
 export { makeTable, fetchJsonFromTable };
