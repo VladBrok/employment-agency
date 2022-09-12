@@ -12,7 +12,7 @@ public static class Select
     public static string FromEmployers()
     {
         return $@"SELECT e.id, e.employer, p.property, 
-              e.phone, e.email, d.district, c.city
+              e.phone, e.email, c.city, d.district
        FROM employers e
        JOIN properties p ON p.id = e.property_id
        JOIN districts d ON d.id = e.district_id
@@ -24,7 +24,7 @@ public static class Select
         return $@"SELECT s.id, s.first_name, s.last_name, s.patronymic,
                stat.status, e.education,
                s.phone, s.birthday, s.pol, c.city as registration_city,
-               d.district, cc.city
+               cc.city, d.district
         FROM seekers s
         JOIN statuses stat ON stat.id = s.status_id
         JOIN districts d ON d.id = s.district_id
