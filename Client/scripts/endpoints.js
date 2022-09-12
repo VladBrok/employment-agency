@@ -39,7 +39,6 @@ const endpointInfo = [
     main: "/applications/position_id",
     title: "Заявки на трудоустройство",
   }),
-  new Endpoint({ main: "/seekers/position_id", title: "Соискатели" }),
   new Endpoint({ main: "/seekers/education_id", title: "Образование" }),
   new Endpoint({
     main: "/seekers/registration_city_id",
@@ -67,11 +66,7 @@ const endpointInfo = [
   new Endpoint({ main: "/applications" }),
   new Endpoint({
     main: "/positions",
-    children: [
-      "/applications/position_id",
-      "/seekers/position_id",
-      "/vacancies/position_id",
-    ],
+    children: ["/applications/position_id", "/vacancies/position_id"],
   }),
   new Endpoint({ main: "/properties", children: ["/employers/property_id"] }),
   new Endpoint({
