@@ -35,6 +35,15 @@ button {
   font-size: inherit;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+}
+
 button:enabled:hover {
   cursor: pointer;
 }
@@ -70,6 +79,11 @@ button:enabled:hover {
   color: var(--primary-color);
   margin: 3rem 0;
   font-size: 1.6rem;
+  line-height: 1.3;
+}
+
+.title .sub-title {
+  padding-top: 1.5rem;
 }
 
 .text {

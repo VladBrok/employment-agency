@@ -1,8 +1,14 @@
 .login-form-container {
   margin: 1rem auto;
-  transform: scale(1.2);
 }
 
 .login-form-container .button {
   margin: 1rem auto;
+}
+
+.login-form-container .title {
+  text-align: center;
+  max-width: fit-content;
+  font-size: 1.4rem;
+  margin: 1.5rem 0;
 }
