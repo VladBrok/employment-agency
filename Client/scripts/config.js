@@ -5,4 +5,6 @@ const apiUrls = isDev
       "https://bsite.net/employmentAgencyApi/api",
       "http://www.employmentagencyapi.somee.com/api",
     ];
+
 export { apiUrls };
+export { isDev };
