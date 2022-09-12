@@ -309,7 +309,11 @@ const columnInfo = [
       ),
     (v) => {
       const formatted = formatDate(v);
-      return formatted.substring(0, formatted.indexOf(","));
+      const coma = formatted.indexOf(",");
+      return formatted.substring(
+        0,
+        coma === -1 ? formatted.indexOf(" ") : coma
+      );
     }
   ),
   new Column(
