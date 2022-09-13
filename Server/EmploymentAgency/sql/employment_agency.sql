@@ -20,9 +20,8 @@ DROP TABLE IF EXISTS educations CASCADE;
 
 DROP DOMAIN IF EXISTS email_address CASCADE;
 DROP DOMAIN IF EXISTS phone_number CASCADE;
-DROP DOMAIN IF EXISTS standart_building_number CASCADE;
 
-
+DROP INDEX IF EXISTS employer_company CASCADE;
 DROP INDEX IF EXISTS seekers_city_id CASCADE;
 DROP INDEX IF EXISTS seekers_education_id CASCADE;
 DROP INDEX IF EXISTS applications_seeker_day CASCADE;
@@ -47,9 +46,6 @@ CHECK (VALUE ~* '^.+?@.+$');
 
 CREATE DOMAIN phone_number AS VARCHAR(10)
 CHECK (VALUE ~ '^071\d{7}');
-
-CREATE DOMAIN standart_building_number AS INT
-CHECK (VALUE > 0);
 
 
 CREATE TABLE change_log
@@ -200,6 +196,7 @@ CREATE INDEX vacancies_salary_new ON vacancies(salary_new);
 CREATE INDEX vacancies_employer_day ON vacancies(employer_day);
 CREATE INDEX employers_property_id ON employers(property_id);
 CREATE INDEX employers_district_id ON employers(district_id);
+CREATE INDEX employer_company ON employers(employer);
 CREATE INDEX vacancies_employer_id ON vacancies(employer_id);
 CREATE INDEX vacancies_position_id ON vacancies(position_id);
 CREATE INDEX seekers_status_id ON seekers(status_id);
@@ -564,6 +561,7 @@ DROP VIEW IF EXISTS vacancies_and_salaries;
 DROP VIEW IF EXISTS employers_and_vacancies;
 DROP VIEW IF EXISTS seekers_and_applications;
 DROP VIEW IF EXISTS num_vacancies_from_each_employer;
+DROP VIEW IF EXISTS total_vacancies_including_not_ended;
 
 DROP FUNCTION IF EXISTS get_applications_percent_after;
 DROP FUNCTION IF EXISTS get_applications_percent_by_positions_after;
@@ -662,13 +660,169 @@ CREATE OR REPLACE VIEW average_seeker_ages_by_positions AS
         ON p.id = t.position_id;
         
 
-/*select '-----По всему агентству-----', null
-union all
-(select null, * from get_applications_percent_after(2016))
-union all
-(select '-----По должностям-----', null)
-union all
-(select * from get_applications_percent_by_positions_after(2016))*/
+-- select '-----По всему агентству-----', null
+-- union all
+-- (select null, * from get_applications_percent_after(2016))
+-- union all
+-- (select '-----По должностям-----', null)
+-- union all
+-- (select * from get_applications_percent_by_positions_after(2016))
+
+/* == NEW == */
+
+CREATE OR REPLACE VIEW total_vacancies_including_not_ended AS
+    SELECT e.employer "Компания",
+           COUNT(*) "Всего вакансий", 
+           COUNT(CASE WHEN NOT v.vacancy_end THEN v.vacancy_end END) "Открытых вакансий"
+    FROM vacancies v
+    JOIN employers e
+        ON e.id = v.employer_id
+	GROUP BY e.employer
+	ORDER BY 1, 2, 3;
+
+
+CREATE OR REPLACE FUNCTION get_application_count_of_seekers_whose_name_starts_with(a_chars varchar(20))
+RETURNS TABLE ("Имя" varchar(20), 
+			"Фамилия" varchar(20), 
+			"Отчество" varchar(20), 
+			"Всего заявок" bigint)
+AS $$ BEGIN
+	RETURN QUERY 
+	    SELECT s.first_name, s.last_name, s.patronymic, count(*) 
+        FROM applications a
+        JOIN seekers s
+            ON s.id = a.seeker_id
+        WHERE lower(s.first_name) LIKE concat(a_chars, '%')
+        GROUP BY s.id
+        ORDER BY 1, 2, 3, 4;
+END; $$ LANGUAGE 'plpgsql' STRICT;
+
+
+CREATE OR REPLACE FUNCTION get_min_salary_of_employer_with_name(a_name varchar(100))
+RETURNS TABLE ("Работодатель" citext, 
+			"Минимальная зарплата" numeric, 
+			"email" email_address, 
+			"Телефон" phone_number)
+AS $$ BEGIN
+	RETURN QUERY 
+	    SELECT e.employer, min(v.salary_new), e.email, e.phone
+        FROM vacancies v
+        JOIN employers e 
+            ON e.id = v.employer_id
+        WHERE lower(e.employer) = lower(a_name)
+        GROUP BY e.id
+        ORDER BY 1, 2, 3, 4;
+END; $$ LANGUAGE 'plpgsql' STRICT;
+
+
+CREATE OR REPLACE VIEW num_of_seekers_with_university_education AS
+    SELECT e.education "Образование", count(*) "Количество соискателей"
+    FROM seekers s
+    JOIN educations e
+        ON s.education_id = e.id
+    WHERE e.education LIKE '%университет%'
+    GROUP BY e.id
+    ORDER BY 1, 2;
+
+
+CREATE OR REPLACE VIEW employers_all_and_by_districts AS
+    (SELECT '-----По всему агентству-----' "Район", null "Количество работодателей")
+        UNION ALL
+    	
+    (SELECT null "Район", COUNT(*) "Количество работодателей"
+     FROM employers)
+        UNION ALL
+    	
+    (SELECT '-----По районам-----' "Район", null "Количество работодателей")
+        UNION ALL
+    	
+    (SELECT d.district "Район", count(*) "Количество работодателей"
+     FROM employers e
+     JOIN districts d
+         ON d.id = e.district_id
+    GROUP BY d.district
+    ORDER BY 1, 2);
+
+
+CREATE OR REPLACE FUNCTION get_applications_with_position(a_position varchar(100))
+RETURNS TABLE ("Дата подачи заявления" timestamp, 
+			"Зарплата" numeric(8, 2), 
+			"Опыт" numeric(2), 
+			"Рекомандован" boolean)
+AS $$ BEGIN
+	RETURN QUERY 	    
+		SELECT seeker_day, salary, experience, recommended
+		FROM applications
+		WHERE position_id IN (
+    		SELECT id
+			FROM positions
+			WHERE lower(position) = lower(a_position)
+        )
+        ORDER BY 1, 2, 3, 4;
+END; $$ LANGUAGE 'plpgsql' STRICT;
+
+
+CREATE OR REPLACE FUNCTION get_seekers_not_registered_in(a_city varchar(100))
+RETURNS TABLE ("Имя" varchar(20), 
+			"Фамилия" varchar(20), 
+			"Отчество" varchar(20),
+			"Телефон" phone_number) 
+AS $$ BEGIN
+	RETURN QUERY 	    
+		SELECT first_name, last_name, patronymic, phone
+		FROM seekers s
+		WHERE s.registration_city_id NOT IN (
+			SELECT c.id
+			FROM cities c
+			WHERE lower(c.city) = lower(a_city)
+		)
+        ORDER BY 1, 2, 3, 4;
+END; $$ LANGUAGE 'plpgsql' STRICT;
+
+
+CREATE OR REPLACE FUNCTION get_salaries_in_comparison_with(a_salary numeric(8, 2))
+RETURNS TABLE ("Дата размещения вакансии" timestamp, 
+			"График" varchar(50), 
+			"Зарплата" text) 
+AS $$ BEGIN
+	RETURN QUERY 	    		
+      SELECT 
+          v.employer_day,
+          v.chart_new,
+      	  CASE 
+              WHEN v.salary_new > a_salary THEN 'больше ' || a_salary
+              WHEN v.salary_new < a_salary THEN 'меньше ' || a_salary
+          ELSE 'равно ' || a_salary END
+      FROM vacancies v
+      WHERE v.employer_id IN (
+      	SELECT e.id
+      	FROM employers e
+      	JOIN properties p
+      	    ON p.id = e.property_id
+      	WHERE p.property = 'Частная'
+      )
+      ORDER BY 1, 2, 3;
+END; $$ LANGUAGE 'plpgsql' STRICT;
+
+
+CREATE OR REPLACE VIEW seekers_with_even_average_experience AS
+  SELECT 
+      s.last_name "Фамилия",
+      s.first_name "Имя",
+      s.patronymic "Отчество",
+      round(avg(ap.experience), 0) "Средний опыт"
+  FROM seekers s
+  JOIN applications ap
+      ON ap.seeker_id = s.id
+  WHERE s.id IN (
+  	SELECT a.seeker_id
+  	FROM applications a
+  	GROUP BY a.seeker_id
+  	HAVING avg(a.experience) % 2 = 0
+  )
+  GROUP BY s.id
+  ORDER BY 1, 2, 3, 4;
+
 
 
 /* ===== Lab 6 ===== */
