@@ -4,19 +4,32 @@ DROP TRIGGER IF EXISTS employer_log_delete ON employers CASCADE;
 DROP TRIGGER IF EXISTS seeker_log_delete ON seekers CASCADE;
 DROP TRIGGER IF EXISTS employer_log_update ON employers CASCADE;
 DROP TRIGGER IF EXISTS seeker_log_update ON seekers CASCADE;
+DROP TRIGGER IF EXISTS before_insert_change_log_trigger ON change_log CASCADE;
+DROP TRIGGER IF EXISTS before_insert_educations_trigger ON educations CASCADE;
+DROP TRIGGER IF EXISTS before_insert_cities_trigger ON cities CASCADE;
+DROP TRIGGER IF EXISTS before_insert_properties_trigger ON properties CASCADE;
+DROP TRIGGER IF EXISTS before_insert_positions_trigger ON positions CASCADE;
+DROP TRIGGER IF EXISTS before_insert_statuses_trigger ON statuses CASCADE;
+DROP TRIGGER IF EXISTS before_insert_employment_types_trigger ON employment_types CASCADE;
+DROP TRIGGER IF EXISTS before_insert_districts_trigger ON districts CASCADE;
+DROP TRIGGER IF EXISTS before_insert_employers_trigger ON employers CASCADE;
+DROP TRIGGER IF EXISTS before_insert_vacancies_trigger ON vacancies CASCADE;
+DROP TRIGGER IF EXISTS before_insert_seekers_trigger ON seekers CASCADE;
+DROP TRIGGER IF EXISTS before_insert_applications_trigger ON applications CASCADE;
 
-DROP SEQUENCE IF EXISTS change_log;
-DROP SEQUENCE IF EXISTS educations;
-DROP SEQUENCE IF EXISTS cities;
-DROP SEQUENCE IF EXISTS properties;
-DROP SEQUENCE IF EXISTS positions;
-DROP SEQUENCE IF EXISTS statuses;
-DROP SEQUENCE IF EXISTS employment_types;
-DROP SEQUENCE IF EXISTS districts;
-DROP SEQUENCE IF EXISTS employers;
-DROP SEQUENCE IF EXISTS vacancies;
-DROP SEQUENCE IF EXISTS seekers;
-DROP SEQUENCE IF EXISTS applications;
+
+DROP SEQUENCE IF EXISTS change_log_id_seq;
+DROP SEQUENCE IF EXISTS educations_id_seq;
+DROP SEQUENCE IF EXISTS cities_id_seq;
+DROP SEQUENCE IF EXISTS properties_id_seq;
+DROP SEQUENCE IF EXISTS positions_id_seq;
+DROP SEQUENCE IF EXISTS statuses_id_seq;
+DROP SEQUENCE IF EXISTS employment_types_id_seq;
+DROP SEQUENCE IF EXISTS districts_id_seq;
+DROP SEQUENCE IF EXISTS employers_id_seq;
+DROP SEQUENCE IF EXISTS vacancies_id_seq;
+DROP SEQUENCE IF EXISTS seekers_id_seq;
+DROP SEQUENCE IF EXISTS applications_id_seq;
 
 DROP TABLE IF EXISTS change_log CASCADE;
 DROP TABLE IF EXISTS seekers CASCADE;
@@ -51,6 +64,50 @@ DROP INDEX IF EXISTS seeker_id CASCADE;
 DROP INDEX IF EXISTS position_id CASCADE;
 DROP INDEX IF EXISTS employment_type_id CASCADE;
 DROP INDEX IF EXISTS districts_city_id CASCADE;
+
+DROP FUNCTION IF EXISTS before_insert_change_log;
+DROP FUNCTION IF EXISTS before_insert_educations;
+DROP FUNCTION IF EXISTS before_insert_cities;
+DROP FUNCTION IF EXISTS before_insert_properties;
+DROP FUNCTION IF EXISTS before_insert_positions;
+DROP FUNCTION IF EXISTS before_insert_statuses;
+DROP FUNCTION IF EXISTS before_insert_employment_types;
+DROP FUNCTION IF EXISTS before_insert_districts;
+DROP FUNCTION IF EXISTS before_insert_employers;
+DROP FUNCTION IF EXISTS before_insert_vacancies;
+DROP FUNCTION IF EXISTS before_insert_seekers;
+DROP FUNCTION IF EXISTS before_insert_applications;
+DROP FUNCTION IF EXISTS random_between;
+DROP FUNCTION IF EXISTS random_string;
+DROP FUNCTION IF EXISTS random_date;
+DROP FUNCTION IF EXISTS random_phone;
+DROP FUNCTION IF EXISTS random_bool;
+DROP FUNCTION IF EXISTS populate_employers;
+DROP FUNCTION IF EXISTS populate_vacancies;
+DROP FUNCTION IF EXISTS populate_seekers;
+DROP FUNCTION IF EXISTS populate_applications;
+DROP FUNCTION IF EXISTS populate_all;
+DROP FUNCTION IF EXISTS set_seeker_day;
+DROP FUNCTION IF EXISTS set_employer_day;
+DROP FUNCTION IF EXISTS write_log;
+DROP FUNCTION IF EXISTS get_applications_percent_after;
+DROP FUNCTION IF EXISTS get_applications_percent_by_positions_after;
+DROP FUNCTION IF EXISTS get_application_count_by_positions;
+DROP FUNCTION IF EXISTS get_application_count_of_seekers_whose_name_starts_with;
+DROP FUNCTION IF EXISTS get_min_salary_of_employer_with_name;
+DROP FUNCTION IF EXISTS get_applications_with_position;
+DROP FUNCTION IF EXISTS get_seekers_not_registered_in;
+DROP FUNCTION IF EXISTS get_salaries_in_comparison_with;
+DROP FUNCTION IF EXISTS get_seekers_in_district;
+DROP FUNCTION IF EXISTS get_employers_with_property;
+DROP FUNCTION IF EXISTS get_vacancies_posted_on;
+DROP FUNCTION IF EXISTS get_seekers_born_after;
+DROP FUNCTION IF EXISTS get_applications_without_experience;
+DROP FUNCTION IF EXISTS get_max_salaries_for_position;
+DROP FUNCTION IF EXISTS get_seekers_whose_total_experience_exceeds;
+DROP FUNCTION IF EXISTS get_positions_from_open_vacancies_whose_average_salary_exceeds;
+DROP FUNCTION IF EXISTS get_num_applications_for_each_employment_type;
+DROP FUNCTION IF EXISTS get_latest_vacancy_of_employers_whose_name_contains;
 
 CREATE EXTENSION IF NOT EXISTS citext;
 
@@ -234,6 +291,139 @@ CREATE INDEX applications_position_id ON applications(position_id);
 CREATE INDEX applications_employment_type_id ON applications(employment_type_id);
 CREATE INDEX districts_city_id ON districts(city_id);
 CREATE INDEX seekers_city_id ON seekers(registration_city_id);
+
+
+
+CREATE OR REPLACE FUNCTION before_insert_change_log() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('change_log_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_change_log_trigger
+BEFORE INSERT ON change_log
+FOR EACH ROW EXECUTE PROCEDURE before_insert_change_log();
+
+
+CREATE OR REPLACE FUNCTION before_insert_educations() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('educations_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_educations_trigger
+BEFORE INSERT ON educations
+FOR EACH ROW EXECUTE PROCEDURE before_insert_educations();
+
+
+CREATE OR REPLACE FUNCTION before_insert_cities() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('cities_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_cities_trigger
+BEFORE INSERT ON cities
+FOR EACH ROW EXECUTE PROCEDURE before_insert_cities();
+
+
+CREATE OR REPLACE FUNCTION before_insert_properties() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('properties_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_properties_trigger
+BEFORE INSERT ON properties
+FOR EACH ROW EXECUTE PROCEDURE before_insert_properties();
+
+
+CREATE OR REPLACE FUNCTION before_insert_positions() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('positions_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_positions_trigger
+BEFORE INSERT ON positions
+FOR EACH ROW EXECUTE PROCEDURE before_insert_positions();
+
+
+CREATE OR REPLACE FUNCTION before_insert_statuses() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('statuses_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_statuses_trigger
+BEFORE INSERT ON statuses
+FOR EACH ROW EXECUTE PROCEDURE before_insert_statuses();
+
+
+CREATE OR REPLACE FUNCTION before_insert_employment_types() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('employment_types_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_employment_types_trigger
+BEFORE INSERT ON employment_types
+FOR EACH ROW EXECUTE PROCEDURE before_insert_employment_types();
+
+
+CREATE OR REPLACE FUNCTION before_insert_districts() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('districts_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_districts_trigger
+BEFORE INSERT ON districts
+FOR EACH ROW EXECUTE PROCEDURE before_insert_districts();
+
+
+CREATE OR REPLACE FUNCTION before_insert_employers() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('employers_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_employers_trigger
+BEFORE INSERT ON employers
+FOR EACH ROW EXECUTE PROCEDURE before_insert_employers();
+
+
+CREATE OR REPLACE FUNCTION before_insert_vacancies() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('vacancies_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_vacancies_trigger
+BEFORE INSERT ON vacancies
+FOR EACH ROW EXECUTE PROCEDURE before_insert_vacancies();
+
+
+CREATE OR REPLACE FUNCTION before_insert_seekers() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('seekers_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_seekers_trigger
+BEFORE INSERT ON seekers
+FOR EACH ROW EXECUTE PROCEDURE before_insert_seekers();
+
+
+CREATE OR REPLACE FUNCTION before_insert_applications() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('applications_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_applications_trigger
+BEFORE INSERT ON applications
+FOR EACH ROW EXECUTE PROCEDURE before_insert_applications();
 
 
 INSERT INTO statuses(status)
@@ -577,138 +767,6 @@ CREATE TRIGGER seeker_log_update
     AFTER UPDATE ON seekers
     FOR EACH ROW
         EXECUTE PROCEDURE write_log('update');
-
-
-CREATE OR REPLACE FUNCTION before_insert_change_log() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('change_log_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_change_log_trigger
-BEFORE INSERT ON change_log
-FOR EACH ROW EXECUTE PROCEDURE before_insert_change_log();
-
-
-CREATE OR REPLACE FUNCTION before_insert_educations() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('educations_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_educations_trigger
-BEFORE INSERT ON educations
-FOR EACH ROW EXECUTE PROCEDURE before_insert_educations();
-
-
-CREATE OR REPLACE FUNCTION before_insert_cities() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('cities_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_cities_trigger
-BEFORE INSERT ON cities
-FOR EACH ROW EXECUTE PROCEDURE before_insert_cities();
-
-
-CREATE OR REPLACE FUNCTION before_insert_properties() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('properties_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_properties_trigger
-BEFORE INSERT ON properties
-FOR EACH ROW EXECUTE PROCEDURE before_insert_properties();
-
-
-CREATE OR REPLACE FUNCTION before_insert_positions() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('positions_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_positions_trigger
-BEFORE INSERT ON positions
-FOR EACH ROW EXECUTE PROCEDURE before_insert_positions();
-
-
-CREATE OR REPLACE FUNCTION before_insert_statuses() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('statuses_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_statuses_trigger
-BEFORE INSERT ON statuses
-FOR EACH ROW EXECUTE PROCEDURE before_insert_statuses();
-
-
-CREATE OR REPLACE FUNCTION before_insert_employment_types() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('employment_types_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_employment_types_trigger
-BEFORE INSERT ON employment_types
-FOR EACH ROW EXECUTE PROCEDURE before_insert_employment_types();
-
-
-CREATE OR REPLACE FUNCTION before_insert_districts() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('districts_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_districts_trigger
-BEFORE INSERT ON districts
-FOR EACH ROW EXECUTE PROCEDURE before_insert_districts();
-
-
-CREATE OR REPLACE FUNCTION before_insert_employers() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('employers_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_employers_trigger
-BEFORE INSERT ON employers
-FOR EACH ROW EXECUTE PROCEDURE before_insert_employers();
-
-
-CREATE OR REPLACE FUNCTION before_insert_vacancies() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('vacancies_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_vacancies_trigger
-BEFORE INSERT ON vacancies
-FOR EACH ROW EXECUTE PROCEDURE before_insert_vacancies();
-
-
-CREATE OR REPLACE FUNCTION before_insert_seekers() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('seekers_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_seekers_trigger
-BEFORE INSERT ON seekers
-FOR EACH ROW EXECUTE PROCEDURE before_insert_seekers();
-
-
-CREATE OR REPLACE FUNCTION before_insert_applications() RETURNS TRIGGER AS $$
-BEGIN
-    NEW.id = nextval('applications_id_seq');
-    RETURN NEW;
-END; $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER before_insert_applications_trigger
-BEFORE INSERT ON applications
-FOR EACH ROW EXECUTE PROCEDURE before_insert_applications();
 
 
 DROP VIEW IF EXISTS average_seeker_ages_by_positions;
