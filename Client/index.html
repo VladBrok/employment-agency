@@ -103,6 +103,35 @@
                 <ul class="child">
                   <li>
                     <button
+                      data-endpoint="/special/total_vacancies_including_not_ended"
+                    >
+                      Общее количество вакансий, в том числе открытых
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      data-endpoint="/special/num_of_seekers_with_university_education"
+                    >
+                      Количество соискателей с университетским образованием
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      data-endpoint="/special/employers_all_and_by_districts"
+                    >
+                      Количество работодателей по районам и по всему агентству в
+                      целом
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      data-endpoint="/special/seekers_with_even_average_experience"
+                    >
+                      Соискатели, у которых средний опыт является четным числом
+                    </button>
+                  </li>
+                  <li>
+                    <button
                       data-endpoint="/special/average_seeker_ages_by_positions"
                     >
                       Средний возраст соискателей по должностям
@@ -153,6 +182,13 @@
                     <ul class="child">
                       <li>
                         <button
+                          data-endpoint="/special/applications_with_position"
+                        >
+                          На указанную должность
+                        </button>
+                      </li>
+                      <li>
+                        <button
                           data-endpoint="/special/applications_without_experience"
                         >
                           Без опыта работы
@@ -193,6 +229,21 @@
                     <button>Соискатели</button>
                     <ul class="child">
                       <li>
+                        <button
+                          data-endpoint="/special/application_count_of_seekers_whose_name_starts_with"
+                        >
+                          Количество заявок соискателей, у которых начало имени
+                          содержит заданную последовательность символов
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          data-endpoint="/special/seekers_not_registered_in"
+                        >
+                          Не зарегистрированные в указанном городе
+                        </button>
+                      </li>
+                      <li>
                         <button data-endpoint="/special/seekers_in_district">
                           Проживающие в указанном районе
                         </button>
@@ -216,6 +267,14 @@
                     <ul class="child">
                       <li>
                         <button
+                          data-endpoint="/special/min_salary_of_employer_with_name"
+                        >
+                          Минимальная зарплата, которую предлагает выбранная
+                          компания
+                        </button>
+                      </li>
+                      <li>
+                        <button
                           data-endpoint="/special/employers_with_property"
                         >
                           С указанным типом собственности
@@ -226,6 +285,14 @@
                   <li class="parent">
                     <button>Вакансии</button>
                     <ul class="child">
+                      <li>
+                        <button
+                          data-endpoint="/special/salaries_in_comparison_with"
+                        >
+                          Сравнение зарплат с указанной из тех вакансий,
+                          работодатели которых имеют частную собственность
+                        </button>
+                      </li>
                       <li>
                         <button data-endpoint="/special/vacancies_posted_on">
                           Опубликованные в указанный день

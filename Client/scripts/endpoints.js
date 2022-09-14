@@ -93,6 +93,36 @@ const endpointInfo = [
   new Endpoint({ main: "/special/employers_and_vacancies" }),
   new Endpoint({ main: "/special/seekers_and_applications" }),
   new Endpoint({ main: "/special/num_vacancies_from_each_employer" }),
+  new Endpoint({ main: "/special/total_vacancies_including_not_ended" }),
+  new Endpoint({ main: "/special/num_of_seekers_with_university_education" }),
+  new Endpoint({ main: "/special/employers_all_and_by_districts" }),
+  new Endpoint({ main: "/special/seekers_with_even_average_experience" }),
+  new Endpoint({
+    main: "/special/application_count_of_seekers_whose_name_starts_with",
+    parameters: [new Parameter("Символы", (id) => makeTextInput(id, "ал"))],
+  }),
+  new Endpoint({
+    main: "/special/min_salary_of_employer_with_name",
+    parameters: [new Parameter("Компания", (id) => makeTextInput(id, "AAAA"))],
+  }),
+  new Endpoint({
+    main: "/special/applications_with_position",
+    parameters: [
+      new Parameter("Должность", (id) => makeTextInput(id, "Промоутер")),
+    ],
+  }),
+  new Endpoint({
+    main: "/special/seekers_not_registered_in",
+    parameters: [
+      new Parameter("Город", (id) => makeTextInput(id, "Амстердам")),
+    ],
+  }),
+  new Endpoint({
+    main: "/special/salaries_in_comparison_with",
+    parameters: [
+      new Parameter("Зарплата", (id) => makeNumberInput(id, "52000")),
+    ],
+  }),
   new Endpoint({
     main: "/special/applications_without_experience",
     parameters: [
