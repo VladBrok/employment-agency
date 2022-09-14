@@ -8,7 +8,7 @@ public static class SpecialQueriesMapper
     {
         string root = "api/special";
         foreach (
-            string function in new[]
+            string view in new[]
             {
                 "average_seeker_ages_by_positions",
                 "employer_addresses",
@@ -16,14 +16,18 @@ public static class SpecialQueriesMapper
                 "vacancies_and_salaries",
                 "employers_and_vacancies",
                 "seekers_and_applications",
-                "num_vacancies_from_each_employer"
+                "num_vacancies_from_each_employer",
+                "total_vacancies_including_not_ended",
+                "num_of_seekers_with_university_education",
+                "employers_all_and_by_districts",
+                "seekers_with_even_average_experience"
             }
         )
         {
             app.MapGet(
-                $"{root}/{function}",
+                $"{root}/{view}",
                 async (int page, int pageSize, string? filter) =>
-                    await postgres.ReadPageAsync(page, pageSize, Select.From(function), filter)
+                    await postgres.ReadPageAsync(page, pageSize, Select.From(view), filter)
             );
         }
 
@@ -170,6 +174,64 @@ public static class SpecialQueriesMapper
                     Select.From(
                         $"get_latest_vacancy_of_employers_whose_name_contains('{pattern}')"
                     ),
+                    filter
+                )
+        );
+
+        // new
+        app.MapGet(
+            $"{root}/application_count_of_seekers_whose_name_starts_with/{{chars}}",
+            async (int page, int pageSize, string chars, string? filter) =>
+                await postgres.ReadPageAsync(
+                    page,
+                    pageSize,
+                    Select.From(
+                        $"get_application_count_of_seekers_whose_name_starts_with('${chars}')"
+                    ),
+                    filter
+                )
+        );
+
+        app.MapGet(
+            $"{root}/min_salary_of_employer_with_name/{{name}}",
+            async (int page, int pageSize, string name, string? filter) =>
+                await postgres.ReadPageAsync(
+                    page,
+                    pageSize,
+                    Select.From($"get_min_salary_of_employer_with_name('${name}')"),
+                    filter
+                )
+        );
+
+        app.MapGet(
+            $"{root}/applications_with_position/{{name}}",
+            async (int page, int pageSize, string name, string? filter) =>
+                await postgres.ReadPageAsync(
+                    page,
+                    pageSize,
+                    Select.From($"get_applications_with_position('${name}')"),
+                    filter
+                )
+        );
+
+        app.MapGet(
+            $"{root}/seekers_not_registered_in/{{city}}",
+            async (int page, int pageSize, string city, string? filter) =>
+                await postgres.ReadPageAsync(
+                    page,
+                    pageSize,
+                    Select.From($"get_seekers_not_registered_in('${city}')"),
+                    filter
+                )
+        );
+
+        app.MapGet(
+            $"{root}/salaries_in_comparison_with/{{salary}}",
+            async (int page, int pageSize, int salary, string? filter) =>
+                await postgres.ReadPageAsync(
+                    page,
+                    pageSize,
+                    Select.From($"get_salaries_in_comparison_with('${salary}')"),
                     filter
                 )
         );
