@@ -5,6 +5,19 @@ DROP TRIGGER IF EXISTS seeker_log_delete ON seekers CASCADE;
 DROP TRIGGER IF EXISTS employer_log_update ON employers CASCADE;
 DROP TRIGGER IF EXISTS seeker_log_update ON seekers CASCADE;
 
+DROP SEQUENCE IF EXISTS change_log;
+DROP SEQUENCE IF EXISTS educations;
+DROP SEQUENCE IF EXISTS cities;
+DROP SEQUENCE IF EXISTS properties;
+DROP SEQUENCE IF EXISTS positions;
+DROP SEQUENCE IF EXISTS statuses;
+DROP SEQUENCE IF EXISTS employment_types;
+DROP SEQUENCE IF EXISTS districts;
+DROP SEQUENCE IF EXISTS employers;
+DROP SEQUENCE IF EXISTS vacancies;
+DROP SEQUENCE IF EXISTS seekers;
+DROP SEQUENCE IF EXISTS applications;
+
 DROP TABLE IF EXISTS change_log CASCADE;
 DROP TABLE IF EXISTS seekers CASCADE;
 DROP TABLE IF EXISTS employers CASCADE;
@@ -48,9 +61,23 @@ CREATE DOMAIN phone_number AS VARCHAR(10)
 CHECK (VALUE ~ '^071\d{7}');
 
 
+CREATE SEQUENCE change_log_id_seq;
+CREATE SEQUENCE educations_id_seq;
+CREATE SEQUENCE cities_id_seq;
+CREATE SEQUENCE properties_id_seq;
+CREATE SEQUENCE positions_id_seq;
+CREATE SEQUENCE statuses_id_seq;
+CREATE SEQUENCE employment_types_id_seq;
+CREATE SEQUENCE districts_id_seq;
+CREATE SEQUENCE employers_id_seq;
+CREATE SEQUENCE vacancies_id_seq;
+CREATE SEQUENCE seekers_id_seq;
+CREATE SEQUENCE applications_id_seq;
+
+
 CREATE TABLE change_log
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     table_name VARCHAR(50) NOT NULL,
     operation VARCHAR(10) NOT NULL,
     record_id INT NOT NULL,
@@ -60,43 +87,43 @@ CREATE TABLE change_log
 
 CREATE TABLE educations
 (
-  id SERIAL PRIMARY KEY,
+  id INT NOT NULL PRIMARY KEY,
   education citext UNIQUE NOT NULL
 );
 
 CREATE TABLE cities
 (
-  id SERIAL PRIMARY KEY,
+  id INT NOT NULL PRIMARY KEY,
   city citext UNIQUE NOT NULL
 );
 
 CREATE TABLE properties
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     property citext UNIQUE NOT NULL
 );
 
 CREATE TABLE positions
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     position citext UNIQUE NOT NULL
 );
 
 CREATE TABLE statuses
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     status citext UNIQUE NOT NULL CHECK (length(status) > 0)
 );
 
 CREATE TABLE employment_types
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     type citext UNIQUE NOT NULL
 );
 
 CREATE TABLE districts
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     city_id INT NOT NULL,
     district citext UNIQUE NOT NULL,
     FOREIGN KEY (city_id)
@@ -106,7 +133,7 @@ CREATE TABLE districts
 
 CREATE TABLE employers
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     property_id INT NOT NULL,
     district_id INT NOT NULL,
     employer citext NOT NULL,
@@ -122,7 +149,7 @@ CREATE TABLE employers
 
 CREATE TABLE vacancies
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     employer_id INT NOT NULL,
     position_id INT NOT NULL,
     employer_day TIMESTAMP NOT NULL DEFAULT now(),
@@ -140,7 +167,7 @@ CREATE TABLE vacancies
 
 CREATE TABLE seekers
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     status_id INT NOT NULL,
     district_id INT NOT NULL,
     registration_city_id INT NOT NULL,
@@ -167,7 +194,7 @@ CREATE TABLE seekers
 
 CREATE TABLE applications
 (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
     seeker_id INT NOT NULL,
     position_id INT NOT NULL,
     employment_type_id INT,
@@ -521,7 +548,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
 CREATE TRIGGER applicatons_set_seeker_day
     BEFORE INSERT ON applications
     FOR EACH ROW
@@ -552,6 +578,137 @@ CREATE TRIGGER seeker_log_update
     FOR EACH ROW
         EXECUTE PROCEDURE write_log('update');
 
+
+CREATE OR REPLACE FUNCTION before_insert_change_log() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('change_log_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_change_log_trigger
+BEFORE INSERT ON change_log
+FOR EACH ROW EXECUTE PROCEDURE before_insert_change_log();
+
+
+CREATE OR REPLACE FUNCTION before_insert_educations() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('educations_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_educations_trigger
+BEFORE INSERT ON educations
+FOR EACH ROW EXECUTE PROCEDURE before_insert_educations();
+
+
+CREATE OR REPLACE FUNCTION before_insert_cities() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('cities_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_cities_trigger
+BEFORE INSERT ON cities
+FOR EACH ROW EXECUTE PROCEDURE before_insert_cities();
+
+
+CREATE OR REPLACE FUNCTION before_insert_properties() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('properties_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_properties_trigger
+BEFORE INSERT ON properties
+FOR EACH ROW EXECUTE PROCEDURE before_insert_properties();
+
+
+CREATE OR REPLACE FUNCTION before_insert_positions() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('positions_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_positions_trigger
+BEFORE INSERT ON positions
+FOR EACH ROW EXECUTE PROCEDURE before_insert_positions();
+
+
+CREATE OR REPLACE FUNCTION before_insert_statuses() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('statuses_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_statuses_trigger
+BEFORE INSERT ON statuses
+FOR EACH ROW EXECUTE PROCEDURE before_insert_statuses();
+
+
+CREATE OR REPLACE FUNCTION before_insert_employment_types() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('employment_types_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_employment_types_trigger
+BEFORE INSERT ON employment_types
+FOR EACH ROW EXECUTE PROCEDURE before_insert_employment_types();
+
+
+CREATE OR REPLACE FUNCTION before_insert_districts() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('districts_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_districts_trigger
+BEFORE INSERT ON districts
+FOR EACH ROW EXECUTE PROCEDURE before_insert_districts();
+
+
+CREATE OR REPLACE FUNCTION before_insert_employers() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('employers_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_employers_trigger
+BEFORE INSERT ON employers
+FOR EACH ROW EXECUTE PROCEDURE before_insert_employers();
+
+
+CREATE OR REPLACE FUNCTION before_insert_vacancies() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('vacancies_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_vacancies_trigger
+BEFORE INSERT ON vacancies
+FOR EACH ROW EXECUTE PROCEDURE before_insert_vacancies();
+
+
+CREATE OR REPLACE FUNCTION before_insert_seekers() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('seekers_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_seekers_trigger
+BEFORE INSERT ON seekers
+FOR EACH ROW EXECUTE PROCEDURE before_insert_seekers();
+
+
+CREATE OR REPLACE FUNCTION before_insert_applications() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.id = nextval('applications_id_seq');
+    RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_applications_trigger
+BEFORE INSERT ON applications
+FOR EACH ROW EXECUTE PROCEDURE before_insert_applications();
 
 
 DROP VIEW IF EXISTS average_seeker_ages_by_positions;
