@@ -941,9 +941,9 @@ END; $$ LANGUAGE 'plpgsql' STRICT;
 
 
 CREATE OR REPLACE FUNCTION get_min_salary_of_employer_with_name(a_name varchar(100))
-RETURNS TABLE ("Работодатель" citext, 
+RETURNS TABLE ("Компания" citext, 
 			"Минимальная зарплата" numeric, 
-			"email" email_address, 
+			"Почта" email_address, 
 			"Телефон" phone_number)
 AS $$ BEGIN
 	RETURN QUERY 
