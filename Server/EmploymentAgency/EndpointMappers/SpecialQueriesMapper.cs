@@ -186,7 +186,7 @@ public static class SpecialQueriesMapper
                     page,
                     pageSize,
                     Select.From(
-                        $"get_application_count_of_seekers_whose_name_starts_with('${chars}')"
+                        $"get_application_count_of_seekers_whose_name_starts_with('{chars}')"
                     ),
                     filter
                 )
@@ -198,7 +198,7 @@ public static class SpecialQueriesMapper
                 await postgres.ReadPageAsync(
                     page,
                     pageSize,
-                    Select.From($"get_min_salary_of_employer_with_name('${name}')"),
+                    Select.From($"get_min_salary_of_employer_with_name('{name}')"),
                     filter
                 )
         );
@@ -209,7 +209,7 @@ public static class SpecialQueriesMapper
                 await postgres.ReadPageAsync(
                     page,
                     pageSize,
-                    Select.From($"get_applications_with_position('${name}')"),
+                    Select.From($"get_applications_with_position('{name}')"),
                     filter
                 )
         );
@@ -220,7 +220,7 @@ public static class SpecialQueriesMapper
                 await postgres.ReadPageAsync(
                     page,
                     pageSize,
-                    Select.From($"get_seekers_not_registered_in('${city}')"),
+                    Select.From($"get_seekers_not_registered_in('{city}')"),
                     filter
                 )
         );
@@ -231,7 +231,7 @@ public static class SpecialQueriesMapper
                 await postgres.ReadPageAsync(
                     page,
                     pageSize,
-                    Select.From($"get_salaries_in_comparison_with('${salary}')"),
+                    Select.From($"get_salaries_in_comparison_with('{salary}')"),
                     filter
                 )
         );
