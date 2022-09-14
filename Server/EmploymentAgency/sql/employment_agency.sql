@@ -1,4 +1,5 @@
 ﻿DROP TRIGGER IF EXISTS applicatons_set_seeker_day ON applications CASCADE;
+DROP TRIGGER IF EXISTS check_experience_trigger ON applications CASCADE;
 DROP TRIGGER IF EXISTS vacancies_set_employer_day ON vacancies CASCADE;
 DROP TRIGGER IF EXISTS employer_log_delete ON employers CASCADE;
 DROP TRIGGER IF EXISTS seeker_log_delete ON seekers CASCADE;
@@ -233,7 +234,7 @@ CREATE TABLE seekers
     first_name VARCHAR(20) NOT NULL,
     patronymic VARCHAR(20),
     phone phone_number,
-    birthday DATE NOT NULL CHECK ((DATE_PART('year', now()::date) - DATE_PART('year', birthday::date)) > 15),
+    birthday DATE NOT NULL CHECK (EXTRACT(YEAR FROM age(birthday))::NUMERIC > 15),
     pol BOOLEAN NOT NULL,
     FOREIGN KEY (status_id)
         REFERENCES statuses (id)
@@ -259,7 +260,7 @@ CREATE TABLE applications
     information TEXT,
     photo VARCHAR(100),
     salary NUMERIC(8, 2),
-    experience NUMERIC(2,0) CHECK (experience < 70),
+    experience NUMERIC(2,0) CHECK (experience >= 0),
     recommended BOOLEAN NOT NULL,
     FOREIGN KEY (seeker_id)
         REFERENCES seekers (id)
@@ -292,6 +293,32 @@ CREATE INDEX applications_employment_type_id ON applications(employment_type_id)
 CREATE INDEX districts_city_id ON districts(city_id);
 CREATE INDEX seekers_city_id ON seekers(registration_city_id);
 
+
+CREATE OR REPLACE FUNCTION check_experience() RETURNS TRIGGER AS $$
+DECLARE
+  max_experience INT;
+  age INT;
+BEGIN
+  IF NEW.experience IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT EXTRACT(YEAR FROM age(birthday))::NUMERIC 
+  FROM seekers 
+  WHERE id = NEW.seeker_id
+  INTO age;
+  max_experience := age - 16;
+
+  IF NEW.experience > max_experience THEN
+      RAISE EXCEPTION 'Опыт работы соискателя слишком велик';
+  END IF;
+
+  RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_experience_trigger
+BEFORE INSERT OR UPDATE ON applications
+FOR EACH ROW EXECUTE PROCEDURE check_experience();
 
 
 CREATE OR REPLACE FUNCTION before_insert_change_log() RETURNS TRIGGER AS $$
@@ -648,7 +675,7 @@ BEGIN
             first_names[random_between(1, array_length(first_names, 1))],
             patronymics[random_between(1, array_length(patronymics, 1))],
             random_phone(),
-            random_date('1990-01-01 00:00:00', '2004-01-01 00:00:00')::DATE,
+            random_date('1970-01-01 00:00:00', '1990-01-01 00:00:00')::DATE,
             TRUE
         );
     END LOOP;
