@@ -36,7 +36,8 @@ async function makeForm(
               const input = await columns[name]?.convertToInput(
                 id,
                 values?.[i],
-                endpoint
+                endpoint,
+                entityId
               );
               const first = input?.indexOf("photo") !== -1;
               return input === null

@@ -1,4 +1,4 @@
-import { fetchAllJson, makeImageUrl } from "./api.js";
+import { fetchAllJson, fetchSingle, makeImageUrl } from "./api.js";
 import {
   makeFileInput,
   makeDateInput,
@@ -8,6 +8,8 @@ import {
   PATTERNS,
 } from "./input.js";
 import { isDev } from "./config.js";
+
+const MIN_AGE = 16;
 
 class Column {
   constructor(
@@ -304,7 +306,7 @@ const columnInfo = [
         id,
         value,
         "1900-01-01",
-        `${new Date().getFullYear() - 16}-01-01`,
+        `${new Date().getFullYear() - MIN_AGE}-01-01`,
         true
       ),
     (v) => {
@@ -366,7 +368,23 @@ const columnInfo = [
   new Column(
     "experience",
     "опыт работы",
-    (id, value) => makeNumberInput(id, value, 0, 69),
+    async (id, value, endpoint, entityId) => {
+      const application = await fetchSingle({
+        endpoint,
+        id: entityId,
+      });
+      const seeker = await fetchSingle({
+        endpoint: "/seekers",
+        id: application.seeker_id,
+      });
+      const age = getAge(seeker.birthday);
+      const maxExperience = age - MIN_AGE;
+
+      console.log(seeker.birthday);
+      console.log(age);
+      console.log(maxExperience);
+      return makeNumberInput(id, value, 0, maxExperience);
+    },
     (v) => (v === "" ? "Нет" : v)
   ),
 ];
@@ -377,6 +395,25 @@ function formatDate(string) {
   }
   const date = new Date(string + " UTC");
   return date.toLocaleString();
+}
+
+function getAge(birthday) {
+  const [day, month, year] = formatDate(birthday)
+    .slice(0, formatDate(birthday).indexOf(" "))
+    .split(".");
+  const birthDate = new Date(year, month, day);
+  const now = new Date();
+  const result = now.getFullYear() - birthDate.getFullYear();
+
+  if (
+    now.getMonth() < birthDate.getMonth() ||
+    (now.getMonth() === birthDate.getMonth() &&
+      now.getDay() < birthDate.getDay())
+  ) {
+    return result - 1;
+  }
+
+  return result;
 }
 
 async function changeDistricts(citySelect) {
