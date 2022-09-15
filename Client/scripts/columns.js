@@ -326,6 +326,15 @@ const columnInfo = [
     (v) => (v === "Да" ? "True" : "False")
   ),
   new Column(
+    "Рекомендован",
+    "Рекомендован",
+    function (_, value) {
+      return this.makeRadio(value, "Да", "Нет");
+    },
+    (v) => (v === "True" ? "да" : "нет"),
+    (v) => (v === "Да" ? "True" : "False")
+  ),
+  new Column(
     "pol",
     "пол",
     function (_, value) {

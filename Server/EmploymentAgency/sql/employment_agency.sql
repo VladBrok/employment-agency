@@ -990,7 +990,7 @@ CREATE OR REPLACE FUNCTION get_applications_with_position(a_position varchar(100
 RETURNS TABLE ("Дата подачи заявления" timestamp, 
 			"Зарплата" numeric(8, 2), 
 			"Опыт" numeric(2), 
-			"Рекомандован" boolean)
+			"Рекомендован" boolean)
 AS $$ BEGIN
 	RETURN QUERY 	    
 		SELECT seeker_day, salary, experience, recommended
