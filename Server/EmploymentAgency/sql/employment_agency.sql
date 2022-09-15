@@ -19,18 +19,18 @@ DROP TRIGGER IF EXISTS before_insert_seekers_trigger ON seekers CASCADE;
 DROP TRIGGER IF EXISTS before_insert_applications_trigger ON applications CASCADE;
 
 
-DROP SEQUENCE IF EXISTS change_log_id_seq;
-DROP SEQUENCE IF EXISTS educations_id_seq;
-DROP SEQUENCE IF EXISTS cities_id_seq;
-DROP SEQUENCE IF EXISTS properties_id_seq;
-DROP SEQUENCE IF EXISTS positions_id_seq;
-DROP SEQUENCE IF EXISTS statuses_id_seq;
-DROP SEQUENCE IF EXISTS employment_types_id_seq;
-DROP SEQUENCE IF EXISTS districts_id_seq;
-DROP SEQUENCE IF EXISTS employers_id_seq;
-DROP SEQUENCE IF EXISTS vacancies_id_seq;
-DROP SEQUENCE IF EXISTS seekers_id_seq;
-DROP SEQUENCE IF EXISTS applications_id_seq;
+DROP SEQUENCE IF EXISTS change_log_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS educations_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS cities_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS properties_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS positions_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS statuses_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS employment_types_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS districts_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS employers_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS vacancies_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS seekers_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS applications_id_seq CASCADE;
 
 DROP TABLE IF EXISTS change_log CASCADE;
 DROP TABLE IF EXISTS seekers CASCADE;
