@@ -1,8 +1,8 @@
 import { ensureAuthenticated, getToken } from "./auth.js";
-import { apiUrls } from "./config.js";
+import { apiUrls, isDev } from "./config.js";
 
 const PAGE_SIZE = 15;
-const TIMEOUT_IN_MILLISECONDS = 30000;
+const TIMEOUT_IN_MILLISECONDS = isDev ? 1e6 : 30000;
 let urlIndex = 0;
 
 async function fetchJson({
