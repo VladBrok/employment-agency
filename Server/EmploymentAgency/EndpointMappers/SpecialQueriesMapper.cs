@@ -8,26 +8,32 @@ public static class SpecialQueriesMapper
     {
         string root = "api/special";
         foreach (
-            string view in new[]
+            (string view, bool shouldOrder) in new[]
             {
-                "average_seeker_ages_by_positions",
-                "employer_addresses",
-                "employment_types_and_salaries",
-                "vacancies_and_salaries",
-                "employers_and_vacancies",
-                "seekers_and_applications",
-                "num_vacancies_from_each_employer",
-                "total_vacancies_including_not_ended",
-                "num_of_seekers_with_university_education",
-                "employers_all_and_by_districts",
-                "seekers_with_even_average_experience"
+                ("average_seeker_ages_by_positions", true),
+                ("employer_addresses", true),
+                ("employment_types_and_salaries", true),
+                ("vacancies_and_salaries", true),
+                ("employers_and_vacancies", true),
+                ("seekers_and_applications", true),
+                ("num_vacancies_from_each_employer", true),
+                ("total_vacancies_including_not_ended", true),
+                ("num_of_seekers_with_university_education", true),
+                ("employers_all_and_by_districts", false),
+                ("seekers_with_even_average_experience", true)
             }
         )
         {
             app.MapGet(
                 $"{root}/{view}",
                 async (int page, int pageSize, string? filter) =>
-                    await postgres.ReadPageAsync(page, pageSize, Select.From(view), filter)
+                    await postgres.ReadPageAsync(
+                        page,
+                        pageSize,
+                        Select.From(view),
+                        filter,
+                        shouldOrder
+                    )
             );
         }
 

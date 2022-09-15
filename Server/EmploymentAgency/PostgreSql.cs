@@ -58,14 +58,15 @@ public class PostgreSql
         int page,
         int pageSize,
         string command,
-        string? filter = null
+        string? filter = null,
+        bool shouldOrder = true
     )
     {
         if (filter is null)
         {
             command =
                 $@"{command}
-                ORDER BY 1
+                {(shouldOrder ? "ORDER BY 1" : "")}
                 OFFSET {page * pageSize}
                 LIMIT {pageSize}";
             return await ExecuteAsync(command);
