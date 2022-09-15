@@ -103,7 +103,7 @@ const endpointInfo = [
   }),
   new Endpoint({
     main: "/special/min_salary_of_employer_with_name",
-    parameters: [new Parameter("Компания", (id) => makeTextInput(id, "AAAA"))],
+    parameters: [new Parameter("Компания", (id) => makeTextInput(id, "abaa"))],
   }),
   new Endpoint({
     main: "/special/applications_with_position",

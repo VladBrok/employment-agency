@@ -399,8 +399,9 @@ function formatDate(string) {
 
 function getAge(birthday) {
   const [day, month, year] = formatDate(birthday)
-    .slice(0, formatDate(birthday).indexOf(" "))
+    .slice(0, 10)
     .split(".");
+  console.log(formatDate(birthday), day, month, year);
   const birthDate = new Date(year, month, day);
   const now = new Date();
   const result = now.getFullYear() - birthDate.getFullYear();
