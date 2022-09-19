@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 dotnet publish -c Release -o bin/build/
 cp -r media/ bin/build/

@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 file=./scripts/config.js
 found=$(grep 'isDev = true' $file)
