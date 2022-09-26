@@ -1,0 +1,20 @@
+{
+  "Serilog": {
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "./logs/log-.txt",
+          "rollingInterval": "Day",
+          "rollOnFileSizeLimit": true,
+          "fileSizeLimitBytes": 10000000
+        }
+      }
+    ]
+  },
+  "Settings": {
+    "ConnectionString": "Host=MY.HOST.COM;Username=MY_USERNAME;Password=MY_PASSWORD;Database=MY_DATABASE",
+    "MaxRetryCount": 4,
+    "InitialRetryDelayMs": 4000
+  }
+}

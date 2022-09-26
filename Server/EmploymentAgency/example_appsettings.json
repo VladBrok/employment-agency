@@ -1,0 +1,38 @@
+{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information"
+      }
+    }
+  },
+  "AllowedHosts": "*",
+  "Settings": {
+    "ConnectionString": "Host=MY.HOST.COM;Username=MY_USERNAME;Password=MY_PASSWORD;Database=MY_DATABASE",
+    "MaxRetryCount": 3,
+    "InitialRetryDelayMs": 100,
+    "RetryDelayMultiplier": 2,
+    "JwtLifetimeMs": 86400000,
+    "Secret": "MT_SECRET",
+    "Admin": {
+      "Login": "ADMIN_LOGIN",
+      "Password": "ADMIN_PASSWORD_HASH"
+    },
+    "FileSignatures": {
+      ".png": [["89", "50", "4E", "47", "0D", "0A", "1A", "0A"]],
+      ".jpg": [
+        ["FF", "D8", "FF", "E0"],
+        ["FF", "D8", "FF", "E1"],
+        ["FF", "D8", "FF", "E8"]
+      ],
+      ".jpeg": [
+        ["FF", "D8", "FF", "E0"],
+        ["FF", "D8", "FF", "E2"],
+        ["FF", "D8", "FF", "E3"]
+      ]
+    },
+    "MaxFileSizeInBytes": 4097152
+  }
+}
