@@ -15,7 +15,7 @@
     "InitialRetryDelayMs": 100,
     "RetryDelayMultiplier": 2,
     "JwtLifetimeMs": 86400000,
-    "Secret": "MT_SECRET",
+    "Secret": "MY_SECRET",
     "Admin": {
       "Login": "ADMIN_LOGIN",
       "Password": "ADMIN_PASSWORD_HASH"
